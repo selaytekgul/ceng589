@@ -26,7 +26,7 @@ void crossProductFunction(int v_A[], int v_B[], int c_P[]) {
 	c_P[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
 }
 
-int rayIntersectsTriangle(float* p, float* d,
+float rayIntersectsTriangle(float* p, float* d,
 	float* v0, float* v1, float* v2) {
 
 	float e1[3], e2[3], h[3], s[3], q[3];
@@ -38,31 +38,36 @@ int rayIntersectsTriangle(float* p, float* d,
 	a = innerProduct(e1, h);
 
 	if (a > -0.00001 && a < 0.00001)
-		return(false);
+		//return(false);
+		return(-1);
 
 	f = 1 / a;
 	vector(s, p, v0);
 	u = f * (innerProduct(s, h));
 
 	if (u < 0.0 || u > 1.0)
-		return(false);
+		//return(false);
+		return(-1);
 
 	crossProduct(q, s, e1);
 	v = f * innerProduct(d, q);
 
 	if (v < 0.0 || u + v > 1.0)
-		return(false);
+		//return(false);
+		return(-1);
 
 	// at this stage we can compute t to find out where
 	// the intersection point is on the line
 	float t = f * innerProduct(e2, q);
 
 	if (t > 0.00001) // ray intersection
-		return(true);
+		//return(true);
+		return(t);
 
 	else // this means that there is a line intersection
 		 // but not a ray intersection
-		return (false);
+		//return (false);
+		return (-2);
 }
 
 
@@ -84,6 +89,15 @@ void normalize(int v[], float nor[]) {
 
 void triangleNormalVectors(Mesh* mesh)
 {
+	for (size_t i = 0; i < mesh->tris.size(); i++)
+	{
+		int vertex1ID = mesh->tris[i]->v1i;
+		int vertex2ID = mesh->tris[i]->v2i;
+		int vertex3ID = mesh->tris[i]->v3i;
+		mesh->verts[vertex1ID]->length = -5.0;
+		mesh->verts[vertex2ID]->length = -5.0;
+		mesh->verts[vertex3ID]->length = -5.0;
+	}
 	for (size_t i = 0; i < mesh->tris.size(); i++)
 	{
 		int vertex1ID = mesh->tris[i]->v1i;
@@ -141,9 +155,12 @@ void triangleNormalVectors(Mesh* mesh)
 		p[2] = z1_A;
 
 		float d[3];
-		d[0] = norm_final[0];
+		/*d[0] = norm_final[0];
 		d[1] = norm_final[1];
-		d[2] = norm_final[2];
+		d[2] = norm_final[2];*/
+		d[0] = c_P[0];
+		d[1] = c_P[1];
+		d[2] = c_P[2];
 		
 		for (size_t j = 0; j < mesh->tris.size(); j++)
 		{
@@ -176,14 +193,19 @@ void triangleNormalVectors(Mesh* mesh)
 				v0[2] = z0;
 				v1[2] = z1;
 				v2[2] = z2;
-				int intersects = rayIntersectsTriangle(p, d, v0, v1, v2);
-				if (intersects != 0) {
+				float intersects = rayIntersectsTriangle(p, d, v0, v1, v2);
+				if (intersects > 0) {
 					printf("p =%f.2, %f.2, %f.2\n", p[0], p[1], p[2]);
 					printf("d =%f.2, %f.2, %f.2\n", d[0], d[1], d[2]);
 					printf("v0 =%f.2, %f.2, %f.2\n", v0[0], v0[1], v0[2]);
 					printf("v1 =%f.2, %f.2, %f.2\n", v1[0], v1[1], v1[2]);
 					printf("v2 =%f.2, %f.2, %f.2\n", v2[0], v2[1], v2[2]);
-					printf("Intersects = %d \n\n\n\n", intersects);
+					printf("Intersects = %f.2 \n\n\n\n", intersects);
+					if (mesh->verts[vertex1ID]->length < intersects) {
+						mesh->verts[vertex1ID]->length = intersects;
+						mesh->verts[vertex2ID]->length = intersects;
+						mesh->verts[vertex3ID]->length = intersects;
+					}
 				}
 			}
 		}

@@ -20,17 +20,24 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 		float r = 0;
 		float g = 0;
 		float b = 0;
-		if (i < (int)mesh->verts.size()/2)
+		//if (i < (int)mesh->verts.size()/2)
+		if (mesh->verts[i]->length > 0)
 		{
-			r = i % 2 == 0 ? 1 : 0;
-			g = i % 2 != 0 ? 1 : 0;
-			b = i % 3 == 0 ? 1 : 0;
+			//r = i % 2 == 0 ? 1 : 0;
+			//g = i % 2 != 0 ? 1 : 0;
+			//b = i % 3 == 0 ? 1 : 0;
+			r = 1;
+			g = 1;
+			b = 1;
 		}
 		else
 		{
-			r = i % 2 == 0 ? 1 : 0;
-			g = i % 2 != 0 ? 1 : 0;
-			b = i % 3 == 0 ? 1 : 0;
+			//r = i % 2 == 0 ? 1 : 0;
+			//g = i % 2 != 0 ? 1 : 0;
+			//b = i % 3 == 0 ? 1 : 0;
+			r = 0;
+			g = 0;
+			b = 0;
 		}
 		mesh->verts[i]->color[0] = r;
 		mesh->verts[i]->color[1] = g;
