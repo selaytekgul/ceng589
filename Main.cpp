@@ -89,6 +89,8 @@ void normalize(int v[], float nor[]) {
 
 void triangleNormalVectors(Mesh* mesh)
 {
+	int numberOfIntersections = 0;
+	int numberOfNOTIntersections = 0;
 	for (size_t i = 0; i < mesh->tris.size(); i++)
 	{
 		int vertex1ID = mesh->tris[i]->v1i;
@@ -195,6 +197,7 @@ void triangleNormalVectors(Mesh* mesh)
 				v2[2] = z2;
 				float intersects = rayIntersectsTriangle(p, d, v0, v1, v2);
 				if (intersects > 0) {
+					numberOfIntersections++;
 					printf("p =%f.2, %f.2, %f.2\n", p[0], p[1], p[2]);
 					printf("d =%f.2, %f.2, %f.2\n", d[0], d[1], d[2]);
 					printf("v0 =%f.2, %f.2, %f.2\n", v0[0], v0[1], v0[2]);
@@ -207,9 +210,15 @@ void triangleNormalVectors(Mesh* mesh)
 						mesh->verts[vertex3ID]->length = intersects;
 					}
 				}
+				else
+				{
+					numberOfNOTIntersections++;
+				}
 			}
 		}
 	}
+	printf("numberofintersections = %d\n", numberOfIntersections);
+	printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
 }
 
 int main(int, char ** argv)

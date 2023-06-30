@@ -18,7 +18,7 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 		//const float g = i % 2 != 0 ? 1 : 0;
 		//const float b = i % 3 == 0 ? 1 : 0;
 		float r = 0;
-		float g = 0;
+		float g = 1;
 		float b = 0;
 		//if (i < (int)mesh->verts.size()/2)
 		if (mesh->verts[i]->length < 0)
