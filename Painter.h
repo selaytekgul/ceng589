@@ -6,6 +6,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoCone.h>
+#include <vector>
 
 
 
@@ -14,8 +15,10 @@ class Painter
 public:
 	SoSeparator* getShapeSep(Mesh* mesh);
 	void triangleNormalVectors(Mesh* mesh);
-	float calculateLength(int v[]);
-	void normalize(int v[], float nor[]);
-	void Painter::crossProductFunction(int v_A[], int v_B[], int c_P[]);
-	float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2);
+	float calculateLength(const int v[]);
+	void normalize(const int v[], float nor[]);
+	void crossProductFunction(const int v_A[], const int v_B[], int c_P[]);
+	float rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2);
+	float normalizedValueInRange(double value, double min, double max);
+	void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 };

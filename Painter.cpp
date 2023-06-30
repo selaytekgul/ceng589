@@ -16,7 +16,7 @@
 	(a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; \
 	(a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
 
-void Painter::crossProductFunction(int v_A[], int v_B[], int c_P[]) {
+void Painter::crossProductFunction(const int v_A[], const int v_B[], int c_P[]) {
 	c_P[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
 	c_P[1] = -(v_A[0] * v_B[2] - v_A[2] * v_B[0]);
 	c_P[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
@@ -67,7 +67,7 @@ float Painter::rayIntersectsTriangle(float* p, float* d,
 }
 
 
-float Painter::calculateLength(int v[]) {
+float Painter::calculateLength(const int v[]) {
 	int square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 	float root = sqrt(square);
 	return root;
@@ -75,13 +75,36 @@ float Painter::calculateLength(int v[]) {
 
 
 
-void Painter::normalize(int v[], float nor[]) {
+void Painter::normalize(const int v[], float nor[]) {
 	float len = calculateLength(v);
 	nor[0] = v[0] / len;
 	nor[1] = v[1] / len;
 	nor[2] = v[2] / len;
 }
 
+float Painter::normalizedValueInRange(double value, double min, double max) {
+	return (value - min) / (max - min);
+}
+
+void Painter::normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {
+	float minValue = std::numeric_limits<float>::max();
+	float maxValue = std::numeric_limits<float>::min();
+
+	// Find the minimum and maximum values in the input vector
+	for (float value : inputArr) {
+		if (value < minValue)
+			minValue = value;
+		if (value > maxValue)
+			maxValue = value;
+	}
+	int i = 0;
+	// Normalize the input vector values and store them in the output vector
+	for (float value : inputArr) {
+		float normalizedValue = (value - minValue) / (maxValue - minValue);
+		outputArr[i] = normalizedValue;
+		i++;
+	}
+}
 
 void Painter::triangleNormalVectors(Mesh* mesh)
 {
@@ -153,12 +176,12 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 		p[2] = z1_A;
 
 		float d[3];
-		/*d[0] = norm_final[0];
-		d[1] = norm_final[1];
-		d[2] = norm_final[2];*/
-		d[0] = c_P[0];
-		d[1] = c_P[1];
-		d[2] = c_P[2];
+		d[0] = -norm_final[0];
+		d[1] = -norm_final[1];
+		d[2] = -norm_final[2];
+		//d[0] = c_P[0];
+		//d[1] = c_P[1];
+		//d[2] = c_P[2];
 
 		for (size_t j = 0; j < mesh->tris.size(); j++)
 		{
@@ -229,60 +252,78 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	mat->diffuseColor.setValue(0, 1, 0); //paint all vertices with this color
 	//mat->transparency = 0.5f : 0.0f; //0 makes it completely opaque, the default
 
-	for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
+	std::vector<float> inputArray((int)mesh->verts.size());
+	std::vector<float> outputArray((int)mesh->verts.size());
+	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
-		//const float r = i % 2 == 0 ? 1 : 0;
-		//const float g = i % 2 != 0 ? 1 : 0;
-		//const float b = i % 3 == 0 ? 1 : 0;
-		float r = 0;
-		float g = 1;
-		float b = 0;
-		//if (i < (int)mesh->verts.size()/2)
-		if (mesh->verts[i]->length < 0)
-		{
-			//r = i % 2 == 0 ? 1 : 0;
-			//g = i % 2 != 0 ? 1 : 0;
-			//b = i % 3 == 0 ? 1 : 0;
-			r = 1;
-			g = 1;
-			b = 1;
-		}
-		else if (mesh->verts[i]->length >= 0 && mesh->verts[i]->length < 0.5)
-		{
-			//r = i % 2 == 0 ? 1 : 0;
-			//g = i % 2 != 0 ? 1 : 0;
-			//b = i % 3 == 0 ? 1 : 0;
-			r = 0;
-			g = 0;
-			b = 1;
-		}
-		else if (mesh->verts[i]->length >= 0.5 && mesh->verts[i]->length < 0.75)
-		{
-			//r = i % 2 == 0 ? 1 : 0;
-			//g = i % 2 != 0 ? 1 : 0;
-			//b = i % 3 == 0 ? 1 : 0;
-			r = 0;
-			g = 1;
-			b = 0;
-		}
-		else
-		{
-			//r = i % 2 == 0 ? 1 : 0;
-			//g = i % 2 != 0 ? 1 : 0;
-			//b = i % 3 == 0 ? 1 : 0;
-			r = 1;
-			g = 0;
-			b = 0;
-		}
-		mesh->verts[i]->color[0] = r;
-		mesh->verts[i]->color[1] = g;
-		mesh->verts[i]->color[2] = b;
+		float value = mesh->verts[i]->length;
+		inputArray[i] = value;
+		outputArray[i] = -9.0f;
+	}
+	normalizeArray(inputArray, outputArray);
+
+	//for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
+	for (int i = 0; i < (int)outputArray.size(); i++)
+	{
+	//	//const float r = i % 2 == 0 ? 1 : 0;
+	//	//const float g = i % 2 != 0 ? 1 : 0;
+	//	//const float b = i % 3 == 0 ? 1 : 0;
+	//	float r = 0;
+	//	float g = 1;
+	//	float b = 0;
+	//	//if (i < (int)mesh->verts.size()/2)
+	//	if (mesh->verts[i]->length < 0)
+	//	{
+	//		//r = i % 2 == 0 ? 1 : 0;
+	//		//g = i % 2 != 0 ? 1 : 0;
+	//		//b = i % 3 == 0 ? 1 : 0;
+	//		r = 1;
+	//		g = 1;
+	//		b = 1;
+	//	}
+	//	else if (mesh->verts[i]->length >= 0 && mesh->verts[i]->length < 0.5)
+	//	{
+	//		//r = i % 2 == 0 ? 1 : 0;
+	//		//g = i % 2 != 0 ? 1 : 0;
+	//		//b = i % 3 == 0 ? 1 : 0;
+	//		r = 0;
+	//		g = 0;
+	//		b = 1;
+	//	}
+	//	else if (mesh->verts[i]->length >= 0.5 && mesh->verts[i]->length < 0.75)
+	//	{
+	//		//r = i % 2 == 0 ? 1 : 0;
+	//		//g = i % 2 != 0 ? 1 : 0;
+	//		//b = i % 3 == 0 ? 1 : 0;
+	//		r = 0;
+	//		g = 1;
+	//		b = 0;
+	//	}
+	//	else
+	//	{
+	//		//r = i % 2 == 0 ? 1 : 0;
+	//		//g = i % 2 != 0 ? 1 : 0;
+	//		//b = i % 3 == 0 ? 1 : 0;
+	//		r = 1;
+	//		g = 0;
+	//		b = 0;
+	//	}
+		//mesh->verts[i]->color[0] = r;
+		//mesh->verts[i]->color[1] = g;
+		//mesh->verts[i]->color[2] = b;
+
+		mesh->verts[i]->color[0] = 0;
+		mesh->verts[i]->color[1] = outputArray[i];
+		mesh->verts[i]->color[2] = 0;
 	}
 	bool youWantToPaintEachVertexDifferently = false;
 	youWantToPaintEachVertexDifferently = true;
 	if (youWantToPaintEachVertexDifferently)
 		for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
 			mat->diffuseColor.set1Value(i, mesh->verts[i]->color); //vert color according to its x-y-z coord (for mesh1) and to the transferred color (for mesh2)
+
+	//float green[3] = {0, 1, 0};
+	//mat->diffuseColor.set1Value(0, green); //vert color according to its x-y-z coord (for mesh1) and to the transferred color (for mesh2)
 
 	res->addChild(mat);
 
