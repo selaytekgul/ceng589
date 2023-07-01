@@ -117,9 +117,9 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 	}
 	for (size_t i = 0; i < mesh->tris.size(); i++)
 	{
-		int vertex1ID = mesh->tris[i]->v1i;
-		int vertex2ID = mesh->tris[i]->v2i;
-		int vertex3ID = mesh->tris[i]->v3i;
+		//int vertex1ID = mesh->tris[i]->v1i;
+		//int vertex2ID = mesh->tris[i]->v2i;
+		//int vertex3ID = mesh->tris[i]->v3i;
 
 		std::array<int, 3> vertexIdsOfTriangle;
 		vertexIdsOfTriangle[0] = mesh->tris[i]->v1i;
@@ -176,47 +176,116 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 			printf("NEW(B-A): x=%d y=%d z=%d\n", vectorsToTheOtherVerticesArray[0][0], vectorsToTheOtherVerticesArray[0][1], vectorsToTheOtherVerticesArray[0][2]);
 			printf("NEW(C-A): x=%d y=%d z=%d\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
 			printf("NEWCrossProduct x=%d y=%d z=%d\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
+
+			float p[3];
+			p[0] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][0];
+			p[1] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][1];
+			p[2] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][2];
+
+			float d[3];
+			d[0] = crossProductVector[0];
+			d[1] = crossProductVector[1];
+			d[2] = crossProductVector[2];
+
+			for (size_t j = 0; j < mesh->tris.size(); j++)
+			{
+				if (i != j) {
+					int idxofVertex0inTriangle = mesh->tris[j]->v1i;
+					int idxofVertex1inTriangle = mesh->tris[j]->v2i;
+					int idxofVertex2inTriangle = mesh->tris[j]->v3i;
+					float v0[3];
+					float v1[3];
+					float v2[3];
+
+					float x0 = mesh->verts[idxofVertex0inTriangle]->coords[0];
+					float x1 = mesh->verts[idxofVertex1inTriangle]->coords[0];
+					float x2 = mesh->verts[idxofVertex2inTriangle]->coords[0];
+					v0[0] = x0;
+					v1[0] = x1;
+					v2[0] = x2;
+
+
+					float y0 = mesh->verts[idxofVertex0inTriangle]->coords[1];
+					float y1 = mesh->verts[idxofVertex1inTriangle]->coords[1];
+					float y2 = mesh->verts[idxofVertex2inTriangle]->coords[1];
+					v0[1] = y0;
+					v1[1] = y1;
+					v2[1] = y2;
+
+					float z0 = mesh->verts[idxofVertex0inTriangle]->coords[2];
+					float z1 = mesh->verts[idxofVertex1inTriangle]->coords[2];
+					float z2 = mesh->verts[idxofVertex2inTriangle]->coords[2];
+					v0[2] = z0;
+					v1[2] = z1;
+					v2[2] = z2;
+
+
+					float intersects = rayIntersectsTriangle(p, d, v0, v1, v2);
+					if (intersects > 0) {
+						numberOfIntersections++;
+						printf("p(%d) =%f, %f, %f\n", vertexIdsOfTriangle[selectedVertexNumber], p[0], p[1], p[2]);
+						printf("d =%f, %f, %f\n", d[0], d[1], d[2]);
+						printf("v0 =%f, %f, %f\n", v0[0], v0[1], v0[2]);
+						printf("v1 =%f, %f, %f\n", v1[0], v1[1], v1[2]);
+						printf("v2 =%f, %f, %f\n", v2[0], v2[1], v2[2]);
+						printf("Intersects = %f \n\n\n\n", intersects);
+						if (mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length <= intersects) {
+							mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length = intersects;
+						}
+					}
+					else
+					{
+						printf("NOT INT p(%d) =%f, %f, %f\n", vertexIdsOfTriangle[selectedVertexNumber], p[0], p[1], p[2]);
+						printf("NOT INT d =%f, %f, %f\n", d[0], d[1], d[2]);
+						printf("NOT INT v0 =%f, %f, %f\n", v0[0], v0[1], v0[2]);
+						printf("NOT INT v1 =%f, %f, %f\n", v1[0], v1[1], v1[2]);
+						printf("NOT INT v2 =%f, %f, %f\n", v2[0], v2[1], v2[2]);
+						printf("NOT INT Intersects = %f \n\n\n\n", intersects);
+						numberOfNOTIntersections++;
+					}
+				}
+			}
 		}
 
-		int x1_A = mesh->verts[vertex1ID]->coords[0];
-		int y1_A = mesh->verts[vertex1ID]->coords[1];
-		int z1_A = mesh->verts[vertex1ID]->coords[2];
+		//int x1_A = mesh->verts[vertex1ID]->coords[0];
+		//int y1_A = mesh->verts[vertex1ID]->coords[1];
+		//int z1_A = mesh->verts[vertex1ID]->coords[2];
 
-		int x2_B = mesh->verts[vertex2ID]->coords[0];
-		int y2_B = mesh->verts[vertex2ID]->coords[1];
-		int z2_B = mesh->verts[vertex2ID]->coords[2];
+		//int x2_B = mesh->verts[vertex2ID]->coords[0];
+		//int y2_B = mesh->verts[vertex2ID]->coords[1];
+		//int z2_B = mesh->verts[vertex2ID]->coords[2];
 
-		int x3_C = mesh->verts[vertex3ID]->coords[0];
-		int y3_C = mesh->verts[vertex3ID]->coords[1];
-		int z3_C = mesh->verts[vertex3ID]->coords[2];
+		//int x3_C = mesh->verts[vertex3ID]->coords[0];
+		//int y3_C = mesh->verts[vertex3ID]->coords[1];
+		//int z3_C = mesh->verts[vertex3ID]->coords[2];
 
-		int x_B_A = x2_B - x1_A;
-		int y_B_A = y2_B - y1_A;
-		int z_B_A = z2_B - z1_A;
+		//int x_B_A = x2_B - x1_A;
+		//int y_B_A = y2_B - y1_A;
+		//int z_B_A = z2_B - z1_A;
 
-		int x_C_A = x3_C - x1_A;
-		int y_C_A = y3_C - y1_A;
-		int z_C_A = z3_C - z1_A;
+		//int x_C_A = x3_C - x1_A;
+		//int y_C_A = y3_C - y1_A;
+		//int z_C_A = z3_C - z1_A;
 
-		int v_B_A[3] = { x_B_A, y_B_A, z_B_A };
-		int v_C_A[3] = { x_C_A, y_C_A, z_C_A };
-		int c_P[3];
-		crossProductFunction(v_B_A, v_C_A, c_P);
-		printf("(B-A): x=%d y=%d z=%d\n", x_B_A, y_B_A, z_B_A);
-		printf("(C-A): x=%d y=%d z=%d\n", x_C_A, y_C_A, z_C_A);
-		printf("CrossProduct x=%d y=%d z=%d\n", c_P[0], c_P[1], c_P[2]);
+		//int v_B_A[3] = { x_B_A, y_B_A, z_B_A };
+		//int v_C_A[3] = { x_C_A, y_C_A, z_C_A };
+		//int c_P[3];
+		//crossProductFunction(v_B_A, v_C_A, c_P);
+		//printf("(B-A): x=%d y=%d z=%d\n", x_B_A, y_B_A, z_B_A);
+		//printf("(C-A): x=%d y=%d z=%d\n", x_C_A, y_C_A, z_C_A);
+		//printf("CrossProduct x=%d y=%d z=%d\n", c_P[0], c_P[1], c_P[2]);
 
-		float p[3];
-		p[0] = x1_A;
-		p[1] = y1_A;
-		p[2] = z1_A;
+		//float p[3];
+		//p[0] = x1_A;
+		//p[1] = y1_A;
+		//p[2] = z1_A;
 
-		float d[3];
-		d[0] = c_P[0];
-		d[1] = c_P[1];
-		d[2] = c_P[2];
+		//float d[3];
+		//d[0] = c_P[0];
+		//d[1] = c_P[1];
+		//d[2] = c_P[2];
 
-		for (size_t j = 0; j < mesh->tris.size(); j++)
+		/*for (size_t j = 0; j < mesh->tris.size(); j++)
 		{
 			if (i != j) {
 				int idxofVertex0inTriangle = mesh->tris[j]->v1i;
@@ -269,7 +338,7 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 					numberOfNOTIntersections++;
 				}
 			}
-		}
+		}*/
 	}
 	printf("numberofintersections = %d\n", numberOfIntersections);
 	printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
