@@ -297,71 +297,8 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	}
 	normalizeArray(inputArray, outputArray);
 
-	//for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
 	for (int i = 0; i < (int)outputArray.size(); i++)
 	{
-		//const float r = i % 2 == 0 ? 1 : 0;
-		//const float g = i % 2 != 0 ? 1 : 0;
-		//const float b = i % 3 == 0 ? 1 : 0;
-		//float r = 0;
-		//float g = 1;
-		//float b = 0;
-		////if (i < (int)mesh->verts.size()/2)
-		////if (mesh->verts[i]->length < 0)
-		//if (outputArray[i] < 0)
-		//{
-		//	r = 1;
-		//	g = 1;
-		//	b = 1;
-		//}
-		////else if (mesh->verts[i]->length >= 0 && mesh->verts[i]->length < 0.5)
-		//else if (outputArray[i] >= 0 && outputArray[i] < 0.02)
-		//{
-		//	r = 0;
-		//	g = 1;
-		//	b = 0;
-		//}
-		//else if (outputArray[i] >= 0.02 && outputArray[i] < 0.05)
-		//{
-		//	r = 0;
-		//	g = 1;
-		//	b = 0;
-		//}
-
-		//else if (outputArray[i] >= 0.05 && outputArray[i] < 0.15)
-		//{
-		//	r = 0;
-		//	g = 0;
-		//	b = 1;
-		//}
-		//else if (outputArray[i] >= 0.15 && outputArray[i] < 0.25)
-		//{
-		//	r = 0;
-		//	g = 0;
-		//	b = 1;
-		//}
-		//else if (outputArray[i] >= 0.25 && outputArray[i] < 0.5)
-		//{
-		//	r = 0;
-		//	g = 0;
-		//	b = 1;
-		//}
-		//else if (outputArray[i] >= 0.5 && outputArray[i] < 0.75)
-		//{
-		//	r = 1;
-		//	g = 0;
-		//	b = 0;
-		//}
-		//else
-		//{
-		//	r = 1;
-		//	g = 0;
-		//	b = 0;
-		//}
-		//mesh->verts[i]->color[0] = r;
-		//mesh->verts[i]->color[1] = g;
-		//mesh->verts[i]->color[2] = b;
-
 		mesh->verts[i]->color[0] = 0;
 		mesh->verts[i]->color[1] = outputArray[i];
 		mesh->verts[i]->color[2] = 0;
@@ -371,10 +308,6 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	if (youWantToPaintEachVertexDifferently)
 		for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
 			mat->diffuseColor.set1Value(i, mesh->verts[i]->color); //vert color according to its x-y-z coord (for mesh1) and to the transferred color (for mesh2)
-
-	//float green[3] = {0, 1, 0};
-	//mat->diffuseColor.set1Value(0, green); //vert color according to its x-y-z coord (for mesh1) and to the transferred color (for mesh2)
-
 	res->addChild(mat);
 
 	SoShapeHints* hints = new SoShapeHints;
