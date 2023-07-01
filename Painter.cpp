@@ -117,10 +117,6 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 	}
 	for (size_t i = 0; i < mesh->tris.size(); i++)
 	{
-		//int vertex1ID = mesh->tris[i]->v1i;
-		//int vertex2ID = mesh->tris[i]->v2i;
-		//int vertex3ID = mesh->tris[i]->v3i;
-
 		std::array<int, 3> vertexIdsOfTriangle;
 		vertexIdsOfTriangle[0] = mesh->tris[i]->v1i;
 		vertexIdsOfTriangle[1] = mesh->tris[i]->v2i;
