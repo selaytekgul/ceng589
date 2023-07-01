@@ -323,27 +323,27 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	//assign color values to the vertices according to their length values
 	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
-		mesh->verts[i]->color[0] = 0;
-		mesh->verts[i]->color[1] = 0;
-		mesh->verts[i]->color[2] = mesh->verts[i]->length/Vertex::maxLength;
-		//if (mesh->verts[i]->length < 15)
-		//{
-		//	mesh->verts[i]->color[0] = 1;
-		//	mesh->verts[i]->color[1] = 0;
-		//	mesh->verts[i]->color[2] = 0;
-		//}
-		//else if (mesh->verts[i]->length >= 15 && mesh->verts[i]->length < 35)
-		//{
-		//	mesh->verts[i]->color[0] = 0;
-		//	mesh->verts[i]->color[1] = 1;
-		//	mesh->verts[i]->color[2] = 0;
-		//}
-		//else //if (mesh->verts[i]->length >= 15 && mesh->verts[i]->length < 35)
-		//{
-		//	mesh->verts[i]->color[0] = 0;
-		//	mesh->verts[i]->color[1] = 0;
-		//	mesh->verts[i]->color[2] = 1;
-		//}
+		//mesh->verts[i]->color[0] = 0;
+		//mesh->verts[i]->color[1] = 0;
+		//mesh->verts[i]->color[2] = mesh->verts[i]->length/Vertex::maxLength;
+		if (mesh->verts[i]->length < 15)
+		{
+			mesh->verts[i]->color[0] = 1;
+			mesh->verts[i]->color[1] = 0;
+			mesh->verts[i]->color[2] = 0;
+		}
+		else if (mesh->verts[i]->length >= 15 && mesh->verts[i]->length < 35)
+		{
+			mesh->verts[i]->color[0] = 0;
+			mesh->verts[i]->color[1] = 1;
+			mesh->verts[i]->color[2] = 0;
+		}
+		else //if (mesh->verts[i]->length >= 15 && mesh->verts[i]->length < 35)
+		{
+			mesh->verts[i]->color[0] = 0;
+			mesh->verts[i]->color[1] = 0;
+			mesh->verts[i]->color[2] = 1;
+		}
 		//if (mesh->verts[i]->hasLongLength)
 		//{
 		//	mesh->verts[i]->color[0] = 1;
