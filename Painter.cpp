@@ -176,12 +176,12 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 		p[2] = z1_A;
 
 		float d[3];
-		d[0] = -norm_final[0];
-		d[1] = -norm_final[1];
-		d[2] = -norm_final[2];
-		//d[0] = c_P[0];
-		//d[1] = c_P[1];
-		//d[2] = c_P[2];
+		//d[0] = -norm_final[0];
+		//d[1] = -norm_final[1];
+		//d[2] = -norm_final[2];
+		d[0] = c_P[0];
+		d[1] = c_P[1];
+		d[2] = c_P[2];
 
 		for (size_t j = 0; j < mesh->tris.size(); j++)
 		{
@@ -223,7 +223,7 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 					printf("v1 =%f.2, %f.2, %f.2\n", v1[0], v1[1], v1[2]);
 					printf("v2 =%f.2, %f.2, %f.2\n", v2[0], v2[1], v2[2]);
 					printf("Intersects = %f.2 \n\n\n\n", intersects);
-					if (mesh->verts[vertex1ID]->length < intersects) {
+					if (mesh->verts[vertex1ID]->length <= intersects) {
 						mesh->verts[vertex1ID]->length = intersects;
 						mesh->verts[vertex2ID]->length = intersects;
 						mesh->verts[vertex3ID]->length = intersects;
@@ -265,55 +265,71 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	//for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
 	for (int i = 0; i < (int)outputArray.size(); i++)
 	{
-	//	//const float r = i % 2 == 0 ? 1 : 0;
-	//	//const float g = i % 2 != 0 ? 1 : 0;
-	//	//const float b = i % 3 == 0 ? 1 : 0;
-	//	float r = 0;
-	//	float g = 1;
-	//	float b = 0;
-	//	//if (i < (int)mesh->verts.size()/2)
-	//	if (mesh->verts[i]->length < 0)
-	//	{
-	//		//r = i % 2 == 0 ? 1 : 0;
-	//		//g = i % 2 != 0 ? 1 : 0;
-	//		//b = i % 3 == 0 ? 1 : 0;
-	//		r = 1;
-	//		g = 1;
-	//		b = 1;
-	//	}
-	//	else if (mesh->verts[i]->length >= 0 && mesh->verts[i]->length < 0.5)
-	//	{
-	//		//r = i % 2 == 0 ? 1 : 0;
-	//		//g = i % 2 != 0 ? 1 : 0;
-	//		//b = i % 3 == 0 ? 1 : 0;
-	//		r = 0;
-	//		g = 0;
-	//		b = 1;
-	//	}
-	//	else if (mesh->verts[i]->length >= 0.5 && mesh->verts[i]->length < 0.75)
-	//	{
-	//		//r = i % 2 == 0 ? 1 : 0;
-	//		//g = i % 2 != 0 ? 1 : 0;
-	//		//b = i % 3 == 0 ? 1 : 0;
-	//		r = 0;
-	//		g = 1;
-	//		b = 0;
-	//	}
-	//	else
-	//	{
-	//		//r = i % 2 == 0 ? 1 : 0;
-	//		//g = i % 2 != 0 ? 1 : 0;
-	//		//b = i % 3 == 0 ? 1 : 0;
-	//		r = 1;
-	//		g = 0;
-	//		b = 0;
-	//	}
+		////const float r = i % 2 == 0 ? 1 : 0;
+		////const float g = i % 2 != 0 ? 1 : 0;
+		////const float b = i % 3 == 0 ? 1 : 0;
+		//float r = 0;
+		//float g = 1;
+		//float b = 0;
+		////if (i < (int)mesh->verts.size()/2)
+		////if (mesh->verts[i]->length < 0)
+		//if (outputArray[i] < 0)
+		//{
+		//	r = 1;
+		//	g = 1;
+		//	b = 1;
+		//}
+		////else if (mesh->verts[i]->length >= 0 && mesh->verts[i]->length < 0.5)
+		//else if (outputArray[i] >= 0 && outputArray[i] < 0.02)
+		//{
+		//	r = 0;
+		//	g = 1;
+		//	b = 0;
+		//}
+		//else if (outputArray[i] >= 0.02 && outputArray[i] < 0.05)
+		//{
+		//	r = 0;
+		//	g = 1;
+		//	b = 0;
+		//}
+
+		//else if (outputArray[i] >= 0.05 && outputArray[i] < 0.15)
+		//{
+		//	r = 0;
+		//	g = 0;
+		//	b = 1;
+		//}
+		//else if (outputArray[i] >= 0.15 && outputArray[i] < 0.25)
+		//{
+		//	r = 0;
+		//	g = 0;
+		//	b = 0;
+		//}
+		//else if (outputArray[i] >= 0.25 && outputArray[i] < 0.5)
+		//{
+		//	r = 0;
+		//	g = 0;
+		//	b = 0;
+		//}
+		//else if (outputArray[i] >= 0.5 && outputArray[i] < 0.75)
+		//{
+		//	r = 0;
+		//	g = 1;
+		//	b = 0;
+		//}
+		//else
+		//{
+		//	r = 1;
+		//	g = 0;
+		//	b = 0;
+		//}
 		//mesh->verts[i]->color[0] = r;
 		//mesh->verts[i]->color[1] = g;
 		//mesh->verts[i]->color[2] = b;
 
 		mesh->verts[i]->color[0] = 0;
-		mesh->verts[i]->color[1] = outputArray[i];
+		//mesh->verts[i]->color[1] = outputArray[i];
+		mesh->verts[i]->color[1] = (outputArray[i])*8;
 		mesh->verts[i]->color[2] = 0;
 	}
 	bool youWantToPaintEachVertexDifferently = false;
@@ -327,9 +343,9 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 
 	res->addChild(mat);
 
-	SoShapeHints* hints = new SoShapeHints;
-	hints->creaseAngle = 3.14;
-	res->addChild(hints); //Gouraud shading
+	//SoShapeHints* hints = new SoShapeHints;
+	//hints->creaseAngle = 1;
+	//res->addChild(hints); //Gouraud shading
 
 	if (youWantToPaintEachVertexDifferently)
 	{
@@ -350,12 +366,13 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 		faceSet->coordIndex.set1Value(c*4 + 2, mesh->tris[c]->v3i);
 		faceSet->coordIndex.set1Value(c*4 + 3, -1);
 
-		//if (youWantToPaintEachVertexDifferently)
-		//{
-		//	faceSet->materialIndex.set1Value(0 + 4*nt, mesh->tris[t]->v1i);
-		//	faceSet->materialIndex.set1Value(1 + 4*nt, mesh->tris[t]->v2i);
-		//	faceSet->materialIndex.set1Value(2 + 4*nt, mesh->tris[t]->v3i);
-		//}
+		if (youWantToPaintEachVertexDifferently)
+		{
+			faceSet->materialIndex.set1Value(0 + 4*c, mesh->tris[c]->v1i);
+			faceSet->materialIndex.set1Value(1 + 4*c, mesh->tris[c]->v2i);
+			faceSet->materialIndex.set1Value(2 + 4*c, mesh->tris[c]->v3i);
+			faceSet->materialIndex.set1Value(3 + 4*c, -1);
+		}
 	}
 	res->addChild(coords);
 	res->addChild(faceSet);
