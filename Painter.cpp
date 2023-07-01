@@ -33,15 +33,12 @@ void Painter::crossProductFunction(const int v_A[], const int v_B[], int c_P[]) 
 
 float Painter::rayIntersectsTriangle(float* p, float* d,
 	float* v0, float* v1, float* v2) {
-
 	float e1[3], e2[3], h[3], s[3], q[3];
 	float a, f, u, v;
 	vector(e1, v1, v0);
 	vector(e2, v2, v0);
-
 	crossProduct(h, d, e2);
 	a = innerProduct(e1, h);
-
 	if (a > -0.00001 && a < 0.00001)
 		//return(false);
 		return(-1);
@@ -174,19 +171,21 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 						- coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate];
 				}
 			}
-			int c_P[3];
-			int v_B_A__v_C_A[2][3];
+			//store two vectors from the selected vertices in a 2D array
+			int vectorsToTheOtherVerticesArray[2][3];
 			for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
 			{
 				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-					v_B_A__v_C_A[otherVertexNumber][coordinate] = vectorsToTheOtherVertices[otherVertexNumber][coordinate];
+					vectorsToTheOtherVerticesArray[otherVertexNumber][coordinate] = vectorsToTheOtherVertices[otherVertexNumber][coordinate];
 				}
 			}
 
-			crossProductFunction(v_B_A__v_C_A[0], v_B_A__v_C_A[1], c_P);
-			printf("NEW(B-A): x=%d y=%d z=%d\n", v_B_A__v_C_A[0][0], v_B_A__v_C_A[0][1], v_B_A__v_C_A[0][2]);
-			printf("NEW(C-A): x=%d y=%d z=%d\n", v_B_A__v_C_A[1][0], v_B_A__v_C_A[1][1], v_B_A__v_C_A[1][2]);
-			printf("NEWCrossProduct x=%d y=%d z=%d\n", c_P[0], c_P[1], c_P[2]);
+			//calculate cross product of the two vectors
+			int crossProductVector[3];
+			crossProductFunction(vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1], crossProductVector);
+			printf("NEW(B-A): x=%d y=%d z=%d\n", vectorsToTheOtherVerticesArray[0][0], vectorsToTheOtherVerticesArray[0][1], vectorsToTheOtherVerticesArray[0][2]);
+			printf("NEW(C-A): x=%d y=%d z=%d\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
+			printf("NEWCrossProduct x=%d y=%d z=%d\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
 		}
 
 		int x1_A = mesh->verts[vertex1ID]->coords[0];
@@ -217,18 +216,18 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 		printf("(C-A): x=%d y=%d z=%d\n", x_C_A, y_C_A, z_C_A);
 		printf("CrossProduct x=%d y=%d z=%d\n", c_P[0], c_P[1], c_P[2]);
 
-		float len = calculateLength(c_P);
-		float len_B_A = calculateLength(v_B_A);
-		float len_C_A = calculateLength(v_C_A);
-		float sinAlpha = len / (len_B_A * len_C_A);
-		float arcSin = asin(sinAlpha);
-		float norm[3];
-		normalize(c_P, norm);
-		float norm_final[3];
-		norm_final[0] = norm[0] * arcSin;
-		norm_final[1] = norm[1] * arcSin;
-		norm_final[2] = norm[2] * arcSin;
-		printf("Normal x=%f y=%f z=%f\n\n", norm_final[0], norm_final[1], norm_final[2]);
+		//float len = calculateLength(c_P);
+		//float len_B_A = calculateLength(v_B_A);
+		//float len_C_A = calculateLength(v_C_A);
+		//float sinAlpha = len / (len_B_A * len_C_A);
+		//float arcSin = asin(sinAlpha);
+		//float norm[3];
+		//normalize(c_P, norm);
+		//float norm_final[3];
+		//norm_final[0] = norm[0] * arcSin;
+		//norm_final[1] = norm[1] * arcSin;
+		//norm_final[2] = norm[2] * arcSin;
+		//printf("Normal x=%f y=%f z=%f\n\n", norm_final[0], norm_final[1], norm_final[2]);
 
 		//int x1_A = mesh->verts[vertex1ID]->coords[0];
 		//int y1_A = mesh->verts[vertex1ID]->coords[1];
@@ -278,15 +277,17 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 				v0[2] = z0;
 				v1[2] = z1;
 				v2[2] = z2;
+
+
 				float intersects = rayIntersectsTriangle(p, d, v0, v1, v2);
 				if (intersects > 0) {
 					numberOfIntersections++;
-					printf("p =%f.2, %f.2, %f.2\n", p[0], p[1], p[2]);
-					printf("d =%f.2, %f.2, %f.2\n", d[0], d[1], d[2]);
-					printf("v0 =%f.2, %f.2, %f.2\n", v0[0], v0[1], v0[2]);
-					printf("v1 =%f.2, %f.2, %f.2\n", v1[0], v1[1], v1[2]);
-					printf("v2 =%f.2, %f.2, %f.2\n", v2[0], v2[1], v2[2]);
-					printf("Intersects = %f.2 \n\n\n\n", intersects);
+					printf("p =%f, %f, %f\n", p[0], p[1], p[2]);
+					printf("d =%f, %f, %f\n", d[0], d[1], d[2]);
+					printf("v0 =%f, %f, %f\n", v0[0], v0[1], v0[2]);
+					printf("v1 =%f, %f, %f\n", v1[0], v1[1], v1[2]);
+					printf("v2 =%f, %f, %f\n", v2[0], v2[1], v2[2]);
+					printf("Intersects = %f \n\n\n\n", intersects);
 					if (mesh->verts[vertex1ID]->length <= intersects) {
 						mesh->verts[vertex1ID]->length = intersects;
 						mesh->verts[vertex2ID]->length = intersects;
@@ -393,7 +394,7 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 
 		mesh->verts[i]->color[0] = 0;
 		//mesh->verts[i]->color[1] = outputArray[i];
-		mesh->verts[i]->color[1] = (outputArray[i])*8;
+		mesh->verts[i]->color[1] = outputArray[i];
 		mesh->verts[i]->color[2] = 0;
 	}
 	bool youWantToPaintEachVertexDifferently = false;
@@ -407,9 +408,9 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 
 	res->addChild(mat);
 
-	//SoShapeHints* hints = new SoShapeHints;
-	//hints->creaseAngle = 1;
-	//res->addChild(hints); //Gouraud shading
+	SoShapeHints* hints = new SoShapeHints;
+	hints->creaseAngle = 3.14;
+	res->addChild(hints); //Gouraud shading
 
 	if (youWantToPaintEachVertexDifferently)
 	{
