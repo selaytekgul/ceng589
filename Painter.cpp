@@ -180,9 +180,9 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 			//calculate cross product of the two vectors
 			float crossProductVector[3];
 			crossProductFunction(vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1], crossProductVector);
-			printf("NEW(B-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[0][0], vectorsToTheOtherVerticesArray[0][1], vectorsToTheOtherVerticesArray[0][2]);
-			printf("NEW(C-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
-			printf("NEWCrossProduct x=%f y=%f z=%f\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
+			//printf("NEW(B-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[0][0], vectorsToTheOtherVerticesArray[0][1], vectorsToTheOtherVerticesArray[0][2]);
+			//printf("NEW(C-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
+			//printf("NEWCrossProduct x=%f y=%f z=%f\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
 
 			//p is the selected vertex of the base triangle
 			float p[3];
@@ -231,12 +231,12 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 					float intersects = rayIntersectsTriangle(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
 					if (intersects > 0) {
 						numberOfIntersections++;
-						printf("p(%d) =%f, %f, %f\n", vertexIdsOfTriangle[selectedVertexNumber], p[0], p[1], p[2]);
-						printf("d =%f, %f, %f\n", d[0], d[1], d[2]);
-						printf("v0 =%f, %f, %f\n", targetTriangleVertices[0][0], targetTriangleVertices[0][1], targetTriangleVertices[0][2]);
-						printf("v1 =%f, %f, %f\n", targetTriangleVertices[1][0], targetTriangleVertices[1][1], targetTriangleVertices[1][2]);
-						printf("v2 =%f, %f, %f\n", targetTriangleVertices[2][0], targetTriangleVertices[2][1], targetTriangleVertices[2][2]);
-						printf("Intersects = %f \n\n\n\n", intersects);
+						//printf("p(%d) =%f, %f, %f\n", vertexIdsOfTriangle[selectedVertexNumber], p[0], p[1], p[2]);
+						//printf("d =%f, %f, %f\n", d[0], d[1], d[2]);
+						//printf("v0 =%f, %f, %f\n", targetTriangleVertices[0][0], targetTriangleVertices[0][1], targetTriangleVertices[0][2]);
+						//printf("v1 =%f, %f, %f\n", targetTriangleVertices[1][0], targetTriangleVertices[1][1], targetTriangleVertices[1][2]);
+						//printf("v2 =%f, %f, %f\n", targetTriangleVertices[2][0], targetTriangleVertices[2][1], targetTriangleVertices[2][2]);
+						//printf("Intersects = %f \n\n\n\n", intersects);
 
 						//add the lengths and keep the number of the intersections occured for each of the vertices
 						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length += intersects;
@@ -271,7 +271,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 			maxLength = maxLength > mesh->verts[selectedVertexIndex]->length ? maxLength : mesh->verts[selectedVertexIndex]->length;
 			minLength = minLength < mesh->verts[selectedVertexIndex]->length ? minLength : mesh->verts[selectedVertexIndex]->length;
 		}
-		printf("p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
+		//printf("p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
 	}//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
 
 	//select a vertex from mesh->verts to discard the inf values
@@ -285,11 +285,11 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 		{
 			mesh->verts[selectedVertexIndex]->length = maxLength;
 		}
-		printf("DISCARDED p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
+		//printf("DISCARDED p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
 	}//select a vertex from mesh->verts to discard the inf values
 
-	printf("numberofintersections = %d\n", numberOfIntersections);
-	printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
+	//printf("numberofintersections = %d\n", numberOfIntersections);
+	//printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
 }
 
 SoSeparator* Painter::getShapeSep(Mesh* mesh)
@@ -314,13 +314,29 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	//}
 	//normalizeArray(inputArray, outputArray);
 
+	//assign color values to the vertices according to their length values
 	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
-		mesh->verts[i]->color[0] = 0;
-		//mesh->verts[i]->color[1] = outputArray[i];
-		mesh->verts[i]->color[1] = mesh->verts[i]->length / 85.0;
-		mesh->verts[i]->color[2] = 0;
+		if (mesh->verts[i]->length < 33)
+		{
+			mesh->verts[i]->color[0] = 1;
+			mesh->verts[i]->color[1] = 0;
+			mesh->verts[i]->color[2] = 0;
+		}
+		else if (mesh->verts[i]->length >= 33 && mesh->verts[i]->length < 66)
+		{
+			mesh->verts[i]->color[0] = 0;
+			mesh->verts[i]->color[1] = 1;
+			mesh->verts[i]->color[2] = 0;
+		}
+		else
+		{	
+			mesh->verts[i]->color[0] = 0;
+			mesh->verts[i]->color[1] = 0;
+			mesh->verts[i]->color[2] = 1;
+		}
 	}
+
 	bool youWantToPaintEachVertexDifferently = false;
 	youWantToPaintEachVertexDifferently = true;
 	if (youWantToPaintEachVertexDifferently)
