@@ -16,8 +16,9 @@ class Painter
 public:
 	SoSeparator* getShapeSep(Mesh* mesh);
 	void triangleNormalVectors(Mesh* mesh);
-	float calculateLength(const int v[]);
-	void normalize(const int v[], float nor[]);
+private:
+	float calculateLength(const float v[]);
+	void normalize(const float v[], float nor[]);
 	void crossProductFunction(const int v_A[], const int v_B[], int c_P[]);
 	float rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2);
 	float normalizedValueInRange(double value, double min, double max);

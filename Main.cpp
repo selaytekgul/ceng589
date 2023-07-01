@@ -21,6 +21,9 @@ int main(int, char ** argv)
 	Mesh* mesh = new Mesh();
 	Painter* painter = new Painter();
 
+	//mesh->loadOff("0.off");
+	//mesh->loadOff("coffeecup.off");
+	//mesh->loadOff("bunny.off");
 	mesh->loadOff("cube3.off");
 //	mesh->createCube(20.0f);
 
