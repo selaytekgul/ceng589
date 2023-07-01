@@ -80,25 +80,25 @@ float Painter::calculateLength(const float v[]) {
 	return root;
 }
 
-void Painter::normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {
-	float minValue = std::numeric_limits<float>::max();
-	float maxValue = std::numeric_limits<float>::min();
-
-	// Find the minimum and maximum values in the input vector
-	for (float value : inputArr) {
-		if (value < minValue)
-			minValue = value;
-		if (value > maxValue)
-			maxValue = value;
-	}
-	int i = 0;
-	// Normalize the input vector values and store them in the output vector
-	for (float value : inputArr) {
-		float normalizedValue = (value - minValue) / (maxValue - minValue);
-		outputArr[i] = normalizedValue;
-		i++;
-	}
-}
+//void Painter::normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {
+//	float minValue = std::numeric_limits<float>::max();
+//	float maxValue = std::numeric_limits<float>::min();
+//
+//	// Find the minimum and maximum values in the input vector
+//	for (float value : inputArr) {
+//		if (value < minValue)
+//			minValue = value;
+//		if (value > maxValue)
+//			maxValue = value;
+//	}
+//	int i = 0;
+//	// Normalize the input vector values and store them in the output vector
+//	for (float value : inputArr) {
+//		float normalizedValue = (value - minValue) / (maxValue - minValue);
+//		outputArr[i] = normalizedValue;
+//		i++;
+//	}
+//}
 
 void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 {
@@ -121,7 +121,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 		}
 	}
 
-	//loop through triangles
+	//loop through triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
 	{
 		//get the vertex index number of the vertices of the triangle at hand
@@ -184,15 +184,20 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 			printf("NEW(C-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
 			printf("NEWCrossProduct x=%f y=%f z=%f\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
 
+			//p is the selected vertex of the base triangle
 			float p[3];
 			p[0] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][0];
 			p[1] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][1];
 			p[2] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][2];
 
+			//d is the normal vector from the selected vertex of the base triangle drawn according to the other two vertices
 			float d[3];
 			d[0] = crossProductVector[0];
 			d[1] = crossProductVector[1];
 			d[2] = crossProductVector[2];
+
+			//add the normal vector coordinates to the mesh->verts[].normals attribute
+			mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->normalList.push_back(d); //NOT USED
 
 			//select a target triangle
 			for (size_t targetTriangleIndex = 0; targetTriangleIndex < mesh->tris.size(); targetTriangleIndex++)
@@ -232,10 +237,10 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 						printf("v1 =%f, %f, %f\n", targetTriangleVertices[1][0], targetTriangleVertices[1][1], targetTriangleVertices[1][2]);
 						printf("v2 =%f, %f, %f\n", targetTriangleVertices[2][0], targetTriangleVertices[2][1], targetTriangleVertices[2][2]);
 						printf("Intersects = %f \n\n\n\n", intersects);
-						//if (mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length <= intersects) {
+
+						//add the lengths and keep the number of the intersections occured for each of the vertices
 						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length += intersects;
 						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->numberOfLenghtsContributed++;
-						//}
 					}
 					else
 					{
@@ -250,11 +255,13 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 				}//make sure that the target triangle is not the same as the base triangle
 			}//select a target triangle
 		}//select a vertex from 3 vertices of triangle
-	}//loop through triangles
+	}//loop through triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
 
 	//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
 	float minLength = std::numeric_limits<float>::max();
 	float maxLength = std::numeric_limits<float>::min();
+	//Vertex::minLength = std::numeric_limits<float>::max();
+	//Vertex::maxLength = std::numeric_limits<float>::min();
 	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
 	{
 		//calculate the lenghts as average of recorded lengths
@@ -311,7 +318,7 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	{
 		mesh->verts[i]->color[0] = 0;
 		//mesh->verts[i]->color[1] = outputArray[i];
-		mesh->verts[i]->color[1] = mesh->verts[i]->length / 255.0;
+		mesh->verts[i]->color[1] = mesh->verts[i]->length / 85.0;
 		mesh->verts[i]->color[2] = 0;
 	}
 	bool youWantToPaintEachVertexDifferently = false;

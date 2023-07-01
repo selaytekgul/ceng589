@@ -1,23 +1,25 @@
 #pragma once
 
 #include <iostream>
-
 #include <vector>
-
-using namespace std;
 
 struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
-	float* coords, * normals, color[3], length = 0.0f; //3d coordinates etc
+	float* coords, color[3], length = 0.0f; //3d coordinates etc
+	//static float minLength;
+	//static float maxLength;
 	int idx, numberOfLenghtsContributed = 0; //who am i; verts[idx]
-
-	vector< int > vertList; //adj vvertices;
-	vector< int > triList; 
-	vector< int > edgeList; 
+	std::vector< int > vertList; //adj vertices;
+	std::vector< int > triList;
+	std::vector< int > edgeList;
+	std::vector< float* > normalList;
 	
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 };
+
+//float Vertex::minLength = std::numeric_limits<float>::max();
+//float Vertex::maxLength = std::numeric_limits<float>::min();
 
 struct Edge
 {
@@ -47,9 +49,9 @@ private:
 	void addVertex(float x, float y, float z);
 	bool makeVertsNeighbor(int v1i, int v2i);
 public:
-	vector< Vertex* > verts;
-	vector< Triangle* > tris;
-	vector< Edge* > edges;
+	std::vector< Vertex* > verts;
+	std::vector< Triangle* > tris;
+	std::vector< Edge* > edges;
 
 
 	Mesh() {} ;

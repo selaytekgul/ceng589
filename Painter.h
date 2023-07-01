@@ -21,5 +21,5 @@ private:
 	float calculateLength(const float v[]);
 	void crossProductFunction(const float v_A[], const float v_B[], float CP[]);
 	float rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2);
-	void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
+	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 };
