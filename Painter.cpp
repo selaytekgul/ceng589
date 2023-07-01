@@ -332,18 +332,18 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 		mesh->verts[i]->color[2] = 1;
 		if (mesh->verts[i]->hasLongLength)
 		{
-			mesh->verts[i]->color[0] += 1;
-			mesh->verts[i]->color[1] += 0;
-			mesh->verts[i]->color[2] += 0;
+			mesh->verts[i]->color[0] = 1;
+			mesh->verts[i]->color[1] = 0;
+			mesh->verts[i]->color[2] = 0;
 
 			for (int j = 0; j < (int)mesh->verts[i]->intersectionTrianglesVertexIdsList.size(); j++)
 			{
 				int x_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][0];
 				int y_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][1];
 				int z_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][2];
-				mesh->verts[x_vertex1OfTargetTriangle]->color[0] += 0;
-				mesh->verts[y_vertex1OfTargetTriangle]->color[1] += 1;
-				mesh->verts[z_vertex1OfTargetTriangle]->color[2] += 0;
+				mesh->verts[x_vertex1OfTargetTriangle]->color[0] = 0;
+				mesh->verts[y_vertex1OfTargetTriangle]->color[1] = 1;
+				mesh->verts[z_vertex1OfTargetTriangle]->color[2] = 0;
 			}
 		}
 	}
