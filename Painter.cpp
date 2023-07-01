@@ -75,7 +75,7 @@ float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, f
 }
 
 float Painter::calculateLength(const float v[]) {
-	int square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+	float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 	float root = sqrt(square);
 	return root;
 }
@@ -131,7 +131,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 		vertexIdsOfTriangle[2] = mesh->tris[triangleIndex]->v3i;
 
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
-		std::array<std::array<int,3>, 3> coordinatesOfVerticesOfTriangle;
+		std::array<std::array<float,3>, 3> coordinatesOfVerticesOfTriangle;
 		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
 		{
 			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
@@ -210,7 +210,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 					vertexIdsOfTargetTriangle[2] = mesh->tris[targetTriangleIndex]->v3i;
 
 					//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
-					std::array<std::array<int, 3>, 3> coordinatesOfVerticesOfTargetTriangle;
+					std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTargetTriangle;
 					for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
 					{
 						for (size_t coordinate = 0; coordinate < 3; coordinate++) {
@@ -329,7 +329,7 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	res->addChild(mat);
 
 	SoShapeHints* hints = new SoShapeHints;
-	hints->creaseAngle = 3.14;
+	hints->creaseAngle = 3.14f;
 	res->addChild(hints); //Gouraud shading
 
 	if (youWantToPaintEachVertexDifferently)

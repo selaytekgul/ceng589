@@ -6,7 +6,7 @@
 struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
-	float* coords, color[3], length = 0.0f; //3d coordinates etc
+	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, length = 0.0f; //3d coordinates etc
 	//static float minLength;
 	//static float maxLength;
 	int idx, numberOfLenghtsContributed = 0; //who am i; verts[idx]
