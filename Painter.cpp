@@ -228,8 +228,8 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 					}//fill the 2D array of targetTriangleVertices with the coordinate values
 
 					//calculate the lengths
-					float intersects = rayIntersectsTriangle(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
-					if (intersects > 0) {
+					float intersectionLength = rayIntersectsTriangle(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
+					if (intersectionLength > 0) {
 						numberOfIntersections++;
 						//printf("p(%d) =%f, %f, %f\n", vertexIdsOfTriangle[selectedVertexNumber], p[0], p[1], p[2]);
 						//printf("d =%f, %f, %f\n", d[0], d[1], d[2]);
@@ -239,8 +239,15 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 						//printf("Intersects = %f \n\n\n\n", intersects);
 
 						//add the lengths and keep the number of the intersections occured for each of the vertices
-						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length += intersects;
+						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length += intersectionLength;
 						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->numberOfLenghtsContributed++;
+						//long length vertices are marked
+						if (intersectionLength > 80) {
+							mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->hasLongLength = true;
+							mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->intersectionTriangleIdsList.push_back(targetTriangleIndex);
+							mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->intersectionNormalsList.push_back(d);
+							mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->intersectionTrianglesVertexIdsList.push_back(vertexIdsOfTargetTriangle);
+						}
 					}
 					else
 					{
@@ -256,7 +263,8 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 			}//select a target triangle
 		}//select a vertex from 3 vertices of triangle
 	}//loop through triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
-
+	
+	//loop through vertices (mesh->verts):
 	//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
 	float minLength = std::numeric_limits<float>::max();
 	float maxLength = std::numeric_limits<float>::min();
@@ -274,6 +282,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 		//printf("p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
 	}//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
 
+	//loop through vertices (mesh->verts):
 	//select a vertex from mesh->verts to discard the inf values
 	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
 	{
@@ -287,6 +296,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 		}
 		//printf("DISCARDED p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
 	}//select a vertex from mesh->verts to discard the inf values
+
 
 	//printf("numberofintersections = %d\n", numberOfIntersections);
 	//printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
@@ -317,23 +327,24 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	//assign color values to the vertices according to their length values
 	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
-		if (mesh->verts[i]->length < 33)
+		mesh->verts[i]->color[0] = 0;
+		mesh->verts[i]->color[1] = 0;
+		mesh->verts[i]->color[2] = 1;
+		if (mesh->verts[i]->hasLongLength)
 		{
 			mesh->verts[i]->color[0] = 1;
 			mesh->verts[i]->color[1] = 0;
 			mesh->verts[i]->color[2] = 0;
-		}
-		else if (mesh->verts[i]->length >= 33 && mesh->verts[i]->length < 66)
-		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 1;
-			mesh->verts[i]->color[2] = 0;
-		}
-		else
-		{	
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 1;
+
+			for (int j = 0; j < (int)mesh->verts[i]->intersectionTrianglesVertexIdsList.size(); j++)
+			{
+				int x_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][0];
+				int y_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][1];
+				int z_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][2];
+				mesh->verts[x_vertex1OfTargetTriangle]->color[0] = 0;
+				mesh->verts[y_vertex1OfTargetTriangle]->color[1] = 1;
+				mesh->verts[z_vertex1OfTargetTriangle]->color[2] = 0;
+			}
 		}
 	}
 
