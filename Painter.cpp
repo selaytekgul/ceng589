@@ -170,8 +170,8 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 			{
 				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
 					vectorsToTheOtherVertices[otherVertexNumber][coordinate] =
-						coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate]
-						- coordinatesOfOtherVertices[otherVertexNumber][coordinate];
+						coordinatesOfOtherVertices[otherVertexNumber][coordinate]
+						- coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate];
 				}
 			}
 			int c_P[3];
