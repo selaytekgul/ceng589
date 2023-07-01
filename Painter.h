@@ -18,9 +18,7 @@ public:
 	void triangleNormalVectors(Mesh* mesh);
 private:
 	float calculateLength(const float v[]);
-	void normalize(const float v[], float nor[]);
 	void crossProductFunction(const int v_A[], const int v_B[], int c_P[]);
 	float rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2);
-	float normalizedValueInRange(double value, double min, double max);
 	void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 };

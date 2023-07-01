@@ -82,18 +82,6 @@ float Painter::calculateLength(const float v[]) {
 	return root;
 }
 
-
-void Painter::normalize(const float v[], float nor[]) {
-	float len = calculateLength(v);
-	nor[0] = v[0] / len;
-	nor[1] = v[1] / len;
-	nor[2] = v[2] / len;
-}
-
-float Painter::normalizedValueInRange(double value, double min, double max) {
-	return (value - min) / (max - min);
-}
-
 void Painter::normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {
 	float minValue = std::numeric_limits<float>::max();
 	float maxValue = std::numeric_limits<float>::min();
@@ -218,32 +206,12 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 		printf("(C-A): x=%d y=%d z=%d\n", x_C_A, y_C_A, z_C_A);
 		printf("CrossProduct x=%d y=%d z=%d\n", c_P[0], c_P[1], c_P[2]);
 
-		//float len = calculateLength(c_P);
-		//float len_B_A = calculateLength(v_B_A);
-		//float len_C_A = calculateLength(v_C_A);
-		//float sinAlpha = len / (len_B_A * len_C_A);
-		//float arcSin = asin(sinAlpha);
-		//float norm[3];
-		//normalize(c_P, norm);
-		//float norm_final[3];
-		//norm_final[0] = norm[0] * arcSin;
-		//norm_final[1] = norm[1] * arcSin;
-		//norm_final[2] = norm[2] * arcSin;
-		//printf("Normal x=%f y=%f z=%f\n\n", norm_final[0], norm_final[1], norm_final[2]);
-
-		//int x1_A = mesh->verts[vertex1ID]->coords[0];
-		//int y1_A = mesh->verts[vertex1ID]->coords[1];
-		//int z1_A = mesh->verts[vertex1ID]->coords[2];
-
 		float p[3];
 		p[0] = x1_A;
 		p[1] = y1_A;
 		p[2] = z1_A;
 
 		float d[3];
-		//d[0] = -norm_final[0];
-		//d[1] = -norm_final[1];
-		//d[2] = -norm_final[2];
 		d[0] = c_P[0];
 		d[1] = c_P[1];
 		d[2] = c_P[2];
