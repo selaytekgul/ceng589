@@ -8,6 +8,7 @@
 #include <Inventor/nodes/SoCone.h>
 #include <vector>
 #include <array>
+#include <cmath>
 
 
 

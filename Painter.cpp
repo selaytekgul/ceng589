@@ -252,12 +252,34 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 		}//select a vertex from 3 vertices of triangle
 	}//loop through triangles
 
-	//select a vertex mesh->verts
+	//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
+	float minLength = std::numeric_limits<float>::max();
+	float maxLength = std::numeric_limits<float>::min();
 	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
 	{
+		//calculate the lenghts as average of recorded lengths
 		mesh->verts[selectedVertexIndex]->length /= mesh->verts[selectedVertexIndex]->numberOfLenghtsContributed;
+		if (std::isfinite(mesh->verts[selectedVertexIndex]->length) && mesh->verts[selectedVertexIndex]->length > 0.0001f)
+		{
+			maxLength = maxLength > mesh->verts[selectedVertexIndex]->length ? maxLength : mesh->verts[selectedVertexIndex]->length;
+			minLength = minLength < mesh->verts[selectedVertexIndex]->length ? minLength : mesh->verts[selectedVertexIndex]->length;
+		}
 		printf("p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
-	}//select a vertex mesh->verts
+	}//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
+
+	//select a vertex from mesh->verts to discard the inf values
+	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
+	{
+		if (mesh->verts[selectedVertexIndex]->length < 0.0f)
+		{
+			mesh->verts[selectedVertexIndex]->length = minLength;
+		}
+		if (std::isinf(mesh->verts[selectedVertexIndex]->length))
+		{
+			mesh->verts[selectedVertexIndex]->length = maxLength;
+		}
+		printf("DISCARDED p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
+	}//select a vertex from mesh->verts to discard the inf values
 
 	printf("numberofintersections = %d\n", numberOfIntersections);
 	printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
@@ -275,20 +297,21 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	mat->diffuseColor.setValue(0, 1, 0); //paint all vertices with this color
 	//mat->transparency = 0.5f : 0.0f; //0 makes it completely opaque, the default
 
-	std::vector<float> inputArray((int)mesh->verts.size());
-	std::vector<float> outputArray((int)mesh->verts.size());
+	//std::vector<float> inputArray((int)mesh->verts.size());
+	//std::vector<float> outputArray((int)mesh->verts.size());
+	//for (int i = 0; i < (int)mesh->verts.size(); i++)
+	//{
+	//	float value = mesh->verts[i]->length;
+	//	inputArray[i] = value;
+	//	outputArray[i] = -9.0f;
+	//}
+	//normalizeArray(inputArray, outputArray);
+
 	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
-		float value = mesh->verts[i]->length;
-		inputArray[i] = value;
-		outputArray[i] = -9.0f;
-	}
-	normalizeArray(inputArray, outputArray);
-
-	for (int i = 0; i < (int)outputArray.size(); i++)
-	{
 		mesh->verts[i]->color[0] = 0;
-		mesh->verts[i]->color[1] = outputArray[i];
+		//mesh->verts[i]->color[1] = outputArray[i];
+		mesh->verts[i]->color[1] = mesh->verts[i]->length / 255.0;
 		mesh->verts[i]->color[2] = 0;
 	}
 	bool youWantToPaintEachVertexDifferently = false;
