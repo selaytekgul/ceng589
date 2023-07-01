@@ -323,9 +323,6 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	//assign color values to the vertices according to their length values
 	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
-		//mesh->verts[i]->color[0] = 0;
-		//mesh->verts[i]->color[1] = 0;
-		//mesh->verts[i]->color[2] = mesh->verts[i]->length/Vertex::maxLength;
 		if (mesh->verts[i]->length < 15)
 		{
 			mesh->verts[i]->color[0] = 1;
@@ -344,22 +341,6 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 			mesh->verts[i]->color[1] = 0;
 			mesh->verts[i]->color[2] = 1;
 		}
-		//if (mesh->verts[i]->hasLongLength)
-		//{
-		//	mesh->verts[i]->color[0] = 1;
-		//	mesh->verts[i]->color[1] = 0;
-		//	mesh->verts[i]->color[2] = 0;
-
-		//	for (int j = 0; j < (int)mesh->verts[i]->intersectionTrianglesVertexIdsList.size(); j++)
-		//	{
-		//		int x_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][0];
-		//		int y_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][1];
-		//		int z_vertex1OfTargetTriangle = mesh->verts[i]->intersectionTrianglesVertexIdsList[j][2];
-		//		mesh->verts[x_vertex1OfTargetTriangle]->color[0] = 0;
-		//		mesh->verts[y_vertex1OfTargetTriangle]->color[1] = 1;
-		//		mesh->verts[z_vertex1OfTargetTriangle]->color[2] = 0;
-		//	}
-		//}
 	}
 
 	bool youWantToPaintEachVertexDifferently = false;
@@ -370,7 +351,7 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	res->addChild(mat);
 
 	SoShapeHints* hints = new SoShapeHints;
-	hints->creaseAngle = 0.f;
+	hints->creaseAngle = 3.14f;
 	res->addChild(hints); //Gouraud shading
 
 	if (youWantToPaintEachVertexDifferently)
