@@ -31,8 +31,7 @@ void Painter::crossProductFunction(const int v_A[], const int v_B[], int c_P[]) 
 	c_P[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
 }
 
-float Painter::rayIntersectsTriangle(float* p, float* d,
-	float* v0, float* v1, float* v2) {
+float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2) {
 	float e1[3], e2[3], h[3], s[3], q[3];
 	float a, f, u, v;
 	vector(e1, v1, v0);
@@ -74,7 +73,6 @@ float Painter::rayIntersectsTriangle(float* p, float* d,
 		//return (false);
 		return (-2);
 }
-
 
 float Painter::calculateLength(const float v[]) {
 	int square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
