@@ -7,6 +7,7 @@
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoCone.h>
 #include <vector>
+#include <array>
 
 
 

@@ -1,4 +1,13 @@
 #include "Painter.h"
+struct Point3Di
+{
+	int x, y, z;
+};
+
+struct Point3Df
+{
+	float x, y, z;
+};
 
 /* a = b - c */
 #define vector(a,b,c) \
@@ -124,6 +133,61 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 		int vertex1ID = mesh->tris[i]->v1i;
 		int vertex2ID = mesh->tris[i]->v2i;
 		int vertex3ID = mesh->tris[i]->v3i;
+
+		std::array<int, 3> vertexIdsOfTriangle;
+		vertexIdsOfTriangle[0] = mesh->tris[i]->v1i;
+		vertexIdsOfTriangle[1] = mesh->tris[i]->v2i;
+		vertexIdsOfTriangle[2] = mesh->tris[i]->v3i;
+
+		std::array<std::array<int,3>, 3> coordinatesOfVerticesOfTriangle;
+		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
+		{
+			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+				coordinatesOfVerticesOfTriangle[vertexNumber][coordinate] = mesh->verts[vertexIdsOfTriangle[vertexNumber]]->coords[coordinate];
+			}
+		}
+		
+		//select a vertex
+		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
+		{
+			//find the other 2 vertices of the triangle
+			std::array<std::array<int, 3>, 2> coordinatesOfOtherVertices;
+			int number = 0;
+			for (size_t otherVertexNumber = 0; otherVertexNumber < 3; otherVertexNumber++)
+			{
+				if (selectedVertexNumber != otherVertexNumber)
+				{
+					for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+						coordinatesOfOtherVertices[number][coordinate] = coordinatesOfVerticesOfTriangle[otherVertexNumber][coordinate];
+					}
+					number++;
+				}
+			}
+
+			//create two vectors from the selected vertex
+			std::array<std::array<int, 3>, 2> vectorsToTheOtherVertices;
+			for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
+			{
+				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+					vectorsToTheOtherVertices[otherVertexNumber][coordinate] =
+						coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate]
+						- coordinatesOfOtherVertices[otherVertexNumber][coordinate];
+				}
+			}
+			int c_P[3];
+			int v_B_A__v_C_A[2][3];
+			for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
+			{
+				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+					v_B_A__v_C_A[otherVertexNumber][coordinate] = vectorsToTheOtherVertices[otherVertexNumber][coordinate];
+				}
+			}
+
+			crossProductFunction(v_B_A__v_C_A[0], v_B_A__v_C_A[1], c_P);
+			printf("NEW(B-A): x=%d y=%d z=%d\n", v_B_A__v_C_A[0][0], v_B_A__v_C_A[0][1], v_B_A__v_C_A[0][2]);
+			printf("NEW(C-A): x=%d y=%d z=%d\n", v_B_A__v_C_A[1][0], v_B_A__v_C_A[1][1], v_B_A__v_C_A[1][2]);
+			printf("NEWCrossProduct x=%d y=%d z=%d\n", c_P[0], c_P[1], c_P[2]);
+		}
 
 		int x1_A = mesh->verts[vertex1ID]->coords[0];
 		int y1_A = mesh->verts[vertex1ID]->coords[1];
