@@ -15,7 +15,7 @@ class Painter
 {
 public:
 	SoSeparator* getShapeSep(Mesh* mesh);
-	void triangleNormalVectors(Mesh* mesh);
+	void assignLengthValuesOfVertices(Mesh* mesh);
 private:
 	float calculateLength(const float v[]);
 	void crossProductFunction(const float v_A[], const float v_B[], float CP[]);

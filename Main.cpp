@@ -27,7 +27,7 @@ int main(int, char ** argv)
 	mesh->loadOff("cube3.off");
 //	mesh->createCube(20.0f);
 
-	painter->triangleNormalVectors(mesh);
+	painter->assignLengthValuesOfVertices(mesh);
 
 	//cout << "my (verts[4]) 1-ring neighborhood is: \n";
 	//for (int nv = 0; nv < mesh->verts[4]->vertList.size(); nv++)

@@ -100,7 +100,7 @@ void Painter::normalizeArray(const std::vector<float>& inputArr, std::vector<flo
 	}
 }
 
-void Painter::triangleNormalVectors(Mesh* mesh)
+void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 {
 	int numberOfIntersections = 0;
 	int numberOfNOTIntersections = 0;
@@ -137,7 +137,7 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
 				coordinatesOfVerticesOfTriangle[vertexNumber][coordinate] = mesh->verts[vertexIdsOfTriangle[vertexNumber]]->coords[coordinate];
 			}
-		}
+		}//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
 		
 		//select a vertex from 3 vertices of triangle
 		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
@@ -155,7 +155,7 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 					}
 					number++;
 				}
-			}
+			}//find the other 2 vertices of the triangle
 
 			//create two vectors from the selected vertex
 			std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices;
@@ -166,7 +166,7 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 						coordinatesOfOtherVertices[otherVertexNumber][coordinate]
 						- coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate];
 				}
-			}
+			}//create two vectors from the selected vertex
 
 			//store two vectors from the selected vertices in a 2D array
 			float vectorsToTheOtherVerticesArray[2][3];
@@ -175,7 +175,7 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
 					vectorsToTheOtherVerticesArray[otherVertexNumber][coordinate] = vectorsToTheOtherVertices[otherVertexNumber][coordinate];
 				}
-			}
+			}//store two vectors from the selected vertices in a 2D array
 
 			//calculate cross product of the two vectors
 			float crossProductVector[3];
@@ -194,51 +194,48 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 			d[1] = crossProductVector[1];
 			d[2] = crossProductVector[2];
 
+			//select a target triangle
 			for (size_t targetTriangleIndex = 0; targetTriangleIndex < mesh->tris.size(); targetTriangleIndex++)
 			{
+				//make sure that the target triangle is not the same as the base triangle
 				if (triangleIndex != targetTriangleIndex) {
-					int idxofVertex0inTriangle = mesh->tris[targetTriangleIndex]->v1i;
-					int idxofVertex1inTriangle = mesh->tris[targetTriangleIndex]->v2i;
-					int idxofVertex2inTriangle = mesh->tris[targetTriangleIndex]->v3i;
-					float v0[3];
-					float v1[3];
-					float v2[3];
+					std::array<int, 3> vertexIdsOfTargetTriangle;
+					vertexIdsOfTargetTriangle[0] = mesh->tris[targetTriangleIndex]->v1i;
+					vertexIdsOfTargetTriangle[1] = mesh->tris[targetTriangleIndex]->v2i;
+					vertexIdsOfTargetTriangle[2] = mesh->tris[targetTriangleIndex]->v3i;
 
-					float x0 = mesh->verts[idxofVertex0inTriangle]->coords[0];
-					float x1 = mesh->verts[idxofVertex1inTriangle]->coords[0];
-					float x2 = mesh->verts[idxofVertex2inTriangle]->coords[0];
-					v0[0] = x0;
-					v1[0] = x1;
-					v2[0] = x2;
+					//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
+					std::array<std::array<int, 3>, 3> coordinatesOfVerticesOfTargetTriangle;
+					for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
+					{
+						for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+							coordinatesOfVerticesOfTargetTriangle[vertexNumber][coordinate] = mesh->verts[vertexIdsOfTargetTriangle[vertexNumber]]->coords[coordinate];
+						}
+					}//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
 
+					//fill the 2D array of targetTriangleVertices with the coordinate values
+					float targetTriangleVertices[3][3];
+					for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
+					{
+						for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+							targetTriangleVertices[vertexNumber][coordinate] = coordinatesOfVerticesOfTargetTriangle[vertexNumber][coordinate];
+						}
+					}//fill the 2D array of targetTriangleVertices with the coordinate values
 
-					float y0 = mesh->verts[idxofVertex0inTriangle]->coords[1];
-					float y1 = mesh->verts[idxofVertex1inTriangle]->coords[1];
-					float y2 = mesh->verts[idxofVertex2inTriangle]->coords[1];
-					v0[1] = y0;
-					v1[1] = y1;
-					v2[1] = y2;
-
-					float z0 = mesh->verts[idxofVertex0inTriangle]->coords[2];
-					float z1 = mesh->verts[idxofVertex1inTriangle]->coords[2];
-					float z2 = mesh->verts[idxofVertex2inTriangle]->coords[2];
-					v0[2] = z0;
-					v1[2] = z1;
-					v2[2] = z2;
-
-
-					float intersects = rayIntersectsTriangle(p, d, v0, v1, v2);
+					//calculate the lengths
+					float intersects = rayIntersectsTriangle(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
 					if (intersects > 0) {
 						numberOfIntersections++;
 						printf("p(%d) =%f, %f, %f\n", vertexIdsOfTriangle[selectedVertexNumber], p[0], p[1], p[2]);
 						printf("d =%f, %f, %f\n", d[0], d[1], d[2]);
-						printf("v0 =%f, %f, %f\n", v0[0], v0[1], v0[2]);
-						printf("v1 =%f, %f, %f\n", v1[0], v1[1], v1[2]);
-						printf("v2 =%f, %f, %f\n", v2[0], v2[1], v2[2]);
+						printf("v0 =%f, %f, %f\n", targetTriangleVertices[0][0], targetTriangleVertices[0][1], targetTriangleVertices[0][2]);
+						printf("v1 =%f, %f, %f\n", targetTriangleVertices[1][0], targetTriangleVertices[1][1], targetTriangleVertices[1][2]);
+						printf("v2 =%f, %f, %f\n", targetTriangleVertices[2][0], targetTriangleVertices[2][1], targetTriangleVertices[2][2]);
 						printf("Intersects = %f \n\n\n\n", intersects);
-						if (mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length <= intersects) {
-							mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length = intersects;
-						}
+						//if (mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length <= intersects) {
+						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length += intersects;
+						mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->numberOfLenghtsContributed++;
+						//}
 					}
 					else
 					{
@@ -250,10 +247,18 @@ void Painter::triangleNormalVectors(Mesh* mesh)
 						//printf("NOT INT Intersects = %f \n\n\n\n", intersects);
 						numberOfNOTIntersections++;
 					}
-				}
-			}
-		}
-	}
+				}//make sure that the target triangle is not the same as the base triangle
+			}//select a target triangle
+		}//select a vertex from 3 vertices of triangle
+	}//loop through triangles
+
+	//select a vertex mesh->verts
+	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
+	{
+		mesh->verts[selectedVertexIndex]->length /= mesh->verts[selectedVertexIndex]->numberOfLenghtsContributed;
+		printf("p(%d) =%f\n", selectedVertexIndex, mesh->verts[selectedVertexIndex]->length);
+	}//select a vertex mesh->verts
+
 	printf("numberofintersections = %d\n", numberOfIntersections);
 	printf("numberofNOTintersections = %d\n", numberOfNOTIntersections);
 }

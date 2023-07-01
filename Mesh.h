@@ -9,8 +9,8 @@ using namespace std;
 struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
-	float* coords, * normals, color[3], length; //3d coordinates etc
-	int idx; //who am i; verts[idx]
+	float* coords, * normals, color[3], length = 0.0f; //3d coordinates etc
+	int idx, numberOfLenghtsContributed = 0; //who am i; verts[idx]
 
 	vector< int > vertList; //adj vvertices;
 	vector< int > triList; 
