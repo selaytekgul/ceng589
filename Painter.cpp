@@ -64,7 +64,7 @@ float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, f
 	if (t > 0.00001) // ray intersection
 	{
 		const float directionVector[3] = {d[0], d[1], d[2]};
-		const float lenghtOfDirectionVector = calculateLength(directionVector);
+		const float lenghtOfDirectionVector = calculateLengthOfVector(directionVector);
 		//return(true);
 		return(t * lenghtOfDirectionVector);
 	}
@@ -74,7 +74,7 @@ float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, f
 		return (-2);
 }
 
-float Painter::calculateLength(const float v[]) {
+float Painter::calculateLengthOfVector(const float v[]) {
 	float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 	float root = sqrt(square);
 	return root;
