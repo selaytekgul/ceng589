@@ -1,3 +1,5 @@
+#pragma once
+
 #define HAVE_INT8_T
 #include "Mesh.h"
 #include <Inventor/nodes/SoMaterial.h>

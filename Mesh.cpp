@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+float Vertex::minLength = std::numeric_limits<float>::max();
+float Vertex::maxLength = std::numeric_limits<float>::min();
 
 void Mesh::loadOff(char* name)
 {

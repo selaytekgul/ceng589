@@ -8,8 +8,8 @@ struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
 	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, length = 0.0f; //3d coordinates etc
-	//static float minLength;
-	//static float maxLength;
+	static float minLength;
+	static float maxLength;
 	int idx, numberOfLenghtsContributed = 0; //who am i; verts[idx]
 	std::vector< int > vertList; //adj vertices;
 	std::vector< int > triList;
@@ -22,9 +22,6 @@ struct Vertex
 
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 };
-
-//float Vertex::minLength = std::numeric_limits<float>::max();
-//float Vertex::maxLength = std::numeric_limits<float>::min();
 
 struct Edge
 {

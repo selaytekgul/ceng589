@@ -1,5 +1,4 @@
 #define HAVE_INT8_T
-#include "Mesh.h"
 #include "Painter.h"
 #include <Inventor/Win/SoWin.h>
 #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
