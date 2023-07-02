@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <cmath>
+
 namespace VectorMath
 {
 	inline void vector(float v_A[3], const float v_B[3], const float v_C[3]);
@@ -13,28 +14,35 @@ namespace VectorMath
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 
 	/* a = b - c */
-	void vector(float v_A[3], const float v_B[3], const float v_C[3]) {
+	void vector(float v_A[3], const float v_B[3], const float v_C[3])
+	{
 		v_A[0] = v_B[0] - v_C[0];
 		v_A[1] = v_B[1] - v_C[1];
 		v_A[2] = v_B[2] - v_C[2];
 	}
-	void crossProduct(float CP[3], const float v_A[3], const float v_B[3]) {
+
+	void crossProduct(float CP[3], const float v_A[3], const float v_B[3])
+	{
 		CP[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
 		CP[1] = -(v_A[0] * v_B[2] - v_A[2] * v_B[0]);
 		CP[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
 	}
 
-	float innerProduct(const float v[3], const float q[3]) {
+	float innerProduct(const float v[3], const float q[3])
+	{
 		return v[0] * q[0] + v[1] * q[1] + v[2] * q[2];
 	}
 
-	float calculateLengthOfVector(const float v[3]) {
+	float calculateLengthOfVector(const float v[3])
+	{
 		float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 		float root = sqrt(square);
 		return root;
 	}
 
-	float rayTriangleIntersectLength(float* p, float* d, const float* v0, const float* v1, const float* v2) {
+	float rayTriangleIntersectLength(float* p, float* d, const float* v0, const float* v1, const float* v2)
+	{
+		https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
 		float e1[3], e2[3], h[3], s[3], q[3];
 		float a, f, u, v;
 		vector(e1, v1, v0);
