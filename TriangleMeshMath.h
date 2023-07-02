@@ -4,12 +4,12 @@
 #include "TypeDefinitions.h"
 
 namespace TriangleMeshMath{
-	inline triVertsIds getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex);
-	inline triVertsCoords getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
-	inline triOtherVertsCoords getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
+	inline triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex);
+	inline triVertsCoords getCoordsOfTriangle(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
+	inline triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
 	inline triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords coordinatesOfOtherVertices, const int selectedVertexNumber, const triVertsCoords coordinatesOfVerticesOfTriangle);
 
-	triVertsIds getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex)
+	triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex)
 	{
 		triVertsIds vertexIdsOfTriangle;
 		vertexIdsOfTriangle[0] = mesh->tris[triangleIndex]->v1i;
@@ -18,7 +18,7 @@ namespace TriangleMeshMath{
 		return vertexIdsOfTriangle;
 	}
 	
-	triVertsCoords getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
+	triVertsCoords getCoordsOfTriangle(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
 	{
 		triVertsCoords coordinatesOfVerticesOfTriangle;
 		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
@@ -30,7 +30,7 @@ namespace TriangleMeshMath{
 		return coordinatesOfVerticesOfTriangle;
 	}
 
-	triOtherVertsCoords getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber)
+	triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber)
 	{
 		triOtherVertsCoords coordinatesOfOtherVertices;
 		int number = 0;

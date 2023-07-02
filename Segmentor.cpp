@@ -8,16 +8,16 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
 	{
 		//get the vertex index number of the vertices of the triangle at hand
-		triVertsIds vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, triangleIndex);
+		triVertsIds vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangle(mesh, triangleIndex);
 
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
-		triVertsCoords coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfOfTriangleAsStdArrayOfStdArray(mesh, vertexIdsOfTriangle);
+		triVertsCoords coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfTriangle(mesh, vertexIdsOfTriangle);
 		
 		//select a vertex from 3 vertices of triangle
 		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
 		{
 			//find the other 2 vertices of the triangle
-			triOtherVertsCoords coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+			triOtherVertsCoords coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfTriangle(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
 
 			//create two vectors from the selected vertex
 			triOtherVertsCoords vectorsToTheOtherVertices = TriangleMeshMath::getVectorsToTheOtherVertices(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
@@ -34,9 +34,6 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			//calculate cross product of the two vectors
 			float crossProductVector[3];
 			VectorMath::crossProduct(vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1], crossProductVector);
-			//printf("NEW(B-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[0][0], vectorsToTheOtherVerticesArray[0][1], vectorsToTheOtherVerticesArray[0][2]);
-			//printf("NEW(C-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
-			//printf("NEWCrossProduct x=%f y=%f z=%f\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
 
 			//p is the selected vertex of the base triangle
 			float p[3];
@@ -66,7 +63,7 @@ void Segmentor::selectATargetTriangle(Mesh* mesh, int triangleIndex, int selecte
 	{
 		//make sure that the target triangle is not the same as the base triangle
 		if (triangleIndex != targetTriangleIndex) {
-			triVertsIds vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, targetTriangleIndex);
+			triVertsIds vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangle(mesh, targetTriangleIndex);
 
 			//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
 			triVertsCoords coordinatesOfVerticesOfTargetTriangle;
