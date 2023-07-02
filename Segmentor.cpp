@@ -37,9 +37,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 
 			//p is the selected vertex of the base triangle
 			float p[3];
-			p[0] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][0];
-			p[1] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][1];
-			p[2] = coordinatesOfVerticesOfTriangle[selectedVertexNumber][2];
+			TD::fillWith(p, coordinatesOfVerticesOfTriangle[selectedVertexNumber]);
 
 			//d is the normal vector from the selected vertex of the base triangle drawn according to the other two vertices
 			float d[3];
