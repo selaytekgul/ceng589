@@ -41,5 +41,8 @@
     <ClInclude Include="VectorMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TriangleMeshMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #include "Segmentor.h"
 #include "VectorMath.h"
+#include "TriangleMeshMath.h"
 
 void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 {
@@ -7,10 +8,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
 	{
 		//get the vertex index number of the vertices of the triangle at hand
-		std::array<int, 3> vertexIdsOfTriangle;
-		vertexIdsOfTriangle[0] = mesh->tris[triangleIndex]->v1i;
-		vertexIdsOfTriangle[1] = mesh->tris[triangleIndex]->v2i;
-		vertexIdsOfTriangle[2] = mesh->tris[triangleIndex]->v3i;
+		std::array<int, 3> vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, triangleIndex);
 
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
 		std::array<std::array<float,3>, 3> coordinatesOfVerticesOfTriangle;
@@ -81,7 +79,6 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			//add the normal vector coordinates to the mesh->verts[].normals attribute
 			mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->normalList.push_back(d); //NOT USED
 			selectATargetTriangle(mesh, triangleIndex, selectedVertexNumber, vertexIdsOfTriangle, p, d);
-			
 		}//select a vertex from 3 vertices of triangle
 	}//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
 	mesh->setMinMaxLenghts();
@@ -94,10 +91,7 @@ void Segmentor::selectATargetTriangle(Mesh* mesh, int triangleIndex, int selecte
 	{
 		//make sure that the target triangle is not the same as the base triangle
 		if (triangleIndex != targetTriangleIndex) {
-			std::array<int, 3> vertexIdsOfTargetTriangle;
-			vertexIdsOfTargetTriangle[0] = mesh->tris[targetTriangleIndex]->v1i;
-			vertexIdsOfTargetTriangle[1] = mesh->tris[targetTriangleIndex]->v2i;
-			vertexIdsOfTargetTriangle[2] = mesh->tris[targetTriangleIndex]->v3i;
+			std::array<int, 3> vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, targetTriangleIndex);
 
 			//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
 			std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTargetTriangle;
