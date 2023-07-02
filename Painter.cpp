@@ -11,8 +11,7 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	mat->diffuseColor.setValue(0, 1, 0); //paint all vertices with this color
 	//mat->transparency = 0.5f : 0.0f; //0 makes it completely opaque, the default
 
-	bool youWantToPaintEachVertexDifferently = false;
-	youWantToPaintEachVertexDifferently = true;
+	bool youWantToPaintEachVertexDifferently = true;
 	if (youWantToPaintEachVertexDifferently)
 		for (int i = 0; i < (int)mesh->verts.size(); i++) //i = 0 obj->color above overwritten here
 			mat->diffuseColor.set1Value(i, mesh->verts[i]->color); //vert color according to its x-y-z coord (for mesh1) and to the transferred color (for mesh2)
