@@ -12,5 +12,6 @@ public:
 	void setColorValuesToVertices();
 private:
 	Mesh* mesh;
+	void calculateCrossProduct(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber);
 	void calculateShortestDiameter(int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]);
 };

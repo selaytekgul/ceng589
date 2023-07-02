@@ -139,7 +139,7 @@ void Mesh::addEdge(int v1, int v2)
 	verts[v2]->edgeList.push_back(idx);
 }
 
-void Mesh::setMinMaxLenghts()
+void Mesh::setMinMaxDiameters()
 {
 	//loop through vertices (this->verts): find min & max values
 	for (Vertex* selectedVertex : this->verts)
@@ -153,7 +153,7 @@ void Mesh::setMinMaxLenghts()
 	}
 }
 
-void Mesh::discardInfAndNegativeLenghts()
+void Mesh::discardInfAndNegativeDiameters()
 {
 	//loop through vertices (this->verts): select a vertex from this->verts to discard the negative & inf values
 	for(Vertex* selectedVertex : this->verts)

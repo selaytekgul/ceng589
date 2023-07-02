@@ -45,8 +45,8 @@ private:
 	void addVertex(float x, float y, float z);
 	bool makeVertsNeighbor(int v1i, int v2i);
 public:
-	void setMinMaxLenghts();
-	void discardInfAndNegativeLenghts();
+	void setMinMaxDiameters();
+	void discardInfAndNegativeDiameters();
 	std::vector< Vertex* > verts;
 	std::vector< Triangle* > tris;
 	std::vector< Edge* > edges;

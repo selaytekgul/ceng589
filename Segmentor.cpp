@@ -10,7 +10,7 @@ Segmentor::~Segmentor() = default;
 
 void Segmentor::assignLengthValuesOfVertices()
 {
-	//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
+	//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add diameters to vertex's diameter attribute
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
 	{
 		//get the vertex index number of the vertices of the triangle at hand
@@ -19,39 +19,40 @@ void Segmentor::assignLengthValuesOfVertices()
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
 		triVertsCoords coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfTriangle(mesh, vertexIdsOfTriangle);
 		
-		//select a vertex from 3 vertices of triangle
+		//for each vertex of base triangle
 		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
 		{
-			//find the other 2 vertices of the triangle
-			triOtherVertsCoords coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfTriangle(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
-
-			//create two vectors from the selected vertex
-			triOtherVertsCoords vectorsToTheOtherVertices = TriangleMeshMath::getVectorsToTheOtherVertices(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
-
-			//store two vectors from the selected vertices in a 2D array
-			float vectorsToTheOtherVerticesArray[2][3];
-			for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
-			{
-				TD::fillWith(vectorsToTheOtherVerticesArray[otherVertexNumber], vectorsToTheOtherVertices[otherVertexNumber], 3);
-			}
-
-			//calculate cross product of the two vectors
-			float crossProductVector[3];
-			VectorMath::crossProduct(crossProductVector, vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1]);
+			//d is the normal vector from the selected vertex of the base triangle drawn according to the other two vertices
+			float d[3];
+			calculateCrossProduct(d, coordinatesOfVerticesOfTriangle, selectedVertexNumber);
 
 			//p is the selected vertex of the base triangle
 			float p[3];
 			TD::fillWith(p, coordinatesOfVerticesOfTriangle[selectedVertexNumber], coordinatesOfVerticesOfTriangle[selectedVertexNumber].size());
 
-			//d is the normal vector from the selected vertex of the base triangle drawn according to the other two vertices
-			float d[3];
-			TD::fillWith(d, crossProductVector, 3);
-
 			calculateShortestDiameter(triangleIndex, selectedVertexNumber, vertexIdsOfTriangle, p, d);
-		}//select a vertex from 3 vertices of triangle
-	}//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
-	mesh->setMinMaxLenghts();
-	mesh->discardInfAndNegativeLenghts();
+		}
+	}//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add diameters to vertex's diameter attribute
+	mesh->setMinMaxDiameters();
+	mesh->discardInfAndNegativeDiameters();
+}
+void Segmentor::calculateCrossProduct(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
+{
+	//find the other 2 vertices of the triangle
+	triOtherVertsCoords coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfTriangle(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+
+	//create two vectors from the selected vertex
+	triOtherVertsCoords vectorsToTheOtherVertices = TriangleMeshMath::getVectorsToTheOtherVertices(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
+
+	//store two vectors from the selected vertices in a 2D array
+	float vectorsToTheOtherVerticesArray[2][3];
+	for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
+	{
+		TD::fillWith(vectorsToTheOtherVerticesArray[otherVertexNumber], vectorsToTheOtherVertices[otherVertexNumber], 3);
+	}
+
+	//calculate cross product of the two vectors
+	VectorMath::crossProduct(crossProductVector, vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1]);
 }
 
 void Segmentor::calculateShortestDiameter(int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3])
