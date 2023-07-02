@@ -90,8 +90,7 @@ void Segmentor::calculateShortestDiameter(const int triangleIndex, const int sel
 void Segmentor::setColorValuesToVertices()
 {
 	constexpr int numberOfColors = 6;
-
-	float colors[numberOfColors][3] = {
+	constexpr float colors[numberOfColors][3] = {
 		{0, 1, 0},
 		{0, 1, 1},
 		{0, 0, 1},
@@ -107,12 +106,9 @@ void Segmentor::setColorValuesToVertices()
 	for (Vertex* vertex : mesh->verts)
 	{
 		int colorIndex = static_cast<int>(vertex->diameter / k);
-		if (colorIndex > usedNumberOfColors)
-			colorIndex = usedNumberOfColors;
+		if (colorIndex > usedNumberOfColors - 1)
+			colorIndex = usedNumberOfColors - 1;
 
-		TD::fillWith(vertex->color, colors[colorIndex],3);
-		//vertex->color[0] = colors[colorIndex][0];
-		//vertex->color[1] = colors[colorIndex][1];
-		//vertex->color[2] = colors[colorIndex][2];
+		TD::fillWith(vertex->color, colors[colorIndex], 3);
 	}
 }
