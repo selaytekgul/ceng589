@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <vector>
-#include <array>
 #include "TypeDefinitions.h"
 
 struct Vertex

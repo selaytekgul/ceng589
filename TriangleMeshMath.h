@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include "Mesh.h"
 #include "TypeDefinitions.h"
 
