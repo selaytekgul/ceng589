@@ -8,16 +8,13 @@
 struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
-	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, length = -5.0f; //3d coordinates etc
-	static float minLength;
-	static float maxLength;
+	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, diameter = -5.0f; //3d coordinates etc
+	static float minDiameter;
+	static float maxDiameter;
 	int idx; //who am i; verts[idx]
 	std::vector< int > vertList; //adj vertices;
 	std::vector< int > triList;
 	std::vector< int > edgeList;
-	std::vector< float* > normalList;
-	bool hasLongLength = false;
-
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 };
 

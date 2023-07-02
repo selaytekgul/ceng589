@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
-float Vertex::minLength = std::numeric_limits<float>::max();
-float Vertex::maxLength = std::numeric_limits<float>::min();
+float Vertex::minDiameter = std::numeric_limits<float>::max();
+float Vertex::maxDiameter = std::numeric_limits<float>::min();
 
 void Mesh::loadOff(char* name)
 {
@@ -145,10 +145,10 @@ void Mesh::setMinMaxLenghts()
 	for (Vertex* selectedVertex : this->verts)
 	{
 		//find min & max values
-		if (std::isfinite(selectedVertex->length) && selectedVertex->length > 0.0001f)
+		if (std::isfinite(selectedVertex->diameter) && selectedVertex->diameter > 0.0001f)
 		{
-			Vertex::maxLength = std::max(Vertex::maxLength, selectedVertex->length);
-			Vertex::minLength = std::min(Vertex::minLength, selectedVertex->length);
+			Vertex::maxDiameter = std::max(Vertex::maxDiameter, selectedVertex->diameter);
+			Vertex::minDiameter = std::min(Vertex::minDiameter, selectedVertex->diameter);
 		}
 	}
 }
@@ -158,10 +158,10 @@ void Mesh::discardInfAndNegativeLenghts()
 	//loop through vertices (this->verts): select a vertex from this->verts to discard the negative & inf values
 	for(Vertex* selectedVertex : this->verts)
 	{
-		if (selectedVertex->length < 0.0f)
-			selectedVertex->length = Vertex::minLength;
+		if (selectedVertex->diameter < 0.0f)
+			selectedVertex->diameter = Vertex::minDiameter;
 
-		if (std::isinf(selectedVertex->length))
-			selectedVertex->length = Vertex::maxLength;
+		if (std::isinf(selectedVertex->diameter))
+			selectedVertex->diameter = Vertex::maxDiameter;
 	}
 }

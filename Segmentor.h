@@ -9,5 +9,5 @@ public:
 	void assignLengthValuesOfVertices(Mesh* mesh);
 	void setColorValuesToVertices(Mesh* mesh);
 private:
-	void selectATargetTriangle(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]);
+	void calculateShortestDiameter(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]);
 };
