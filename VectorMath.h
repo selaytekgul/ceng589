@@ -9,7 +9,7 @@ namespace VectorMath
 	inline void crossProduct(const float v_A[], const float v_B[], float CP[]);
 	inline float calculateLengthOfVector(const float v[]);
 	inline float innerProduct(const float v[], const float q[]);
-	float rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2);
+	float rayTriangleIntersectLength(float* p, float* d, float* v0, float* v1, float* v2);
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 
 	/* a = b - c */
@@ -34,7 +34,7 @@ namespace VectorMath
 		return root;
 	}
 
-	float rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2) {
+	float rayTriangleIntersectLength(float* p, float* d, float* v0, float* v1, float* v2) {
 		float e1[3], e2[3], h[3], s[3], q[3];
 		float a, f, u, v;
 		vector(e1, v1, v0);

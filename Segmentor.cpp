@@ -84,20 +84,12 @@ void Segmentor::selectATargetTriangle(Mesh* mesh, int triangleIndex, int selecte
 			}//fill the 2D array of targetTriangleVertices with the coordinate values
 
 			//calculate the lengths
-			const float intersectionLength = VectorMath::rayIntersectsTriangle(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
+			const float intersectionLength = VectorMath::rayTriangleIntersectLength(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
 			const float previousLength = mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length;
 			if (intersectionLength > 0
 				&& (previousLength <= 0 || intersectionLength < previousLength))
 			{
 				mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->length = intersectionLength;
-				mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->numberOfLenghtsContributed++;
-				//long length vertices are marked
-				if (intersectionLength > 80) {
-					mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->hasLongLength = true;
-					mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->intersectionTriangleIdsList.push_back(targetTriangleIndex);
-					mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->intersectionNormalsList.push_back(d);
-					mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->intersectionTrianglesVertexIdsList.push_back(vertexIdsOfTargetTriangle);
-				}
 			}
 		}//make sure that the target triangle is not the same as the base triangle
 	}//select a target triangle

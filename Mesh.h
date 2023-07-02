@@ -11,15 +11,12 @@ struct Vertex
 	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, length = -5.0f; //3d coordinates etc
 	static float minLength;
 	static float maxLength;
-	int idx, numberOfLenghtsContributed = 0; //who am i; verts[idx]
+	int idx; //who am i; verts[idx]
 	std::vector< int > vertList; //adj vertices;
 	std::vector< int > triList;
 	std::vector< int > edgeList;
 	std::vector< float* > normalList;
 	bool hasLongLength = false;
-	std::vector< int > intersectionTriangleIdsList;
-	std::vector< triVertsIds> intersectionTrianglesVertexIdsList;
-	std::vector< float* > intersectionNormalsList;
 
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 };
