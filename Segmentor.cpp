@@ -129,34 +129,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			}//select a target triangle
 		}//select a vertex from 3 vertices of triangle
 	}//loop through triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
-	
-	//loop through vertices (mesh->verts):
-	//find min & max values
-	Vertex::minLength = std::numeric_limits<float>::max();
-	Vertex::maxLength = std::numeric_limits<float>::min();
-	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
-	{
-		//find min & max values
-		if (std::isfinite(mesh->verts[selectedVertexIndex]->length) && mesh->verts[selectedVertexIndex]->length > 0.0001f)
-		{
-			Vertex::maxLength = Vertex::maxLength > mesh->verts[selectedVertexIndex]->length ? Vertex::maxLength : mesh->verts[selectedVertexIndex]->length;
-			Vertex::minLength = Vertex::minLength < mesh->verts[selectedVertexIndex]->length ? Vertex::minLength : mesh->verts[selectedVertexIndex]->length;
-		}
-	}//select a vertex from mesh->verts to calculate the lenghts as average of recorded lengths
-
-	//loop through vertices (mesh->verts):
-	//select a vertex from mesh->verts to discard the inf values
-	for (size_t selectedVertexIndex = 0; selectedVertexIndex < mesh->verts.size(); selectedVertexIndex++)
-	{
-		if (mesh->verts[selectedVertexIndex]->length < 0.0f)
-		{
-			mesh->verts[selectedVertexIndex]->length = Vertex::minLength;
-		}
-		if (std::isinf(mesh->verts[selectedVertexIndex]->length))
-		{
-			mesh->verts[selectedVertexIndex]->length = Vertex::maxLength;
-		}
-	}//select a vertex from mesh->verts to discard the inf values
+	mesh->minMaxInfDiscard();
 }
 
 void Segmentor::setColorValuesToVertices(Mesh* mesh) {
