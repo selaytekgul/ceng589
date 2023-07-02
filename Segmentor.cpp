@@ -11,31 +11,13 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 		std::array<int, 3> vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, triangleIndex);
 
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
-		std::array<std::array<float,3>, 3> coordinatesOfVerticesOfTriangle;
-		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
-		{
-			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-				coordinatesOfVerticesOfTriangle[vertexNumber][coordinate] = mesh->verts[vertexIdsOfTriangle[vertexNumber]]->coords[coordinate];
-			}
-		}//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
+		std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfOfTriangleAsStdArrayOfStdArray(mesh, vertexIdsOfTriangle);
 		
 		//select a vertex from 3 vertices of triangle
 		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
 		{
 			//find the other 2 vertices of the triangle
-			std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices;
-			int number = 0;
-			for (size_t otherVertexNumber = 0; otherVertexNumber < 3; otherVertexNumber++)
-			{
-				if (selectedVertexNumber != otherVertexNumber)
-				{
-					//fill the coordinate values of other 2 vertices' array
-					for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-						coordinatesOfOtherVertices[number][coordinate] = coordinatesOfVerticesOfTriangle[otherVertexNumber][coordinate];
-					}
-					number++;
-				}
-			}//find the other 2 vertices of the triangle
+			std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
 
 			//create two vectors from the selected vertex
 			std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices;
