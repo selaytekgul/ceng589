@@ -6,12 +6,11 @@
 	(a)[1] = (b)[1] - (c)[1];	\
 	(a)[2] = (b)[2] - (c)[2];
 
-#define innerProduct(v,q) \
-((v)[0] * (q)[0] + \
-	(v)[1] * (q)[1] + \
-	(v)[2] * (q)[2])
+float Painter::innerProduct(const float v[], const float q[]) {
+	return v[0] * q[0] + v[1] * q[1] + v[2] * q[2];
+}
 
-inline void Painter::crossProductFunction(const float v_A[], const float v_B[], float CP[]) {
+void Painter::crossProduct(const float v_A[], const float v_B[], float CP[]) {
 	CP[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
 	CP[1] = -(v_A[0] * v_B[2] - v_A[2] * v_B[0]);
 	CP[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
@@ -22,7 +21,7 @@ float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, f
 	float a, f, u, v;
 	vector(e1, v1, v0);
 	vector(e2, v2, v0);
-	crossProductFunction(d, e2, h);
+	crossProduct(d, e2, h);
 	a = innerProduct(e1, h);
 	if (a > -0.00001 && a < 0.00001)
 		//return(false);
@@ -36,7 +35,7 @@ float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, f
 		//return(false);
 		return(-1);
 
-	crossProductFunction(s, e1, q);
+	crossProduct(s, e1, q);
 	v = f * innerProduct(d, q);
 
 	if (v < 0.0 || u + v > 1.0)
@@ -165,7 +164,7 @@ void Painter::assignLengthValuesOfVertices(Mesh* mesh)
 
 			//calculate cross product of the two vectors
 			float crossProductVector[3];
-			crossProductFunction(vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1], crossProductVector);
+			crossProduct(vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1], crossProductVector);
 			//printf("NEW(B-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[0][0], vectorsToTheOtherVerticesArray[0][1], vectorsToTheOtherVerticesArray[0][2]);
 			//printf("NEW(C-A): x=%f y=%f z=%f\n", vectorsToTheOtherVerticesArray[1][0], vectorsToTheOtherVerticesArray[1][1], vectorsToTheOtherVerticesArray[1][2]);
 			//printf("NEWCrossProduct x=%f y=%f z=%f\n", crossProductVector[0], crossProductVector[1], crossProductVector[2]);
