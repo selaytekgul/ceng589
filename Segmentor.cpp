@@ -91,17 +91,17 @@ void Segmentor::setColorValuesToVertices()
 {
 	constexpr int numberOfColors = 6;
 	constexpr float colors[numberOfColors][3] = {
-		{0, 1, 0},
-		{0, 1, 1},
-		{0, 0, 1},
-		{1, 0, 0},
-		{1, 0, 1},
-		{1, 1, 0}
+		{0, 1, 0}, //green
+		{0, 1, 1}, //cyan
+		{0, 0, 1}, //blue
+		{1, 0, 0}, //red
+		{1, 0, 1}, //magenta
+		{1, 1, 0} //yellow
 	};
 	
-	int usedNumberOfColors = 5;
-	int dividend = 8;
-	float k = Vertex::maxDiameter / dividend; //~10
+	int usedNumberOfColors = 5; //number of segmented groups
+	int dividend = 8; //determines the increment value that seperates groups
+	float k = Vertex::maxDiameter / dividend; //~10 increment value 
 	//assign color values to the vertices according to their diameter values
 	for (Vertex* vertex : mesh->verts)
 	{
