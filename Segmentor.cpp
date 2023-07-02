@@ -3,22 +3,6 @@
 
 void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 {
-	//fill the length attribute of each of the mesh->verts with -5
-	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
-	{
-		//get the vertex index number of the vertices of the triangle at hand
-		std::array<int, 3> vertexIdsOfTriangle;
-		vertexIdsOfTriangle[0] = mesh->tris[triangleIndex]->v1i;
-		vertexIdsOfTriangle[1] = mesh->tris[triangleIndex]->v2i;
-		vertexIdsOfTriangle[2] = mesh->tris[triangleIndex]->v3i;
-
-		//fill the lenghts with -5
-		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
-		{
-			mesh->verts[vertexIdsOfTriangle[vertexNumber]]->length = -5.0;
-		}
-	}
-
 	//loop through triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
 	{
