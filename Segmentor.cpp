@@ -2,7 +2,13 @@
 #include "VectorMath.h"
 #include "TriangleMeshMath.h"
 
-void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
+Segmentor::Segmentor(Mesh* mesh)
+	: mesh(mesh)
+{}
+
+Segmentor::~Segmentor() = default;
+
+void Segmentor::assignLengthValuesOfVertices()
 {
 	//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
@@ -41,14 +47,14 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			float d[3];
 			TD::fillWith(d, crossProductVector, 3);
 
-			calculateShortestDiameter(mesh, triangleIndex, selectedVertexNumber, vertexIdsOfTriangle, p, d);
+			calculateShortestDiameter(triangleIndex, selectedVertexNumber, vertexIdsOfTriangle, p, d);
 		}//select a vertex from 3 vertices of triangle
 	}//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
 	mesh->setMinMaxLenghts();
 	mesh->discardInfAndNegativeLenghts();
 }
 
-void Segmentor::calculateShortestDiameter(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3])
+void Segmentor::calculateShortestDiameter(int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3])
 {
 	Vertex* selectedVertex = mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]];
 	
@@ -79,7 +85,7 @@ void Segmentor::calculateShortestDiameter(Mesh* mesh, int triangleIndex, int sel
 	}
 }
 
-void Segmentor::setColorValuesToVertices(Mesh* mesh)
+void Segmentor::setColorValuesToVertices()
 {
 	//assign color values to the vertices according to their diameter values
 	for (int i = 0; i < (int)mesh->verts.size(); i++)

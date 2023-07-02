@@ -6,8 +6,11 @@
 class Segmentor
 {
 public:
-	void assignLengthValuesOfVertices(Mesh* mesh);
-	void setColorValuesToVertices(Mesh* mesh);
+	Segmentor(Mesh* mesh);
+	~Segmentor();
+	void assignLengthValuesOfVertices();
+	void setColorValuesToVertices();
 private:
-	void calculateShortestDiameter(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]);
+	Mesh* mesh;
+	void calculateShortestDiameter(int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]);
 };
