@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include "TypeDefinitions.h"
 
 struct Vertex
 {
@@ -17,7 +18,7 @@ struct Vertex
 	std::vector< float* > normalList;
 	bool hasLongLength = false;
 	std::vector< int > intersectionTriangleIdsList;
-	std::vector< std::array<int, 3>> intersectionTrianglesVertexIdsList;
+	std::vector< triVertsIds> intersectionTrianglesVertexIdsList;
 	std::vector< float* > intersectionNormalsList;
 
 	Vertex(int i, float* c) : idx(i), coords(c) {};

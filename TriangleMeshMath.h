@@ -1,23 +1,24 @@
 #pragma once
 #include <array>
 #include "Mesh.h"
+#include "TypeDefinitions.h"
 
 namespace TriangleMeshMath{
-	inline std::array<int, 3> getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex);
-	inline std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, std::array<int, 3> vertexIdsOfTriangle);
+	inline triVertsIds getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex);
+	inline std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
 	inline std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
 	inline std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle);
 
-	std::array<int, 3> getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex)
+	triVertsIds getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex)
 	{
-		std::array<int, 3> vertexIdsOfTriangle;
+		triVertsIds vertexIdsOfTriangle;
 		vertexIdsOfTriangle[0] = mesh->tris[triangleIndex]->v1i;
 		vertexIdsOfTriangle[1] = mesh->tris[triangleIndex]->v2i;
 		vertexIdsOfTriangle[2] = mesh->tris[triangleIndex]->v3i;
 		return vertexIdsOfTriangle;
 	}
 	
-	std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, const std::array<int, 3> vertexIdsOfTriangle)
+	std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
 	{
 		std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle;
 		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)

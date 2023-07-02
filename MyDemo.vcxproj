@@ -92,6 +92,7 @@
     <ClInclude Include="Painter.h" />
     <ClInclude Include="Segmentor.h" />
     <ClInclude Include="TriangleMeshMath.h" />
+    <ClInclude Include="TypeDefinitions.h" />
     <ClInclude Include="VectorMath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -8,7 +8,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
 	{
 		//get the vertex index number of the vertices of the triangle at hand
-		std::array<int, 3> vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, triangleIndex);
+		triVertsIds vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, triangleIndex);
 
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
 		std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfOfTriangleAsStdArrayOfStdArray(mesh, vertexIdsOfTriangle);
@@ -60,13 +60,13 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 	mesh->discardInfAndNegativeLenghts();
 }
 
-void Segmentor::selectATargetTriangle(Mesh* mesh, int triangleIndex, int selectedVertexNumber, std::array<int, 3> vertexIdsOfTriangle, float p[3], float d[3]) {
+void Segmentor::selectATargetTriangle(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]) {
 	//select a target triangle
 	for (size_t targetTriangleIndex = 0; targetTriangleIndex < mesh->tris.size(); targetTriangleIndex++)
 	{
 		//make sure that the target triangle is not the same as the base triangle
 		if (triangleIndex != targetTriangleIndex) {
-			std::array<int, 3> vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, targetTriangleIndex);
+			triVertsIds vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, targetTriangleIndex);
 
 			//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
 			std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTargetTriangle;
