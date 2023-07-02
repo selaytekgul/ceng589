@@ -1,19 +1,25 @@
 #include "Painter.h"
 
 /* a = b - c */
-#define vector(a,b,c) \
-	(a)[0] = (b)[0] - (c)[0];	\
-	(a)[1] = (b)[1] - (c)[1];	\
-	(a)[2] = (b)[2] - (c)[2];
+void Painter::vector(float v_A[], const float v_B[],const float v_C[]) {
+	v_A[0] = v_B[0] - v_C[0];
+	v_A[1] = v_B[1] - v_C[1];
+	v_A[2] = v_B[2] - v_C[2];
+}
+void Painter::crossProduct(const float v_A[], const float v_B[], float CP[]) {
+	CP[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
+	CP[1] = -(v_A[0] * v_B[2] - v_A[2] * v_B[0]);
+	CP[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
+}
 
 float Painter::innerProduct(const float v[], const float q[]) {
 	return v[0] * q[0] + v[1] * q[1] + v[2] * q[2];
 }
 
-void Painter::crossProduct(const float v_A[], const float v_B[], float CP[]) {
-	CP[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
-	CP[1] = -(v_A[0] * v_B[2] - v_A[2] * v_B[0]);
-	CP[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
+float Painter::calculateLengthOfVector(const float v[]) {
+	float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+	float root = sqrt(square);
+	return root;
 }
 
 float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, float* v2) {
@@ -57,12 +63,6 @@ float Painter::rayIntersectsTriangle(float* p, float* d, float* v0, float* v1, f
 		 // but not a ray intersection
 		//return (false);
 		return (-2);
-}
-
-float Painter::calculateLengthOfVector(const float v[]) {
-	float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	float root = sqrt(square);
-	return root;
 }
 
 //void Painter::normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {

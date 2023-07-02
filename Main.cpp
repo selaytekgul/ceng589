@@ -19,6 +19,7 @@ int main(int, char ** argv)
 
 	Mesh* mesh = new Mesh();
 	Painter* painter = new Painter();
+	//Segmentor* segmentor = new Segmentor();
 
 	mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
@@ -27,6 +28,7 @@ int main(int, char ** argv)
 	//mesh->loadOff("cube3.off");
 //	mesh->createCube(20.0f);
 
+	//segmentor->assignLengthValuesOfVertices(mesh);
 	painter->assignLengthValuesOfVertices(mesh);
 
 	//cout << "my (verts[4]) 1-ring neighborhood is: \n";

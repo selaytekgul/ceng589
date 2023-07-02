@@ -20,6 +20,7 @@ public:
 	SoSeparator* getShapeSep(Mesh* mesh);
 	void assignLengthValuesOfVertices(Mesh* mesh);
 private:
+	inline void vector(float v_A[], const float v_B[], const float v_C[]);
 	inline void crossProduct(const float v_A[], const float v_B[], float CP[]);
 	inline float calculateLengthOfVector(const float v[]);
 	inline float innerProduct(const float v[], const float q[]);
