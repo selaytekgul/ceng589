@@ -31,7 +31,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 
 			//calculate cross product of the two vectors
 			float crossProductVector[3];
-			VectorMath::crossProduct(vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1], crossProductVector);
+			VectorMath::crossProduct(crossProductVector, vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1]);
 
 			//p is the selected vertex of the base triangle
 			float p[3];
