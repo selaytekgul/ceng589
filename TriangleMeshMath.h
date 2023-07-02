@@ -6,15 +6,8 @@
 namespace TriangleMeshMath{
 	inline triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex);
 	inline triVertsCoords getCoordsOfTriangle(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
-	inline triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
-	inline triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords coordinatesOfOtherVertices, const int selectedVertexNumber, const triVertsCoords coordinatesOfVerticesOfTriangle);
-
-	//for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
-	//{
-	//	for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-	//		targetTriangleVertices[vertexNumber][coordinate] = coordinatesOfVerticesOfTargetTriangle[vertexNumber][coordinate];
-	//	}
-	//}
+	inline triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber);
+	inline triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords& coordsOfOtherVertices, const int selectedVertexNumber, const triVertsCoords& coordsOfVerticesOfTriangle);
 
 	triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex)
 	{
@@ -37,32 +30,31 @@ namespace TriangleMeshMath{
 		return coordinatesOfVerticesOfTriangle;
 	}
 
-	triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber)
+	triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber)
 	{
-		triOtherVertsCoords coordinatesOfOtherVertices;
+		triOtherVertsCoords coordsOfOtherVertices;
 		int number = 0;
 		for (size_t otherVertexNumber = 0; otherVertexNumber < 3; otherVertexNumber++)
 		{
-			if (selectedVertexNumber != otherVertexNumber)
-			{
-				//fill the coordinate values of other 2 vertices' array
-				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-					coordinatesOfOtherVertices[number][coordinate] = coordinatesOfVerticesOfTriangle[otherVertexNumber][coordinate];
-				}
-				number++;
+			if (selectedVertexNumber == otherVertexNumber)
+				continue;
+			//fill the coordinate values of other 2 vertices' array
+			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+				coordsOfOtherVertices[number][coordinate] = coordsOfVerticesOfTriangle[otherVertexNumber][coordinate];
 			}
-		}//find the other 2 vertices of the triangle
-		return coordinatesOfOtherVertices;
+			number++;
+		}
+		return coordsOfOtherVertices;
 	}
 
-	triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords coordinatesOfOtherVertices, const int selectedVertexNumber, const triVertsCoords coordinatesOfVerticesOfTriangle) {
+	triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords& coordsOfOtherVertices, const int selectedVertexNumber, const triVertsCoords& coordsOfVerticesOfTriangle) {
 		triOtherVertsCoords vectorsToTheOtherVertices;
 		for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
 		{
 			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
 				vectorsToTheOtherVertices[otherVertexNumber][coordinate] =
-					coordinatesOfOtherVertices[otherVertexNumber][coordinate]
-					- coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate];
+					coordsOfOtherVertices[otherVertexNumber][coordinate]
+					- coordsOfVerticesOfTriangle[selectedVertexNumber][coordinate];
 			}
 		}
 		return vectorsToTheOtherVertices;

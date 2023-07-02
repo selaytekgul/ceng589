@@ -48,8 +48,10 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 	mesh->discardInfAndNegativeLenghts();
 }
 
-void Segmentor::calculateShortestDiameter(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]) {
+void Segmentor::calculateShortestDiameter(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3])
+{
 	Vertex* selectedVertex = mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]];
+	
 	//for each of the target triangles:
 	for (size_t targetTriangleIndex = 0; targetTriangleIndex < mesh->tris.size(); targetTriangleIndex++)
 	{
@@ -69,12 +71,16 @@ void Segmentor::calculateShortestDiameter(Mesh* mesh, int triangleIndex, int sel
 
 		//calculate the diameters
 		const float intersectionLength = VectorMath::rayTriangleIntersectLength(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
+		
+		//set the diameter attribute
 		const float previousLength = selectedVertex->diameter;
 		if (intersectionLength > 0 && (previousLength <= 0 || intersectionLength < previousLength))
 			selectedVertex->diameter = intersectionLength;
 	}
 }
-void Segmentor::setColorValuesToVertices(Mesh* mesh) {
+
+void Segmentor::setColorValuesToVertices(Mesh* mesh)
+{
 	//assign color values to the vertices according to their diameter values
 	for (int i = 0; i < (int)mesh->verts.size(); i++)
 	{
