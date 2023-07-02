@@ -5,9 +5,9 @@
 
 namespace TriangleMeshMath{
 	inline triVertsIds getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex);
-	inline std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
-	inline std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
-	inline std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle);
+	inline triVertsCoords getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
+	inline std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
+	inline std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const triVertsCoords coordinatesOfVerticesOfTriangle);
 
 	triVertsIds getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex)
 	{
@@ -18,9 +18,9 @@ namespace TriangleMeshMath{
 		return vertexIdsOfTriangle;
 	}
 	
-	std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
+	triVertsCoords getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
 	{
-		std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle;
+		triVertsCoords coordinatesOfVerticesOfTriangle;
 		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
 		{
 			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
@@ -30,7 +30,7 @@ namespace TriangleMeshMath{
 		return coordinatesOfVerticesOfTriangle;
 	}
 
-	std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, const int selectedVertexNumber)
+	std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber)
 	{
 		std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices;
 		int number = 0;
@@ -48,7 +48,7 @@ namespace TriangleMeshMath{
 		return coordinatesOfOtherVertices;
 	}
 
-	std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle) {
+	std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const triVertsCoords coordinatesOfVerticesOfTriangle) {
 		std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices;
 		for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
 		{

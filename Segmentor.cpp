@@ -11,7 +11,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 		triVertsIds vertexIdsOfTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, triangleIndex);
 
 		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
-		std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfOfTriangleAsStdArrayOfStdArray(mesh, vertexIdsOfTriangle);
+		triVertsCoords coordinatesOfVerticesOfTriangle = TriangleMeshMath::getCoordsOfOfTriangleAsStdArrayOfStdArray(mesh, vertexIdsOfTriangle);
 		
 		//select a vertex from 3 vertices of triangle
 		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
@@ -69,7 +69,7 @@ void Segmentor::selectATargetTriangle(Mesh* mesh, int triangleIndex, int selecte
 			triVertsIds vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangleAsStdArray(mesh, targetTriangleIndex);
 
 			//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
-			std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTargetTriangle;
+			triVertsCoords coordinatesOfVerticesOfTargetTriangle;
 			for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
 			{
 				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
