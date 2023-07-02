@@ -17,10 +17,10 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 		for (size_t selectedVertexNumber = 0; selectedVertexNumber < 3; selectedVertexNumber++)
 		{
 			//find the other 2 vertices of the triangle
-			std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+			triOtherVertsCoords coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
 
 			//create two vectors from the selected vertex
-			std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices = TriangleMeshMath::getVectorsToTheOtherVertices(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
+			triOtherVertsCoords vectorsToTheOtherVertices = TriangleMeshMath::getVectorsToTheOtherVertices(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
 
 			//store two vectors from the selected vertices in a 2D array
 			float vectorsToTheOtherVerticesArray[2][3];
