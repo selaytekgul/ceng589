@@ -8,13 +8,12 @@ typedef std::array<std::array<float, 3>, 3> triVertsCoords;
 typedef std::array<std::array<float, 3>, 2> triOtherVertsCoords;
 
 namespace TD {
-	inline void fillWith(float* retArr, vertCoords arr);
+	template <typename T, typename U>
+	inline void fillWith(T retArr, const U& arr, const int size);
 
-	void fillWith(float* retArr, const vertCoords arr) {
-		int size = arr.size();
+	template <typename T, typename U>
+	void fillWith(T retArr, const U& arr, const int size) {
 		for (size_t i = 0; i < size; i++)
-		{
 			retArr[i] = arr[i];
-		}
 	}
 }

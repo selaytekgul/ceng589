@@ -9,6 +9,13 @@ namespace TriangleMeshMath{
 	inline triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
 	inline triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords coordinatesOfOtherVertices, const int selectedVertexNumber, const triVertsCoords coordinatesOfVerticesOfTriangle);
 
+	//for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
+	//{
+	//	for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+	//		targetTriangleVertices[vertexNumber][coordinate] = coordinatesOfVerticesOfTargetTriangle[vertexNumber][coordinate];
+	//	}
+	//}
+
 	triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex)
 	{
 		triVertsIds vertexIdsOfTriangle;

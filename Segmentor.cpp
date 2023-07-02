@@ -26,9 +26,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			float vectorsToTheOtherVerticesArray[2][3];
 			for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
 			{
-				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-					vectorsToTheOtherVerticesArray[otherVertexNumber][coordinate] = vectorsToTheOtherVertices[otherVertexNumber][coordinate];
-				}
+				TD::fillWith(vectorsToTheOtherVerticesArray[otherVertexNumber], vectorsToTheOtherVertices[otherVertexNumber], 3);
 			}
 
 			//calculate cross product of the two vectors
@@ -37,13 +35,11 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 
 			//p is the selected vertex of the base triangle
 			float p[3];
-			TD::fillWith(p, coordinatesOfVerticesOfTriangle[selectedVertexNumber]);
+			TD::fillWith(p, coordinatesOfVerticesOfTriangle[selectedVertexNumber], coordinatesOfVerticesOfTriangle[selectedVertexNumber].size());
 
 			//d is the normal vector from the selected vertex of the base triangle drawn according to the other two vertices
 			float d[3];
-			d[0] = crossProductVector[0];
-			d[1] = crossProductVector[1];
-			d[2] = crossProductVector[2];
+			TD::fillWith(d, crossProductVector, 3);
 
 			calculateShortestDiameter(mesh, triangleIndex, selectedVertexNumber, vertexIdsOfTriangle, p, d);
 		}//select a vertex from 3 vertices of triangle
@@ -54,35 +50,29 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 
 void Segmentor::calculateShortestDiameter(Mesh* mesh, int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3]) {
 	Vertex* selectedVertex = mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]];
-	//select a target triangle
+	//for each of the target triangles:
 	for (size_t targetTriangleIndex = 0; targetTriangleIndex < mesh->tris.size(); targetTriangleIndex++)
 	{
 		//make sure that the target triangle is not the same as the base triangle
-		if (triangleIndex != targetTriangleIndex) {
-			triVertsIds vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangle(mesh, targetTriangleIndex);
+		if (triangleIndex == targetTriangleIndex)
+			continue;
 
-			//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
-			triVertsCoords coordinatesOfVerticesOfTargetTriangle = TriangleMeshMath::getCoordsOfTriangle(mesh, vertexIdsOfTargetTriangle);
+		triVertsIds vertexIdsOfTargetTriangle = TriangleMeshMath::getVertexIdsOfTriangle(mesh, targetTriangleIndex);
 
-			//fill the 2D raw array of targetTriangleVertices with the coordinate values
-			float targetTriangleVertices[3][3];
-			for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
-			{
-				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-					targetTriangleVertices[vertexNumber][coordinate] = coordinatesOfVerticesOfTargetTriangle[vertexNumber][coordinate];
-				}
-			}
+		//get the coordinates of the vertices of the target triangle at hand (by using the vertex index numbers)
+		triVertsCoords coordinatesOfVerticesOfTargetTriangle = TriangleMeshMath::getCoordsOfTriangle(mesh, vertexIdsOfTargetTriangle);
 
-			//calculate the diameters
-			const float intersectionLength = VectorMath::rayTriangleIntersectLength(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
-			const float previousLength = selectedVertex->diameter;
-			if (intersectionLength > 0
-				&& (previousLength <= 0 || intersectionLength < previousLength))
-			{
-				selectedVertex->diameter = intersectionLength;
-			}
-		}//make sure that the target triangle is not the same as the base triangle
-	}//select a target triangle
+		//fill the 2D raw array of targetTriangleVertices with the coordinate values
+		float targetTriangleVertices[3][3];
+		for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
+			TD::fillWith(targetTriangleVertices[vertexNumber], coordinatesOfVerticesOfTargetTriangle[vertexNumber], 3);
+
+		//calculate the diameters
+		const float intersectionLength = VectorMath::rayTriangleIntersectLength(p, d, targetTriangleVertices[0], targetTriangleVertices[1], targetTriangleVertices[2]);
+		const float previousLength = selectedVertex->diameter;
+		if (intersectionLength > 0 && (previousLength <= 0 || intersectionLength < previousLength))
+			selectedVertex->diameter = intersectionLength;
+	}
 }
 void Segmentor::setColorValuesToVertices(Mesh* mesh) {
 	//assign color values to the vertices according to their diameter values
