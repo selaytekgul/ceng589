@@ -13,6 +13,7 @@ class Segmentor
 {
 public:
 	void assignLengthValuesOfVertices(Mesh* mesh);
+	void setColorValuesToVertices(Mesh* mesh);
 private:
 	inline void vector(float v_A[], const float v_B[], const float v_C[]);
 	inline void crossProduct(const float v_A[], const float v_B[], float CP[]);

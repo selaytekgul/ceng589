@@ -30,6 +30,7 @@ int main(int, char ** argv)
 //	mesh->createCube(20.0f);
 
 	segmentor->assignLengthValuesOfVertices(mesh);
+	segmentor->setColorValuesToVertices(mesh);
 
 	//cout << "my (verts[4]) 1-ring neighborhood is: \n";
 	//for (int nv = 0; nv < mesh->verts[4]->vertList.size(); nv++)

@@ -11,48 +11,6 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	mat->diffuseColor.setValue(0, 1, 0); //paint all vertices with this color
 	//mat->transparency = 0.5f : 0.0f; //0 makes it completely opaque, the default
 
-	//assign color values to the vertices according to their length values
-	for (int i = 0; i < (int)mesh->verts.size(); i++)
-	{
-		float k = Vertex::maxLength / 8.0f;
-		if (mesh->verts[i]->length < k)
-		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 1;
-			mesh->verts[i]->color[2] = 0;
-		}
-		else if (mesh->verts[i]->length >= k && mesh->verts[i]->length < 2 * k)
-		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 1;
-			mesh->verts[i]->color[2] = 1;
-		}
-		else if (mesh->verts[i]->length >= 2 * k && mesh->verts[i]->length < 3 * k)
-		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 1;
-		}
-		else if (mesh->verts[i]->length >= 3 * k && mesh->verts[i]->length < 4 * k)
-		{
-			mesh->verts[i]->color[0] = 1;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 0;
-		}
-		else //if (mesh->verts[i]->length >= 4 * k && mesh->verts[i]->length < 5 * k)
-		{
-			mesh->verts[i]->color[0] = 1;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 1;
-		}
-		//else // if (mesh->verts[i]->length >= 4 * k && mesh->verts[i]->length < 5 * k)
-		//{
-		//	mesh->verts[i]->color[0] = 1;
-		//	mesh->verts[i]->color[1] = 1;
-		//	mesh->verts[i]->color[2] = 0;
-		//}
-	}
-
 	bool youWantToPaintEachVertexDifferently = false;
 	youWantToPaintEachVertexDifferently = true;
 	if (youWantToPaintEachVertexDifferently)
