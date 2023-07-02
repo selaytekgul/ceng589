@@ -11,12 +11,7 @@
 	(v)[1] * (q)[1] + \
 	(v)[2] * (q)[2])
 
-//#define crossProduct(a,b,c) \
-//	(a)[0] = (b)[1] * (c)[2] - (c)[1] * (b)[2]; \
-//	(a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; \
-//	(a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
-
-void Painter::crossProductFunction(const float v_A[], const float v_B[], float CP[]) {
+inline void Painter::crossProductFunction(const float v_A[], const float v_B[], float CP[]) {
 	CP[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
 	CP[1] = -(v_A[0] * v_B[2] - v_A[2] * v_B[0]);
 	CP[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
