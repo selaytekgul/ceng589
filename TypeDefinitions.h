@@ -7,7 +7,8 @@ typedef std::array<float, 3> vertCoords;
 typedef std::array<std::array<float, 3>, 3> triVertsCoords;
 typedef std::array<std::array<float, 3>, 2> triOtherVertsCoords;
 
-namespace TD {
+namespace TD
+{
 	template <typename T, typename U>
 	inline void fillWith(T retArr, const U& arr, const int size);
 

@@ -2,7 +2,8 @@
 #include "Mesh.h"
 #include "TypeDefinitions.h"
 
-namespace TriangleMeshMath{
+namespace TriangleMeshMath
+{
 	inline triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex);
 	inline triVertsCoords getCoordsOfTriangle(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
 	inline triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber);
