@@ -29,7 +29,6 @@ void Mesh::loadOff(char* name)
 	fclose(fPtr);
 }
 
-
 void Mesh::createCube(float sideLen)
 {
 	//coordinates
