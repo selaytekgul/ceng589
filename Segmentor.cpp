@@ -55,7 +55,7 @@ void Segmentor::calculateCrossProduct(float crossProductVector[3], const triVert
 	VectorMath::crossProduct(crossProductVector, vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1]);
 }
 
-void Segmentor::calculateShortestDiameter(int triangleIndex, int selectedVertexNumber, triVertsIds vertexIdsOfTriangle, float p[3], float d[3])
+void Segmentor::calculateShortestDiameter(const int triangleIndex, const int selectedVertexNumber, const triVertsIds vertexIdsOfTriangle, const float p[3], const float d[3])
 {
 	Vertex* selectedVertex = mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]];
 	

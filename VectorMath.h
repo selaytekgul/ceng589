@@ -10,7 +10,7 @@ namespace VectorMath
 	inline void crossProduct(float CP[3], const float v_A[3], const float v_B[3]);
 	inline float calculateLengthOfVector(const float v[3]);
 	inline float innerProduct(const float v[3], const float q[3]);
-	float rayTriangleIntersectLength(float* p, float* d, const float* v0, const float* v1, const float* v2);
+	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 
 	/* a = b - c */
@@ -40,7 +40,7 @@ namespace VectorMath
 		return root;
 	}
 
-	float rayTriangleIntersectLength(float* p, float* d, const float* v0, const float* v1, const float* v2)
+	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2)
 	{
 		https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
 		float e1[3], e2[3], h[3], s[3], q[3];
