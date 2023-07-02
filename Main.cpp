@@ -1,5 +1,6 @@
 #define HAVE_INT8_T
 #include "Painter.h"
+#include "Segmentor.h"
 #include <Inventor/Win/SoWin.h>
 #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
 
@@ -19,7 +20,7 @@ int main(int, char ** argv)
 
 	Mesh* mesh = new Mesh();
 	Painter* painter = new Painter();
-	//Segmentor* segmentor = new Segmentor();
+	Segmentor* segmentor = new Segmentor();
 
 	mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
@@ -28,8 +29,8 @@ int main(int, char ** argv)
 	//mesh->loadOff("cube3.off");
 //	mesh->createCube(20.0f);
 
-	//segmentor->assignLengthValuesOfVertices(mesh);
-	painter->assignLengthValuesOfVertices(mesh);
+	segmentor->assignLengthValuesOfVertices(mesh);
+	//painter->assignLengthValuesOfVertices(mesh);
 
 	//cout << "my (verts[4]) 1-ring neighborhood is: \n";
 	//for (int nv = 0; nv < mesh->verts[4]->vertList.size(); nv++)
