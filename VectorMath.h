@@ -13,14 +13,15 @@ namespace VectorMath
 	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 
-	/* a = b - c */
+	//v_A = v_B - v_C
 	void vector(float v_A[3], const float v_B[3], const float v_C[3])
 	{
 		v_A[0] = v_B[0] - v_C[0];
 		v_A[1] = v_B[1] - v_C[1];
 		v_A[2] = v_B[2] - v_C[2];
 	}
-
+	
+	//CP = v_A x v_B
 	void crossProduct(float CP[3], const float v_A[3], const float v_B[3])
 	{
 		CP[0] = v_A[1] * v_B[2] - v_A[2] * v_B[1];
@@ -28,11 +29,13 @@ namespace VectorMath
 		CP[2] = v_A[0] * v_B[1] - v_A[1] * v_B[0];
 	}
 
+	//v . q
 	float innerProduct(const float v[3], const float q[3])
 	{
 		return v[0] * q[0] + v[1] * q[1] + v[2] * q[2];
 	}
 
+	//|v|
 	float calculateLengthOfVector(const float v[3])
 	{
 		float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
@@ -50,20 +53,20 @@ namespace VectorMath
 		crossProduct(h, d, e2);
 		a = innerProduct(e1, h);
 		if (a > -0.00001 && a < 0.00001)
-			return(-1);
+			return -1;
 
 		f = 1 / a;
 		vector(s, p, v0);
 		u = f * (innerProduct(s, h));
 
 		if (u < 0.0 || u > 1.0)
-			return(-1);
+			return -1;
 
 		crossProduct(q, s, e1);
 		v = f * innerProduct(d, q);
 
 		if (v < 0.0 || u + v > 1.0)
-			return(-1);
+			return -1;
 
 		// at this stage we can compute t to find out where
 		// the intersection point is on the line
@@ -71,13 +74,13 @@ namespace VectorMath
 
 		if (t > 0.00001) // ray intersection
 		{
-			const float directionVector[3] = { d[0], d[1], d[2] };
+			const float directionVector[3] = {d[0], d[1], d[2]};
 			const float lenghtOfDirectionVector = calculateLengthOfVector(directionVector);
-			return(t * lenghtOfDirectionVector);
+			return t * lenghtOfDirectionVector;
 		}
 		else // this means that there is a line intersection
 			 // but not a ray intersection
-			return (-2);
+			return -2;
 	}
 
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {
