@@ -5,7 +5,8 @@
 namespace TriangleMeshMath{
 	inline std::array<int, 3> getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex);
 	inline std::array<std::array<float, 3>, 3> getCoordsOfOfTriangleAsStdArrayOfStdArray(const Mesh* mesh, std::array<int, 3> vertexIdsOfTriangle);
-	inline std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, int selectedVertexNumber);
+	inline std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, const int selectedVertexNumber);
+	inline std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle);
 
 	std::array<int, 3> getVertexIdsOfTriangleAsStdArray(const Mesh* mesh, const int triangleIndex)
 	{
@@ -28,7 +29,7 @@ namespace TriangleMeshMath{
 		return coordinatesOfVerticesOfTriangle;
 	}
 
-	std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, int selectedVertexNumber)
+	std::array<std::array<float, 3>, 2> getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle, const int selectedVertexNumber)
 	{
 		std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices;
 		int number = 0;
@@ -44,5 +45,18 @@ namespace TriangleMeshMath{
 			}
 		}//find the other 2 vertices of the triangle
 		return coordinatesOfOtherVertices;
+	}
+
+	std::array<std::array<float, 3>, 2> getVectorsToTheOtherVertices(const std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices, const int selectedVertexNumber, const std::array<std::array<float, 3>, 3> coordinatesOfVerticesOfTriangle) {
+		std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices;
+		for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
+		{
+			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+				vectorsToTheOtherVertices[otherVertexNumber][coordinate] =
+					coordinatesOfOtherVertices[otherVertexNumber][coordinate]
+					- coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate];
+			}
+		}
+		return vectorsToTheOtherVertices;
 	}
 }

@@ -20,15 +20,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			std::array<std::array<float, 3>, 2> coordinatesOfOtherVertices = TriangleMeshMath::getOtherCoordsOfOfTriangleAsStdArrayOfStdArray(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
 
 			//create two vectors from the selected vertex
-			std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices;
-			for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
-			{
-				for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-					vectorsToTheOtherVertices[otherVertexNumber][coordinate] =
-						coordinatesOfOtherVertices[otherVertexNumber][coordinate]
-						- coordinatesOfVerticesOfTriangle[selectedVertexNumber][coordinate];
-				}
-			}//create two vectors from the selected vertex
+			std::array<std::array<float, 3>, 2> vectorsToTheOtherVertices = TriangleMeshMath::getVectorsToTheOtherVertices(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
 
 			//store two vectors from the selected vertices in a 2D array
 			float vectorsToTheOtherVerticesArray[2][3];
@@ -60,6 +52,7 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 
 			//add the normal vector coordinates to the mesh->verts[].normals attribute
 			mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]]->normalList.push_back(d); //NOT USED
+
 			selectATargetTriangle(mesh, triangleIndex, selectedVertexNumber, vertexIdsOfTriangle, p, d);
 		}//select a vertex from 3 vertices of triangle
 	}//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
