@@ -89,39 +89,40 @@ void Segmentor::calculateShortestDiameter(const int triangleIndex, const int sel
 
 void Segmentor::setColorValuesToVertices()
 {
+	int n = 8;
+	float k = Vertex::maxDiameter / n;
 	//assign color values to the vertices according to their diameter values
-	for (int i = 0; i < (int)mesh->verts.size(); i++)
+	for (Vertex* vertex : mesh->verts)
 	{
-		float k = Vertex::maxDiameter / 8.0f;
-		if (mesh->verts[i]->diameter < k)
+		if (vertex->diameter < k)
 		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 1;
-			mesh->verts[i]->color[2] = 0;
+			vertex->color[0] = 0;
+			vertex->color[1] = 1;
+			vertex->color[2] = 0;
 		}
-		else if (mesh->verts[i]->diameter >= k && mesh->verts[i]->diameter < 2 * k)
+		else if (vertex->diameter >= k && vertex->diameter < 2 * k)
 		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 1;
-			mesh->verts[i]->color[2] = 1;
+			vertex->color[0] = 0;
+			vertex->color[1] = 1;
+			vertex->color[2] = 1;
 		}
-		else if (mesh->verts[i]->diameter >= 2 * k && mesh->verts[i]->diameter < 3 * k)
+		else if (vertex->diameter >= 2 * k && vertex->diameter < 3 * k)
 		{
-			mesh->verts[i]->color[0] = 0;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 1;
+			vertex->color[0] = 0;
+			vertex->color[1] = 0;
+			vertex->color[2] = 1;
 		}
-		else if (mesh->verts[i]->diameter >= 3 * k && mesh->verts[i]->diameter < 4 * k)
+		else if (vertex->diameter >= 3 * k && vertex->diameter < 4 * k)
 		{
-			mesh->verts[i]->color[0] = 1;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 0;
+			vertex->color[0] = 1;
+			vertex->color[1] = 0;
+			vertex->color[2] = 0;
 		}
 		else
 		{
-			mesh->verts[i]->color[0] = 1;
-			mesh->verts[i]->color[1] = 0;
-			mesh->verts[i]->color[2] = 1;
+			vertex->color[0] = 1;
+			vertex->color[1] = 0;
+			vertex->color[2] = 1;
 		}
 	}
 }
