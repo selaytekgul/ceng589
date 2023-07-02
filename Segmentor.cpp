@@ -129,7 +129,8 @@ void Segmentor::assignLengthValuesOfVertices(Mesh* mesh)
 			}//select a target triangle
 		}//select a vertex from 3 vertices of triangle
 	}//loop through triangles to trace each vertex, find normals, draw rays, calculate and add lengths to vertex's length attribute
-	mesh->minMaxInfDiscard();
+	mesh->setMinMaxLenghts();
+	mesh->discardInfAndNegativeLenghts();
 }
 
 void Segmentor::setColorValuesToVertices(Mesh* mesh) {

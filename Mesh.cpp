@@ -140,33 +140,29 @@ void Mesh::addEdge(int v1, int v2)
 	verts[v2]->edgeList.push_back(idx);
 }
 
-void Mesh::minMaxInfDiscard()
+void Mesh::setMinMaxLenghts()
 {
-		//loop through vertices (this->verts):
-	//find min & max values
-	Vertex::minLength = std::numeric_limits<float>::max();
-	Vertex::maxLength = std::numeric_limits<float>::min();
-	for (size_t selectedVertexIndex = 0; selectedVertexIndex < this->verts.size(); selectedVertexIndex++)
+	//loop through vertices (this->verts): find min & max values
+	for (Vertex* selectedVertex : this->verts)
 	{
 		//find min & max values
-		if (std::isfinite(this->verts[selectedVertexIndex]->length) && this->verts[selectedVertexIndex]->length > 0.0001f)
+		if (std::isfinite(selectedVertex->length) && selectedVertex->length > 0.0001f)
 		{
-			Vertex::maxLength = Vertex::maxLength > this->verts[selectedVertexIndex]->length ? Vertex::maxLength : this->verts[selectedVertexIndex]->length;
-			Vertex::minLength = Vertex::minLength < this->verts[selectedVertexIndex]->length ? Vertex::minLength : this->verts[selectedVertexIndex]->length;
+			Vertex::maxLength = std::max(Vertex::maxLength, selectedVertex->length);
+			Vertex::minLength = std::min(Vertex::minLength, selectedVertex->length);
 		}
-	}//select a vertex from this->verts to calculate the lenghts as average of recorded lengths
+	}
+}
 
-	//loop through vertices (this->verts):
-	//select a vertex from this->verts to discard the inf values
-	for (size_t selectedVertexIndex = 0; selectedVertexIndex < this->verts.size(); selectedVertexIndex++)
+void Mesh::discardInfAndNegativeLenghts()
+{
+	//loop through vertices (this->verts): select a vertex from this->verts to discard the negative & inf values
+	for(Vertex* selectedVertex : this->verts)
 	{
-		if (this->verts[selectedVertexIndex]->length < 0.0f)
-		{
-			this->verts[selectedVertexIndex]->length = Vertex::minLength;
-		}
-		if (std::isinf(this->verts[selectedVertexIndex]->length))
-		{
-			this->verts[selectedVertexIndex]->length = Vertex::maxLength;
-		}
-	}//select a vertex from this->verts to discard the inf values
+		if (selectedVertex->length < 0.0f)
+			selectedVertex->length = Vertex::minLength;
+
+		if (std::isinf(selectedVertex->length))
+			selectedVertex->length = Vertex::maxLength;
+	}
 }
