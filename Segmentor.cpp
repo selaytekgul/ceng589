@@ -89,40 +89,30 @@ void Segmentor::calculateShortestDiameter(const int triangleIndex, const int sel
 
 void Segmentor::setColorValuesToVertices()
 {
-	int n = 8;
-	float k = Vertex::maxDiameter / n;
+	constexpr int numberOfColors = 6;
+
+	float colors[numberOfColors][3] = {
+		{0, 1, 0},
+		{0, 1, 1},
+		{0, 0, 1},
+		{1, 0, 0},
+		{1, 0, 1},
+		{1, 1, 0}
+	};
+	
+	int usedNumberOfColors = 5;
+	int dividend = 8;
+	float k = Vertex::maxDiameter / dividend; //~10
 	//assign color values to the vertices according to their diameter values
 	for (Vertex* vertex : mesh->verts)
 	{
-		if (vertex->diameter < k)
-		{
-			vertex->color[0] = 0;
-			vertex->color[1] = 1;
-			vertex->color[2] = 0;
-		}
-		else if (vertex->diameter >= k && vertex->diameter < 2 * k)
-		{
-			vertex->color[0] = 0;
-			vertex->color[1] = 1;
-			vertex->color[2] = 1;
-		}
-		else if (vertex->diameter >= 2 * k && vertex->diameter < 3 * k)
-		{
-			vertex->color[0] = 0;
-			vertex->color[1] = 0;
-			vertex->color[2] = 1;
-		}
-		else if (vertex->diameter >= 3 * k && vertex->diameter < 4 * k)
-		{
-			vertex->color[0] = 1;
-			vertex->color[1] = 0;
-			vertex->color[2] = 0;
-		}
-		else
-		{
-			vertex->color[0] = 1;
-			vertex->color[1] = 0;
-			vertex->color[2] = 1;
-		}
+		int colorIndex = static_cast<int>(vertex->diameter / k);
+		if (colorIndex > usedNumberOfColors)
+			colorIndex = usedNumberOfColors;
+
+		TD::fillWith(vertex->color, colors[colorIndex],3);
+		//vertex->color[0] = colors[colorIndex][0];
+		//vertex->color[1] = colors[colorIndex][1];
+		//vertex->color[2] = colors[colorIndex][2];
 	}
 }
