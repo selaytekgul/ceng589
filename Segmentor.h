@@ -2,12 +2,7 @@
 
 #define HAVE_INT8_T
 #include "Mesh.h"
-//#include <Inventor/nodes/SoMaterial.h>
-//#include <Inventor/nodes/SoCoordinate3.h>
-//#include <Inventor/nodes/SoIndexedFaceSet.h>
-//#include <Inventor/nodes/SoSeparator.h>
-//#include <Inventor/nodes/SoShapeHints.h>
-//#include <Inventor/nodes/SoCone.h>
+
 #include <vector>
 #include <array>
 #include <cmath>
@@ -17,7 +12,6 @@
 class Segmentor
 {
 public:
-	//SoSeparator* getShapeSep(Mesh* mesh);
 	void assignLengthValuesOfVertices(Mesh* mesh);
 private:
 	inline void vector(float v_A[], const float v_B[], const float v_C[]);
