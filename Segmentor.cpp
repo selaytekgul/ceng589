@@ -8,7 +8,7 @@ Segmentor::Segmentor(Mesh* mesh)
 
 Segmentor::~Segmentor() = default;
 
-void Segmentor::assignLengthValuesOfVertices()
+void Segmentor::assignDiameterValuesOfVertices()
 {
 	//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add diameters to vertex's diameter attribute
 	for (size_t triangleIndex = 0; triangleIndex < mesh->tris.size(); triangleIndex++)
@@ -55,7 +55,7 @@ void Segmentor::calculateCrossProduct(float crossProductVector[3], const triVert
 	VectorMath::crossProduct(crossProductVector, vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1]);
 }
 
-void Segmentor::calculateShortestDiameter(const int triangleIndex, const int selectedVertexNumber, const triVertsIds vertexIdsOfTriangle, const float p[3], const float d[3])
+void Segmentor::calculateShortestDiameter(const int triangleIndex, const int selectedVertexNumber, const triVertsIds& vertexIdsOfTriangle, const float p[3], const float d[3])
 {
 	Vertex* selectedVertex = mesh->verts[vertexIdsOfTriangle[selectedVertexNumber]];
 	

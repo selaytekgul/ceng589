@@ -28,7 +28,7 @@ int main(int, char ** argv)
 //	mesh->createCube(20.0f);
 
 	Segmentor segmentor(mesh);
-	segmentor.assignLengthValuesOfVertices();
+	segmentor.assignDiameterValuesOfVertices();
 	segmentor.setColorValuesToVertices();
 
 	//cout << "my (verts[4]) 1-ring neighborhood is: \n";
