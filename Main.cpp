@@ -1,6 +1,7 @@
 #define HAVE_INT8_T
 #include "Painter.h"
 #include "Segmentor.h"
+#include "KMeans.h"
 #include <Inventor/Win/SoWin.h>
 #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
 
@@ -25,8 +26,11 @@ int main(int, char ** argv)
 //	mesh->createCube(20.0f);
 
 	Segmentor segmentor(mesh);
+	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
-	segmentor.setColorValuesToVertices();
+	//segmentor.setColorValuesToVertices();
+	kmeans.assignClusterIdsOfVertices();
+	kmeans.setColorValuesToVertices();
 
 	root->addChild( painter->getShapeSep(mesh) );
 

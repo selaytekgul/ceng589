@@ -27,6 +27,9 @@
     <ClCompile Include="Segmentor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KMeans.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TypeDefinitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KMeans.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

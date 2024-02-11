@@ -107,9 +107,7 @@ void Segmentor::setColorValuesToVertices()
 	{
 		// setting the color for a vertex
 		int colorIndex = static_cast<int>(vertex->diameter / k);
-		
-		colorIndex = static_cast<int>(vertex->diameter / k);
-		
+
 		//index out of bounds error check for colors array
 		if (colorIndex > usedNumberOfColors - 1)
 			colorIndex = usedNumberOfColors - 1;

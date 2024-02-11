@@ -8,6 +8,7 @@ struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
 	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, diameter = -5.0f; //3d coordinates etc
+	int clusterId = 3;
 	static float minDiameter;
 	static float maxDiameter;
 	int idx; //who am i; verts[idx]

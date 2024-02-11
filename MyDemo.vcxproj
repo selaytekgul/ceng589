@@ -82,12 +82,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="KMeans.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Painter.cpp" />
     <ClCompile Include="Segmentor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KMeans.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Painter.h" />
     <ClInclude Include="Segmentor.h" />
