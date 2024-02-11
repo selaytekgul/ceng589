@@ -1,5 +1,5 @@
 #include "KMeans.h"
-
+#include <random>
 
 KMeans::KMeans(Mesh* mesh) 
 	: mesh(mesh)
@@ -9,6 +9,18 @@ KMeans::~KMeans() = default;
 
 void KMeans::assignClusterIdsOfVertices()
 {
+	auto numberOfVerts = mesh->verts.size();
+
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distrib(0, numberOfVerts);
+
+	std::array<int, 6> centroids = {};
+	for (int i = 0; i < 6; ++i) {
+		centroids[i] = distrib(gen);
+	}
+
 
 }
 
