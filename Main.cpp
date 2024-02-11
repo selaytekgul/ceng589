@@ -20,6 +20,7 @@ int main(int, char ** argv)
 	Mesh* mesh = new Mesh();
 	Painter* painter = new Painter();
 
+	//mesh->loadOff("tr_reg_000.off");
 	mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
 	//mesh->loadOff("coffeecup.off");
