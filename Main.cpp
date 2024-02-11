@@ -18,9 +18,9 @@ int main(int, char ** argv)
 	Painter* painter = new Painter();
 
 	//mesh->loadOff("tr_reg_000.off");
-	//mesh->loadOff("0.off");
+	mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
-	mesh->loadOff("coffeecup.off");
+	//mesh->loadOff("coffeecup.off");
 	//mesh->loadOff("bunny.off");
 	//mesh->loadOff("cube3.off");
 //	mesh->createCube(20.0f);
