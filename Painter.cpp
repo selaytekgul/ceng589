@@ -218,18 +218,7 @@ SoSeparator* Painter::getSpheresSep(Mesh* mesh, float deltaX, float deltaY, floa
 
 		//material
 		SoMaterial* ma = new SoMaterial;
-		if (i == 0)
-			ma->diffuseColor.setValue(SbColor(0.0f, 0.0f, 0.7f));
-		else if (i == 1)
-			ma->diffuseColor.setValue(SbColor(0.0f, 0.0f, 0.0f));
-		else if (i == 2)
-			ma->diffuseColor.setValue(SbColor(0.0f, 0.7f, 0.0f));
-		else if (i == 3)
-			ma->diffuseColor.setValue(SbColor(0.7f, 0.0f, 0.7f));
-		else if (i == 4)
-			ma->diffuseColor.setValue(SbColor(0.7f, 0.7f, 0.0f));
-		else
-			ma->diffuseColor.setValue(SbColor(0.7f, 0.0f, 0.0f));
+		ma->diffuseColor.setValue(SbColor(0.0f, 0.0f, 0.7f));
 
 		sphere1Sep->addChild(ma);
 

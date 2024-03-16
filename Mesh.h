@@ -25,6 +25,8 @@ struct Edge
 	float length;
 	int existedTriangeNumber = 0;
 	bool isItBoundary = false;
+	bool isItPathPart = false;
+	bool isItInLongestBoundary = false;
 	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) { computeLength(); };
 
 	void computeLength()
