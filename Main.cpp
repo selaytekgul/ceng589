@@ -5,6 +5,8 @@
 #include "GraphOperations.h"
 #include <Inventor/Win/SoWin.h>
 #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 
 int main(int, char ** argv)
 {
@@ -30,11 +32,11 @@ int main(int, char ** argv)
 	//mesh->loadOff("bunny.off");
 	//mesh->loadOff("cube3.off");
 	//mesh->loadOff("faces/face.off");
-	//mesh->loadOff("faces/face-low.off");
+	mesh->loadOff("faces/face-low.off");
 	//mesh->loadOff("faces/facem.off");
 	//mesh->loadOff("faces/facem-low.off");
 
-	mesh->createOpenCube(20.0f);
+	//mesh->createOpenCube(20.0f);
 	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
@@ -43,8 +45,32 @@ int main(int, char ** argv)
 	//kmeans.assignClusterIdsOfVertices();
 	kmeans.setColorValuesToVertices();
 
+
+	//cout << "my (verts[4]) 1-ring neighborhood is: \n";
+//for (int nv = 0; nv < mesh->verts[4]->vertList.size(); nv++)
+//	cout << mesh->verts[4]->vertList[nv] << " neighbb\n";
+
+
+//cout << "my (verts[4]) 1-ring neighborhood is: \n";
+//for (int ne = 0; ne < mesh->verts[4]->edgeList.size(); ne++)
+//	if (mesh->edges[   mesh->verts[4]->edgeList[ne]   ]->v1i == 4)
+//		cout << mesh->edges[   mesh->verts[4]->edgeList[ne]   ]->v2i << " nnnnnnnnn\n";
+//	else
+//		cout << mesh->edges[   mesh->verts[4]->edgeList[ne]   ]->v1i << " nnnnnnnnn\n";
+
+//		cout << mesh->verts[4]->vertList[nv] << " neighbb\n";
+
 	root->addChild( painter->getShapeSep(mesh) );
 
+	for (size_t i = 0; i < mesh->edges.size(); i++)
+	{
+		if (mesh->edges[i]->isItBoundary)
+			root->addChild(painter->getThickLineSep(mesh, i));
+	}
+
+	mesh->samples = { mesh->verts[24]->idx , mesh->verts[55]->idx };
+
+	root->addChild(painter->getSpheresSep(mesh, 0.f, 0.f, 1.f));
 
 	viewer->setSize(SbVec2s(640, 480));
 	viewer->setSceneGraph(root);

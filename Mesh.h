@@ -20,11 +20,12 @@ struct Vertex
 
 struct Edge
 {
-	int idx; //edges[idx]
+	int edge_idx; //edges[idx]
 	int v1i, v2i; //endpnts
 	float length;
 	int existedTriangeNumber = 0;
-	Edge(int id, int v1, int v2) : idx(id), v1i(v1), v2i(v2) { computeLength(); };
+	bool isItBoundary = false;
+	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) { computeLength(); };
 
 	void computeLength()
 	{
@@ -34,9 +35,9 @@ struct Edge
 
 struct Triangle
 {
-	int idx; //tris[idx]
+	int tri_idx; //tris[idx]
 	int v1i, v2i, v3i;
-	Triangle(int id, int v1, int v2, int v3) : idx(id), v1i(v1), v2i(v2), v3i(v3) {};
+	Triangle(int id, int v1, int v2, int v3) : tri_idx(id), v1i(v1), v2i(v2), v3i(v3) {};
 };
 
 class Mesh
@@ -53,7 +54,7 @@ public:
 	std::vector< Vertex* > verts;
 	std::vector< Triangle* > tris;
 	std::vector< Edge* > edges;
-
+	std::vector< int > samples;
 
 	Mesh() {} ;
 	void createCube(float side);

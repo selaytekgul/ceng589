@@ -1,4 +1,9 @@
 #include "Painter.h"
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoSphere.h>
+
 SoSeparator* Painter::getShapeSep(Mesh* mesh)
 {
 	SoSeparator* res = new SoSeparator();
@@ -54,7 +59,35 @@ SoSeparator* Painter::getShapeSep(Mesh* mesh)
 	return res;
 }
 
+SoSeparator* Painter::getThickLineSep(Mesh* mesh, int edgeIndex) {
 
+	SoSeparator* thickEdgeSep = new SoSeparator;
+	//material
+	SoMaterial* ma = new SoMaterial;
+	ma->diffuseColor.set1Value(0, 0.0f, 1.0f, 0.0f);
+	thickEdgeSep->addChild(ma);
+	SoDrawStyle* sty = new SoDrawStyle;
+	sty->lineWidth = 5.0f;
+	thickEdgeSep->addChild(sty);
+
+	//shape
+	SoIndexedLineSet* ils = new SoIndexedLineSet;
+	SoCoordinate3* co = new SoCoordinate3;
+
+	SbVec3f end1 = mesh->verts[mesh->edges[edgeIndex]->v1i]->coords;
+	SbVec3f end2 = mesh->verts[mesh->edges[edgeIndex]->v2i]->coords;
+	co->point.set1Value(0, end1);
+	co->point.set1Value(1, end2);
+
+	ils->coordIndex.set1Value(0, 0);
+	ils->coordIndex.set1Value(1, 1);
+	ils->coordIndex.set1Value(2, -1); //end this edge with -1
+
+	thickEdgeSep->addChild(co);
+	thickEdgeSep->addChild(ils);
+
+	return thickEdgeSep;
+}
 
 /* stuff below are from my old projects; should run fine and be useful in your development
 
@@ -158,13 +191,15 @@ SoSeparator* Painter::getPointsSep(Mesh* mesh, SbColor c)
 	return pntsSep;
 }
 
+*/
+
 SoSeparator* Painter::getSpheresSep(Mesh* mesh, float deltaX, float deltaY, float scale)
 {
 	//returns a set of spheres to highlight each mesh.samples[i]
 
 	SoSeparator* spheresSep = new SoSeparator();
 
-	float radius = 50.0f;
+	float radius = 0.5f;
 
 	for (int i = 0; i < (int) mesh->samples.size(); i++)
 	{
@@ -173,7 +208,12 @@ SoSeparator* Painter::getSpheresSep(Mesh* mesh, float deltaX, float deltaY, floa
 
 		//transformation
 		SoTransform* tra = new SoTransform();
-		tra->translation.setValue(scale*mesh->verts[ mesh->samples[i] ]->coords[0]+deltaX, scale*mesh->verts[ mesh->samples[i] ]->coords[1]+deltaY, scale*mesh->verts[ mesh->samples[i] ]->coords[2]);
+
+		tra->translation.setValue(
+			scale * mesh->verts[mesh->samples[i]]->coords[0] + deltaX,
+			scale * mesh->verts[mesh->samples[i]]->coords[1] + deltaY,
+			scale * mesh->verts[mesh->samples[i]]->coords[2]
+		);
 		sphere1Sep->addChild(tra);
 
 		//material
@@ -203,4 +243,4 @@ SoSeparator* Painter::getSpheresSep(Mesh* mesh, float deltaX, float deltaY, floa
 	
 	return spheresSep;
 }
-*/
+

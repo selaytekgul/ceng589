@@ -26,7 +26,9 @@ namespace GraphOperations
     inline std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList);
     inline void generateDiskParameterization(const Mesh* mesh, const ParameterizationMethod method);
     inline std::set<Edge*> findAnyBoundaries(const Mesh* mesh);
-    inline std::map<int, std::map<int, bool>> adjacencyMatrixFromEdges(const std::set<Edge*>& boundaryEdges);
+    inline std::vector<std::vector<int>> adjacencyMatrixFromEdges(const std::set<Edge*>& boundaryEdges);
+    inline std::vector<int> longestCycleConnectedComponent(const std::vector<std::vector<int>>& graph);
+
 
 
     std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList)
@@ -49,10 +51,9 @@ namespace GraphOperations
     void generateDiskParameterization(const Mesh* mesh, const ParameterizationMethod method)
     {
         std::set<Edge*> boundaryEdges = findAnyBoundaries(mesh);
-        std::map<int, std::map<int, bool>> graph = adjacencyMatrixFromEdges(boundaryEdges);
-        //std::vector<std::vector<int>> longestBoundary = longestCycleConnectedComponent(graph);
+        std::vector<std::vector<int>> graph = adjacencyMatrixFromEdges(boundaryEdges);
+        std::vector<int> longestBoundary = longestCycleConnectedComponent(graph);
         int x = 0;
-
     }
 
     std::set<Edge*> findAnyBoundaries(const Mesh* mesh)
@@ -63,36 +64,44 @@ namespace GraphOperations
             if (mesh->edges[i]->existedTriangeNumber == 1)
             {
                 boundaryEdges.insert(mesh->edges[i]);
+                mesh->edges[i]->isItBoundary = true;
             }
         }
         return boundaryEdges;
     }
 
-    std::map<int, std::map<int, bool>> adjacencyMatrixFromEdges(const std::set<Edge*>& boundaryEdges) {
-        // Determine the number of nodes
-        //int numNodes = boundaryEdges.size();
-       
-        // Initialize adjacency matrix with zeros
-        //std::vector<std::vector<int>> graph(numNodes, std::vector<int>(numNodes, 0));
-        std::map<int, std::map<int, bool>> m_graph;
-
-        // Fill adjacency matrix based on boundary edges
+    std::vector<std::vector<int>> adjacencyMatrixFromEdges(const std::set<Edge*>& boundaryEdges) {
+        std::map<int, int> boundIndexToMeshId;
+        std::map<int, int> meshIndexToBoundId;
         int index = 0;
-        for (const auto& edge : boundaryEdges)
+        for (auto boundEdge : boundaryEdges)
         {
-            m_graph[edge->v1i][edge->v2i] = true;
-            m_graph[edge->v2i][edge->v1i] = true;
-            //graph[edge->v1i][edge->node2] = 1;
-            //graph[edge->node2][edge->node1] = 1;
-            m_graph[0][1] = true;
-            m_graph[0][4] = true;
+            if (meshIndexToBoundId.find(boundEdge->v1i) == meshIndexToBoundId.end())
+            {
+                boundIndexToMeshId[index] = boundEdge->v1i;
+                meshIndexToBoundId[boundEdge->v1i] = index;
+                index++;
+            }
+            
+            if (meshIndexToBoundId.find(boundEdge->v2i) == meshIndexToBoundId.end())
+            {
+                boundIndexToMeshId[index] = boundEdge->v2i;
+                meshIndexToBoundId[boundEdge->v2i] = index;
+                index++;
+            }
         }
 
-        //m[24][45] = "123";
-
-
-        return m_graph;
+        int numBoundEdges = boundaryEdges.size();
+        std::vector<std::vector<int>> adjMatrix(numBoundEdges, std::vector<int>(numBoundEdges, false));
+        for (auto boundEdge : boundaryEdges)
+        {
+            adjMatrix[meshIndexToBoundId[boundEdge->v1i]][meshIndexToBoundId[boundEdge->v2i]] =  true;
+            adjMatrix[meshIndexToBoundId[boundEdge->v2i]][meshIndexToBoundId[boundEdge->v1i]] =  true;
+        }
+        return adjMatrix;
     }
+
+
 
     void dfs(const std::vector<std::vector<int>>& graph, int node, std::vector<bool>& visited, std::vector<int>& parent, std::vector<int>& cycle, std::vector<bool>& in_cycle) {
         visited[node] = true;

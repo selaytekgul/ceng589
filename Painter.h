@@ -13,4 +13,6 @@ class Painter
 {
 public:
 	SoSeparator* getShapeSep(Mesh* mesh);
+	SoSeparator* getThickLineSep(Mesh* mesh, int edgeIndex);
+	SoSeparator* getSpheresSep(Mesh* mesh, float deltaX, float deltaY, float scale);
 };
