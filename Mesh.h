@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include "TypeDefinitions.h"
 
 struct Vertex
@@ -57,6 +58,8 @@ public:
 	std::vector< Triangle* > tris;
 	std::vector< Edge* > edges;
 	std::vector< int > samples;
+	std::map<int, int> boundIndexToMeshId;
+	std::map<int, int> meshIndexToBoundId;
 
 	Mesh() {} ;
 	void createCube(float side);

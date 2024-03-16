@@ -24,10 +24,11 @@ namespace GraphOperations
     };
 
     inline std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList);
-    inline void generateDiskParameterization(const Mesh* mesh, const ParameterizationMethod method);
+    inline void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method);
     inline std::set<Edge*> findAnyBoundaries(const Mesh* mesh);
-    inline std::vector<std::vector<int>> adjacencyMatrixFromEdges(const std::set<Edge*>& boundaryEdges);
+    inline std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::set<Edge*>& boundaryEdges);
     inline std::vector<int> longestCycleConnectedComponent(const std::vector<std::vector<int>>& graph);
+    inline void longestCycleConnectedComponentSetToEdgeInfo(Mesh* mesh, const std::vector<int>& longestBoundary);
 
 
 
@@ -48,11 +49,12 @@ namespace GraphOperations
         return { closest, minDistance };
     }
 
-    void generateDiskParameterization(const Mesh* mesh, const ParameterizationMethod method)
+    void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method)
     {
         std::set<Edge*> boundaryEdges = findAnyBoundaries(mesh);
-        std::vector<std::vector<int>> graph = adjacencyMatrixFromEdges(boundaryEdges);
+        std::vector<std::vector<int>> graph = adjacencyMatrixFromEdges(mesh, boundaryEdges);
         std::vector<int> longestBoundary = longestCycleConnectedComponent(graph);
+        longestCycleConnectedComponentSetToEdgeInfo(mesh, longestBoundary);
         int x = 0;
     }
 
@@ -70,23 +72,21 @@ namespace GraphOperations
         return boundaryEdges;
     }
 
-    std::vector<std::vector<int>> adjacencyMatrixFromEdges(const std::set<Edge*>& boundaryEdges) {
-        std::map<int, int> boundIndexToMeshId;
-        std::map<int, int> meshIndexToBoundId;
+    std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::set<Edge*>& boundaryEdges) {
         int index = 0;
         for (auto boundEdge : boundaryEdges)
         {
-            if (meshIndexToBoundId.find(boundEdge->v1i) == meshIndexToBoundId.end())
+            if (mesh->meshIndexToBoundId.find(boundEdge->v1i) == mesh->meshIndexToBoundId.end())
             {
-                boundIndexToMeshId[index] = boundEdge->v1i;
-                meshIndexToBoundId[boundEdge->v1i] = index;
+                mesh->boundIndexToMeshId[index] = boundEdge->v1i;
+                mesh->meshIndexToBoundId[boundEdge->v1i] = index;
                 index++;
             }
             
-            if (meshIndexToBoundId.find(boundEdge->v2i) == meshIndexToBoundId.end())
+            if (mesh->meshIndexToBoundId.find(boundEdge->v2i) == mesh->meshIndexToBoundId.end())
             {
-                boundIndexToMeshId[index] = boundEdge->v2i;
-                meshIndexToBoundId[boundEdge->v2i] = index;
+                mesh->boundIndexToMeshId[index] = boundEdge->v2i;
+                mesh->meshIndexToBoundId[boundEdge->v2i] = index;
                 index++;
             }
         }
@@ -95,8 +95,8 @@ namespace GraphOperations
         std::vector<std::vector<int>> adjMatrix(numBoundEdges, std::vector<int>(numBoundEdges, false));
         for (auto boundEdge : boundaryEdges)
         {
-            adjMatrix[meshIndexToBoundId[boundEdge->v1i]][meshIndexToBoundId[boundEdge->v2i]] =  true;
-            adjMatrix[meshIndexToBoundId[boundEdge->v2i]][meshIndexToBoundId[boundEdge->v1i]] =  true;
+            adjMatrix[mesh->meshIndexToBoundId[boundEdge->v1i]][mesh->meshIndexToBoundId[boundEdge->v2i]] =  true;
+            adjMatrix[mesh->meshIndexToBoundId[boundEdge->v2i]][mesh->meshIndexToBoundId[boundEdge->v1i]] =  true;
         }
         return adjMatrix;
     }
@@ -142,6 +142,35 @@ namespace GraphOperations
         }
 
         return cycle;
+    }
+    
+    void longestCycleConnectedComponentSetToEdgeInfo(Mesh* mesh, const std::vector<int>& longestBoundary) {
+        for (size_t i = 0; i < longestBoundary.size(); i++)
+        {
+            int vertIdx1;
+            int vertIdx2;
+            if (i == longestBoundary.size() - 1)
+            {
+                vertIdx1 = longestBoundary[i];
+                vertIdx2 = longestBoundary[0];
+            }
+            else
+            {
+                vertIdx1 = longestBoundary[i];
+                vertIdx2 = longestBoundary[i + 1];
+            }
+            vertIdx1 = mesh->boundIndexToMeshId[vertIdx1];
+            vertIdx2 = mesh->boundIndexToMeshId[vertIdx2];
+            for (size_t j = 0; j < mesh->edges.size(); j++)
+            {
+                if (mesh->edges[j]->v1i == vertIdx1 && mesh->edges[j]->v2i == vertIdx2
+                    ||
+                    mesh->edges[j]->v1i == vertIdx2 && mesh->edges[j]->v2i == vertIdx1)
+                {
+                    mesh->edges[j]->isItInLongestBoundary = true;
+                }
+            }
+        }
     }
 
 }

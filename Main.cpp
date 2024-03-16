@@ -32,11 +32,12 @@ int main(int, char ** argv)
 	//mesh->loadOff("bunny.off");
 	//mesh->loadOff("cube3.off");
 	//mesh->loadOff("faces/face.off");
-	mesh->loadOff("faces/face-low.off");
+	//mesh->loadOff("faces/face-low.off");
 	//mesh->loadOff("faces/facem.off");
-	//mesh->loadOff("faces/facem-low.off");
+	mesh->loadOff("faces/facem-low.off");
 
 	//mesh->createOpenCube(20.0f);
+
 	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
@@ -64,13 +65,13 @@ int main(int, char ** argv)
 
 	for (size_t i = 0; i < mesh->edges.size(); i++)
 	{
-	//	if (mesh->edges[i]->isItBoundary)
-	//	if (mesh->edges[i]->isItInLongestBoundary)
-		if (mesh->edges[i]->isItPathPart)
+		//if (mesh->edges[i]->isItBoundary)
+		if (mesh->edges[i]->isItInLongestBoundary)
+		//if (mesh->edges[i]->isItPathPart)
 			root->addChild(painter->getThickLineSep(mesh, i));
 	}
 
-	mesh->samples = { mesh->verts[24]->idx , mesh->verts[55]->idx };
+	mesh->samples = { mesh->verts[1]->idx , mesh->verts[2]->idx };
 
 	root->addChild(painter->getSpheresSep(mesh, 0.f, 0.f, 1.f));
 
