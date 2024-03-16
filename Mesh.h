@@ -23,6 +23,7 @@ struct Edge
 	int idx; //edges[idx]
 	int v1i, v2i; //endpnts
 	float length;
+	int existedTriangeNumber = 0;
 	Edge(int id, int v1, int v2) : idx(id), v1i(v1), v2i(v2) { computeLength(); };
 
 	void computeLength()
@@ -43,6 +44,7 @@ class Mesh
 private:
 	void addTriangle(int v1, int v2, int v3);
 	void addEdge(int v1, int v2);
+	void modifyEdge(int v1, int v2);
 	void addVertex(float x, float y, float z);
 	bool makeVertsNeighbor(int v1i, int v2i);
 public:
@@ -55,5 +57,6 @@ public:
 
 	Mesh() {} ;
 	void createCube(float side);
+	void createOpenCube(float side);
 	void loadOff(char* name);
 };

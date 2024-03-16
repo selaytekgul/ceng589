@@ -89,6 +89,7 @@
     <ClCompile Include="Segmentor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraphOperations.h" />
     <ClInclude Include="KMeans.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Painter.h" />

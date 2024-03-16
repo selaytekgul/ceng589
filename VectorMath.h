@@ -9,8 +9,10 @@ namespace VectorMath
 	inline void vector(float v_A[3], const float v_B[3], const float v_C[3]);
 	inline void crossProduct(float CP[3], const float v_A[3], const float v_B[3]);
 	inline float calculateLengthOfVector(const float v[3]);
+	inline float distanceBetweenVectors(const float v[3], const float y[3]);
 	inline float innerProduct(const float v[3], const float q[3]);
-	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
+	inline float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
+	inline float calculateAngleBetweenVectors(const float* vertex1, const float* vertex2);
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 
 	//v_A = v_B - v_C
@@ -41,6 +43,16 @@ namespace VectorMath
 		float square = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 		float root = sqrt(square);
 		return root;
+	}
+	
+	//v --- y
+	float distanceBetweenVectors(const float v[3], const float y[3])
+	{
+		const float deltaX = y[0] - v[0];
+		const float deltaY = y[1] - v[1];
+		const float deltaZ = y[2] - v[2];
+
+		return fabs(sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
 	}
 
 	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2)
@@ -102,4 +114,13 @@ namespace VectorMath
 	//		i++;
 	//	}
 	//}
+
+	float calculateAngleBetweenVectors(const float* vertex1, const float* vertex2)
+	{
+		// As described at https://www.jwwalker.com/pages/angle-between-vectors.html
+		const float dot12 = innerProduct(vertex1, vertex2);
+		const float dot11 = innerProduct(vertex1, vertex1);
+		const float dot22 = innerProduct(vertex2, vertex2);
+		return std::acos(dot12 / std::sqrt(dot11 * dot22));
+	}
 }

@@ -53,5 +53,8 @@
     <ClInclude Include="KMeans.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraphOperations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

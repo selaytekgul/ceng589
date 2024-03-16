@@ -2,6 +2,7 @@
 #include "Painter.h"
 #include "Segmentor.h"
 #include "KMeans.h"
+#include "GraphOperations.h"
 #include <Inventor/Win/SoWin.h>
 #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
 
@@ -18,13 +19,18 @@ int main(int, char ** argv)
 	Painter* painter = new Painter();
 
 	//mesh->loadOff("tr_reg_000.off");
-	mesh->loadOff("0.off");
+	//mesh->loadOff("for timing/centaur.off");
+	//mesh->loadOff("for timing/man.off");
+	//mesh->loadOff("for timing/weirdSphere.off");
+	//mesh->loadOff("for fprinting/horse0.off");
+	//mesh->loadOff("for fprinting/man0.off");
+	//mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
 	//mesh->loadOff("coffeecup.off");
 	//mesh->loadOff("bunny.off");
 	//mesh->loadOff("cube3.off");
-//	mesh->createCube(20.0f);
-
+	mesh->createOpenCube(20.0f);
+	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
