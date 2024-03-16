@@ -29,6 +29,11 @@ int main(int, char ** argv)
 	//mesh->loadOff("coffeecup.off");
 	//mesh->loadOff("bunny.off");
 	//mesh->loadOff("cube3.off");
+	//mesh->loadOff("faces/face.off");
+	//mesh->loadOff("faces/face-low.off");
+	//mesh->loadOff("faces/facem.off");
+	//mesh->loadOff("faces/facem-low.off");
+
 	mesh->createOpenCube(20.0f);
 	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC);
 	//Segmentor segmentor(mesh);
