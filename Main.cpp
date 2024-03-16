@@ -25,11 +25,11 @@ int main(int, char ** argv)
 	//mesh->loadOff("cube3.off");
 //	mesh->createCube(20.0f);
 
-	Segmentor segmentor(mesh);
+	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
 	//segmentor.setColorValuesToVertices();
-	kmeans.assignClusterIdsOfVertices();
+	//kmeans.assignClusterIdsOfVertices();
 	kmeans.setColorValuesToVertices();
 
 	root->addChild( painter->getShapeSep(mesh) );
