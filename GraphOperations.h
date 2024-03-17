@@ -31,10 +31,11 @@ namespace GraphOperations
     inline std::vector<Edge*> returnLongestBoundary(Mesh* mesh, std::vector<std::vector<Edge*>> boundaryEdges);
 
     inline void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges);
-    std::vector<std::vector<int>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
+    inline std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
+    inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, float weight);
 
 
-    inline void printVectorOfVectors(const std::vector<std::vector<int>>& vec);
+    inline void printVectorOfVectors(const std::vector<std::vector<float>>& vec);
 
 
     std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList)
@@ -79,7 +80,7 @@ namespace GraphOperations
         return boundaryEdges;
     }
 
-    void printVectorOfVectors(const std::vector<std::vector<int>>& vec)
+    void printVectorOfVectors(const std::vector<std::vector<float>>& vec)
     {
         for (const auto& innerVec : vec) {
             for (int i : innerVec) {
@@ -254,12 +255,17 @@ namespace GraphOperations
 
     void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges)
     {
-        std::vector<std::vector<int>> bx = createb(mesh, 0, boundaryEdges);
-        std::vector<std::vector<int>> by = createb(mesh, 1, boundaryEdges);
+        std::vector<std::vector<float>> bx = createb(mesh, 0, boundaryEdges);
+        std::vector<std::vector<float>> by = createb(mesh, 1, boundaryEdges);
+        int length = mesh->verts.size();
+
         switch (method)
         {
         case ParameterizationMethod::UNIFORM:
-
+            {
+                float weight = 1.0;
+                std::vector<std::vector<float>> W = createWUniform(mesh, weight);
+            }
             break;
         case ParameterizationMethod::HARMONIC:
 
@@ -273,12 +279,15 @@ namespace GraphOperations
 
     }
 
-    void createW(int weight)
+    std::vector<std::vector<float>> createWUniform(const Mesh* mesh,float weight)
     {
+        int length = mesh->verts.size();
+        std::vector<std::vector<double>> W(length, std::vector<double>(length, 0.0));
 
+        return {};
     }
     
-    std::vector<std::vector<int>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges)
+    std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges)
     {
         auto perimeter = 0.0;
         std::map<int, float> boundaryEdgeIndexToAngle = {};
@@ -306,7 +315,7 @@ namespace GraphOperations
         }
 
         const int length = mesh->verts.size();
-        std::vector<std::vector<int>> b(length, std::vector<int>(1, 0.0));
+        std::vector<std::vector<float>> b(length, std::vector<float>(1, 0.0));
         printVectorOfVectors(b);
 
         const int boundaryEdgesLength = boundaryEdges.size();
