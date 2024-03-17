@@ -228,6 +228,7 @@ namespace GraphOperations
             if (cycleClosed)
             {
                 listedBounds.push_back(listedEdges);
+                listedEdges = {};
             }
         }
 
