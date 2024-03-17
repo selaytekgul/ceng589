@@ -30,6 +30,10 @@ namespace GraphOperations
     inline std::vector<std::vector<Edge*>> findOrderedEntireBoundaryListImproved(std::vector<Edge*> boundaryEdges);
     inline std::vector<Edge*> returnLongestBoundary(Mesh* mesh, std::vector<std::vector<Edge*>> boundaryEdges);
 
+    inline void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges);
+    std::vector<std::vector<int>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
+
+
     inline void printVectorOfVectors(const std::vector<std::vector<int>>& vec);
 
 
@@ -56,6 +60,8 @@ namespace GraphOperations
         //std::vector<Edge*> boundaryList = findOrderedEntireBoundaryList(boundaryEdges);
         std::vector<std::vector<Edge*>> boundaryListImproved = findOrderedEntireBoundaryListImproved(boundaryEdges);
         std::vector<Edge*> longestBoundaryList = returnLongestBoundary(mesh, boundaryListImproved);
+        parameterize(mesh, method, longestBoundaryList);
+
         int x = 0;
     }
 
@@ -81,6 +87,9 @@ namespace GraphOperations
             }
             std::cout << std::endl;
         }
+            std::cout << std::endl;
+            std::cout << "----------------------------------" << std::endl;
+            std::cout << std::endl;
     }
 
     std::vector<Edge*> findOrderedEntireBoundaryList(std::vector<Edge*> boundaryEdges)
@@ -227,6 +236,8 @@ namespace GraphOperations
             if (iter != listedEdgeIdx.end())
             {
                 edge->isItInLongestBoundary = true;
+                mesh->verts[edge->v1i]->isItInLongestBoundary = true;
+                mesh->verts[edge->v2i]->isItInLongestBoundary = true;
             }
         }
 
@@ -240,4 +251,106 @@ namespace GraphOperations
             std::cout << vec.at(i) << " ";
         }
     }
+
+    void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges)
+    {
+        std::vector<std::vector<int>> bx = createb(mesh, 0, boundaryEdges);
+        std::vector<std::vector<int>> by = createb(mesh, 1, boundaryEdges);
+        switch (method)
+        {
+        case ParameterizationMethod::UNIFORM:
+
+            break;
+        case ParameterizationMethod::HARMONIC:
+
+            break;
+        case ParameterizationMethod::MEAN:
+
+            break;
+        default:
+            break;
+        }
+
+    }
+
+    void createW(int weight)
+    {
+
+    }
+    
+    std::vector<std::vector<int>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges)
+    {
+        auto perimeter = 0.0;
+        std::map<int, float> boundaryEdgeIndexToAngle = {};
+
+        for (auto edge : boundaryEdges)
+        {
+            Vertex* v1 = mesh->verts[edge->v1i];
+            Vertex* v2 = mesh->verts[edge->v2i];
+            float v1_coords[3] = { v1->coords[0], v1->coords[1], v1->coords[2] };
+            float v2_coords[3] = { v2->coords[0], v2->coords[1], v2->coords[2] };
+            float distance = VectorMath::distanceBetweenVectors(v1_coords, v2_coords);
+            boundaryEdgeIndexToAngle[edge->edge_idx] = 0;
+            perimeter += distance;
+        }
+
+        for (auto edge : boundaryEdges)
+        {
+            Vertex* v1 = mesh->verts[edge->v1i];
+            Vertex* v2 = mesh->verts[edge->v2i];
+            float v1_coords[3] = { v1->coords[0], v1->coords[1], v1->coords[2] };
+            float v2_coords[3] = { v2->coords[0], v2->coords[1], v2->coords[2] };
+            float distance = VectorMath::distanceBetweenVectors(v1_coords, v2_coords);
+            float angle = 2 * M_PI * distance / perimeter;
+            boundaryEdgeIndexToAngle[edge->edge_idx] = angle;
+        }
+
+        const int length = mesh->verts.size();
+        std::vector<std::vector<int>> b(length, std::vector<int>(1, 0.0));
+        printVectorOfVectors(b);
+
+        const int boundaryEdgesLength = boundaryEdges.size();
+        Edge* firstEdge = boundaryEdges[0];
+        int firstEdgeIndex = firstEdge->edge_idx;
+        Vertex* firstV1 = mesh->verts[firstEdge->v1i];
+        Vertex* firstV2 = mesh->verts[firstEdge->v2i];
+        int prevV1idx = firstV1->idx;
+        int prevV2idx = firstV2->idx;
+        float angle = boundaryEdgeIndexToAngle[firstEdgeIndex];
+        
+        const float r = 25.0;
+        b[firstV1->idx][0] = coordinate == 0 ? r * cos(0) : r * sin(0);
+        b[firstV2->idx][0] = coordinate == 0 ? r * cos(angle) : r * sin(angle);
+        for (size_t i = 1; i < boundaryEdgesLength - 1; i++)
+        {
+            Edge* edge = boundaryEdges[i];
+            int edgeIndex = edge->edge_idx;
+            angle += boundaryEdgeIndexToAngle[edgeIndex];
+
+            Vertex* V1 = mesh->verts[edge->v1i];
+            Vertex* V2 = mesh->verts[edge->v2i];
+            int currentV1idx = V1->idx;
+            int currentV2idx = V2->idx;
+            if (currentV1idx == prevV1idx || currentV1idx == prevV2idx)
+            {
+                b[V2->idx][0] = coordinate == 0 ? r * cos(angle) : r * sin(angle);
+            }
+            else if (currentV2idx == prevV1idx || currentV2idx == prevV2idx)
+            {
+                b[V1->idx][0] = coordinate == 0 ? r * cos(angle) : r * sin(angle);
+            }
+            prevV1idx = V1->idx;
+            prevV2idx = V2->idx;
+        }
+        printVectorOfVectors(b);
+
+        return b;
+    }
+    
+    void calculateX()
+    {
+
+    }
+
+
 }

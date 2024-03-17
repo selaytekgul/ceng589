@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "TypeDefinitions.h"
+#include "VectorMath.h"
 
 struct Vertex
 {
@@ -12,6 +13,7 @@ struct Vertex
 	int clusterId = 3;
 	static float minDiameter;
 	static float maxDiameter;
+	bool isItInLongestBoundary = false;
 	int idx; //who am i; verts[idx]
 	std::vector< int > vertList; //adj vertices;
 	std::vector< int > triList;
@@ -32,7 +34,7 @@ struct Edge
 
 	void computeLength()
 	{
-		length = 7;
+		length = 1;
 	}
 };
 
