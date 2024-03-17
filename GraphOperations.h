@@ -175,21 +175,26 @@ namespace GraphOperations
 
         bool entireEdgesTried = false;
         bool cycleClosed = false;
-        while (listedEdges.size() < boundaryEdges.size())
+        int currentCycleSize = 1;
+        int totalCyclesSize = 1;
+        while (totalCyclesSize < boundaryEdges.size())
         {
             for (size_t i = 0; i < boundaryEdges.size(); i++)
             {
                 Edge* edge = boundaryEdges[i];
-                int edgeIdx = edge->edge_idx;
-                auto iter = std::find(visitedBoundaryEdgeIndexes.begin(), visitedBoundaryEdgeIndexes.end(), edgeIdx);
+                const int edgeIdx = edge->edge_idx;
+                const auto iter = std::find(visitedBoundaryEdgeIndexes.begin(), visitedBoundaryEdgeIndexes.end(), edgeIdx);
                 if (cycleClosed)
                 {
                     if (iter == visitedBoundaryEdgeIndexes.end())
                     {
                         listedEdges.push_back(edge);
-                        visitedBoundaryEdgeIndexes.push_back(edge->edge_idx);
+                        visitedBoundaryEdgeIndexes.push_back(edgeIdx);
                         previousEdge = edge;
+                        firstEdge = edge;
                         cycleClosed = false;
+                        currentCycleSize++;
+                        totalCyclesSize++;
                     }
                 }
                 else
@@ -201,18 +206,22 @@ namespace GraphOperations
                             || edge->v2i == previousEdge->v1i))
                     {
                         listedEdges.push_back(edge);
-                        visitedBoundaryEdgeIndexes.push_back(edge->edge_idx);
+                        visitedBoundaryEdgeIndexes.push_back(edgeIdx);
                         previousEdge = edge;
-                    }
-                }
-                if (listedEdges.size() > 2)
-                {
-                    if ((edge->v1i == firstEdge->v1i
-                        || edge->v2i == firstEdge->v2i
-                        || edge->v1i == firstEdge->v2i
-                        || edge->v2i == firstEdge->v1i))
-                    {
-                        cycleClosed = true;
+                        currentCycleSize++;
+                        totalCyclesSize++;
+                        if (currentCycleSize > 2)
+                        {
+                            if ((edge->v1i == firstEdge->v1i
+                                || edge->v2i == firstEdge->v2i
+                                || edge->v1i == firstEdge->v2i
+                                || edge->v2i == firstEdge->v1i))
+                            {
+                                cycleClosed = true;
+                                currentCycleSize = 0;
+                                break;
+                            }
+                        }
                     }
                 }
             }

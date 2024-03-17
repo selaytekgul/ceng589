@@ -68,8 +68,8 @@ int main(int, char ** argv)
 
 	for (size_t i = 0; i < mesh->edges.size(); i++)
 	{
-		if (mesh->edges[i]->isItBoundary)
-		//if (mesh->edges[i]->isItInLongestBoundary)
+		//if (mesh->edges[i]->isItBoundary)
+		if (mesh->edges[i]->isItInLongestBoundary)
 		//if (mesh->edges[i]->isItPathPart)
 			root->addChild(painter->getThickLineSep(mesh, i));
 	}
