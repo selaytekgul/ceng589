@@ -82,6 +82,59 @@ void Mesh::createCube(float sideLen)
 	addTriangle(0, 5, 4);
 }
 
+void Mesh::createDoubleOpenCube(float sideLen)
+{
+	//coordinates
+	float flbc[3] = {0, 0, 0}, deltaX = 0, deltaY = 0, deltaZ = 0;
+	for (int v = 0; v < 8; v++)
+	{
+		switch (v)
+		{
+			case 1:
+				deltaX = sideLen;
+				break;
+			case 2:
+				deltaZ = -sideLen;
+				break;
+			case 3:
+				deltaX = 0;
+				break;
+			case 4:
+				deltaZ = 0;
+				deltaY = sideLen;
+				break;
+			case 5:
+				deltaX = sideLen;
+				break;
+			case 6:
+				deltaZ = -sideLen;
+				break;
+			default:
+				deltaX = 0;;
+				break;
+		}
+		addVertex(flbc[0] + deltaX, flbc[1] + deltaY, flbc[2] + deltaZ);
+	}
+
+	addTriangle(0, 2, 1);
+	addTriangle(0, 3, 2);
+
+	addTriangle(1, 2, 5);
+	addTriangle(2, 6, 5);
+
+	addTriangle(2, 3, 6);
+	addTriangle(3, 7, 6);
+
+	addTriangle(3, 4, 7);
+	addTriangle(3, 0, 4);
+
+	addTriangle(4, 5, 6);
+	addTriangle(4, 6, 7);
+
+	//addTriangle(0, 1, 5);
+	//addTriangle(0, 5, 4);
+}
+
 void Mesh::createOpenCube(float sideLen)
 {
 	//coordinates

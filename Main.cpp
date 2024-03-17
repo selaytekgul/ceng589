@@ -34,9 +34,12 @@ int main(int, char ** argv)
 	//mesh->loadOff("faces/face.off");
 	//mesh->loadOff("faces/face-low.off");
 	//mesh->loadOff("faces/facem.off");
-	mesh->loadOff("faces/facem-low.off");
+	//mesh->loadOff("faces/facem-low.off");
 
+	mesh->loadOff("doubleOpenCube3.off");
+	//mesh->createCube(20.0f);
 	//mesh->createOpenCube(20.0f);
+	//mesh->createDoubleOpenCube(20.0f);
 
 	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC);
 	//Segmentor segmentor(mesh);
@@ -65,8 +68,8 @@ int main(int, char ** argv)
 
 	for (size_t i = 0; i < mesh->edges.size(); i++)
 	{
-		//if (mesh->edges[i]->isItBoundary)
-		if (mesh->edges[i]->isItInLongestBoundary)
+		if (mesh->edges[i]->isItBoundary)
+		//if (mesh->edges[i]->isItInLongestBoundary)
 		//if (mesh->edges[i]->isItPathPart)
 			root->addChild(painter->getThickLineSep(mesh, i));
 	}

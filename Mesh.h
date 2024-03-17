@@ -64,5 +64,6 @@ public:
 	Mesh() {} ;
 	void createCube(float side);
 	void createOpenCube(float side);
+	void createDoubleOpenCube(float side);
 	void loadOff(char* name);
 };

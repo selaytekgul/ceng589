@@ -25,10 +25,18 @@ namespace GraphOperations
 
     inline std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList);
     inline void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method);
-    inline std::set<Edge*> findAnyBoundaries(const Mesh* mesh);
-    inline std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::set<Edge*>& boundaryEdges);
-    inline std::vector<int> longestCycleConnectedComponent(const std::vector<std::vector<int>>& graph);
+    inline std::vector<Edge*> findAnyBoundaries(const Mesh* mesh);
+    inline std::vector<Edge*> findOrderedEntireBoundaryList(std::vector<Edge*> boundaryEdges);
+    inline std::vector<std::vector<Edge*>> findOrderedEntireBoundaryListImproved(std::vector<Edge*> boundaryEdges);
+    inline std::vector<Edge*> returnLongestBoundary(std::vector<std::vector<Edge*>> boundaryEdges);
+
+
+    inline std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::vector<Edge*>& boundaryEdges);
+    inline void printVectorOfVectors(const std::vector<std::vector<int>>& vec);
     inline void longestCycleConnectedComponentSetToEdgeInfo(Mesh* mesh, const std::vector<int>& longestBoundary);
+
+    inline std::vector<int> longestCycleConnectedComponent(const std::vector<std::vector<int>>& graph);
+
 
 
 
@@ -51,28 +59,43 @@ namespace GraphOperations
 
     void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method)
     {
-        std::set<Edge*> boundaryEdges = findAnyBoundaries(mesh);
+        std::vector<Edge*> boundaryEdges = findAnyBoundaries(mesh);
+        //std::vector<Edge*> boundaryList = findOrderedEntireBoundaryList(boundaryEdges);
+        std::vector<std::vector<Edge*>> boundaryListImproved = findOrderedEntireBoundaryListImproved(boundaryEdges);
+
+        //std::vector<Edge*> longestBoundaryList = returnLongestBoundary();
+
         std::vector<std::vector<int>> graph = adjacencyMatrixFromEdges(mesh, boundaryEdges);
         std::vector<int> longestBoundary = longestCycleConnectedComponent(graph);
         longestCycleConnectedComponentSetToEdgeInfo(mesh, longestBoundary);
         int x = 0;
     }
 
-    std::set<Edge*> findAnyBoundaries(const Mesh* mesh)
+    std::vector<Edge*> findAnyBoundaries(const Mesh* mesh)
     {
-        std::set<Edge*> boundaryEdges;
+        std::vector<Edge*> boundaryEdges;
         for (size_t i = 0; i < mesh->edges.size(); i++)
         {
             if (mesh->edges[i]->existedTriangeNumber == 1)
             {
-                boundaryEdges.insert(mesh->edges[i]);
+                boundaryEdges.push_back(mesh->edges[i]);
                 mesh->edges[i]->isItBoundary = true;
             }
         }
         return boundaryEdges;
     }
 
-    std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::set<Edge*>& boundaryEdges) {
+    void printVectorOfVectors(const std::vector<std::vector<int>>& vec)
+    {
+        for (const auto& innerVec : vec) {
+            for (int i : innerVec) {
+                std::cout << i << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::vector<Edge*>& boundaryEdges) {
         int index = 0;
         for (auto boundEdge : boundaryEdges)
         {
@@ -91,6 +114,7 @@ namespace GraphOperations
             }
         }
 
+
         int numBoundEdges = boundaryEdges.size();
         std::vector<std::vector<int>> adjMatrix(numBoundEdges, std::vector<int>(numBoundEdges, false));
         for (auto boundEdge : boundaryEdges)
@@ -98,10 +122,140 @@ namespace GraphOperations
             adjMatrix[mesh->meshIndexToBoundId[boundEdge->v1i]][mesh->meshIndexToBoundId[boundEdge->v2i]] =  true;
             adjMatrix[mesh->meshIndexToBoundId[boundEdge->v2i]][mesh->meshIndexToBoundId[boundEdge->v1i]] =  true;
         }
+        //printVectorOfVectors(adjMatrix);
         return adjMatrix;
     }
 
 
+    std::vector<Edge*> findOrderedEntireBoundaryList(std::vector<Edge*> boundaryEdges)
+    {
+        std::vector<int> visitedBoundaryEdgeIndexes = {};
+        std::vector<Edge*> listedEdges = {};
+        if (boundaryEdges.size() > 0)
+        {
+            auto previousEdge = boundaryEdges[0];
+            auto firstEdge = previousEdge;
+            visitedBoundaryEdgeIndexes.push_back(previousEdge->edge_idx);
+            listedEdges.push_back(previousEdge);
+            while (listedEdges.size() < boundaryEdges.size())
+            {
+                for (size_t i = 1; i < boundaryEdges.size(); i++)
+                {
+                    Edge* edge = boundaryEdges[i];
+                    int edgeIdx = edge->edge_idx;
+                    auto iter = std::find(visitedBoundaryEdgeIndexes.begin(), visitedBoundaryEdgeIndexes.end(), edgeIdx);
+                    if (iter == visitedBoundaryEdgeIndexes.end()
+                        && (edge->v1i == previousEdge->v1i
+                            || edge->v2i == previousEdge->v2i
+                            || edge->v1i == previousEdge->v2i 
+                            || edge->v2i == previousEdge->v1i))
+                    {
+                        listedEdges.push_back(edge);
+                        visitedBoundaryEdgeIndexes.push_back(edge->edge_idx);
+                        previousEdge = edge;
+                    }
+                }
+            }
+        }
+        return listedEdges;
+    }
+
+    std::vector<std::vector<Edge*>> findOrderedEntireBoundaryListImproved(std::vector<Edge*> boundaryEdges)
+    {
+        std::vector<std::vector<Edge*>> listedBounds;
+        std::vector<int> visitedBoundaryEdgeIndexes = {};
+        std::vector<Edge*> listedEdges = {};
+        if (boundaryEdges.size() == 0)
+            return {};
+
+        auto previousEdge = boundaryEdges[0];
+        auto firstEdge = previousEdge;
+        visitedBoundaryEdgeIndexes.push_back(previousEdge->edge_idx);
+        listedEdges.push_back(previousEdge);
+
+        bool entireEdgesTried = false;
+        bool cycleClosed = false;
+        while (listedEdges.size() < boundaryEdges.size())
+        {
+            for (size_t i = 0; i < boundaryEdges.size(); i++)
+            {
+                Edge* edge = boundaryEdges[i];
+                int edgeIdx = edge->edge_idx;
+                auto iter = std::find(visitedBoundaryEdgeIndexes.begin(), visitedBoundaryEdgeIndexes.end(), edgeIdx);
+                if (cycleClosed)
+                {
+                    if (iter == visitedBoundaryEdgeIndexes.end())
+                    {
+                        listedEdges.push_back(edge);
+                        visitedBoundaryEdgeIndexes.push_back(edge->edge_idx);
+                        previousEdge = edge;
+                        cycleClosed = false;
+                    }
+                }
+                else
+                {
+                    if (iter == visitedBoundaryEdgeIndexes.end()
+                        && (edge->v1i == previousEdge->v1i
+                            || edge->v2i == previousEdge->v2i
+                            || edge->v1i == previousEdge->v2i
+                            || edge->v2i == previousEdge->v1i))
+                    {
+                        listedEdges.push_back(edge);
+                        visitedBoundaryEdgeIndexes.push_back(edge->edge_idx);
+                        previousEdge = edge;
+                    }
+                }
+                if (listedEdges.size() > 2)
+                {
+                    if ((edge->v1i == firstEdge->v1i
+                        || edge->v2i == firstEdge->v2i
+                        || edge->v1i == firstEdge->v2i
+                        || edge->v2i == firstEdge->v1i))
+                    {
+                        cycleClosed = true;
+                    }
+                }
+            }
+            if (cycleClosed)
+            {
+                listedBounds.push_back(listedEdges);
+            }
+        }
+
+        return listedBounds;
+    }
+
+    std::vector<Edge*> returnLongestBoundary(std::vector<std::vector<Edge*>> boundaryEdges)
+    {
+        std::vector<Edge*> listedEdges = {};
+        int maxLengtListIndex = 0;
+        int maxLength = 0;
+        int boundaryOptionIndex = 0;
+        for (auto boundaryOption : boundaryEdges)
+        {
+            int length = 0;
+            for (auto edge : boundaryOption)
+            {
+                length++;
+            }
+            if (length > maxLength)
+            {
+                maxLength = length;
+                maxLengtListIndex = boundaryOptionIndex;
+            }
+            boundaryOptionIndex++;
+        }
+        listedEdges = boundaryEdges[maxLengtListIndex];
+        return listedEdges;
+    }
+
+    void printVec(std::vector<int> vec)
+    {
+        for (size_t i = 0; i < vec.size(); i++)
+        {
+            std::cout << vec.at(i) << " ";
+        }
+    }
 
     void dfs(const std::vector<std::vector<int>>& graph, int node, std::vector<bool>& visited, std::vector<int>& parent, std::vector<int>& cycle, std::vector<bool>& in_cycle) {
         visited[node] = true;
