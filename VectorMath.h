@@ -57,7 +57,7 @@ namespace VectorMath
 
 	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2)
 	{
-		https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
+		//https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
 		float e1[3], e2[3], h[3], s[3], q[3];
 		float a, f, u, v;
 		vector(e1, v1, v0);

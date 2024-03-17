@@ -7,6 +7,7 @@
 #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoDrawStyle.h>
+//#include <Eigen/Dense>
 
 int main(int, char ** argv)
 {
@@ -41,7 +42,7 @@ int main(int, char ** argv)
 	//mesh->createOpenCube(20.0f);
 	//mesh->createDoubleOpenCube(20.0f);
 
-	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC);
+	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();

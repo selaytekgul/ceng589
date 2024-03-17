@@ -14,6 +14,7 @@
 #include <stack>
 #include <algorithm>
 #include <map>
+
 namespace GraphOperations
 {
     enum ParameterizationMethod
@@ -258,13 +259,15 @@ namespace GraphOperations
         std::vector<std::vector<float>> bx = createb(mesh, 0, boundaryEdges);
         std::vector<std::vector<float>> by = createb(mesh, 1, boundaryEdges);
         int length = mesh->verts.size();
-
+        std::vector<std::vector<float>> W = {};
         switch (method)
         {
         case ParameterizationMethod::UNIFORM:
             {
                 float weight = 1.0;
-                std::vector<std::vector<float>> W = createWUniform(mesh, weight);
+                W = createWUniform(mesh, weight);
+                printVectorOfVectors(W);
+                int a = 1;
             }
             break;
         case ParameterizationMethod::HARMONIC:
@@ -277,14 +280,33 @@ namespace GraphOperations
             break;
         }
 
+
+
+
     }
 
     std::vector<std::vector<float>> createWUniform(const Mesh* mesh,float weight)
     {
         int length = mesh->verts.size();
-        std::vector<std::vector<double>> W(length, std::vector<double>(length, 0.0));
-
-        return {};
+        std::vector<std::vector<float>> W(length, std::vector<float>(length, 0.0));
+        for (size_t i = 0; i < length; i++)
+        {
+            Vertex* vert = mesh->verts[i];
+            if (vert->isItInLongestBoundary)
+            {
+                W[i][i] = 1.0;
+            }
+            else
+            {
+                int numberOfNeighbors = vert->vertList.size();
+                for (size_t j = 0; j < numberOfNeighbors; j++)
+                {
+                    W[i][j] = weight;
+                }
+                W[i][i] = -numberOfNeighbors;
+            }
+        }
+        return W;
     }
     
     std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges)
@@ -356,9 +378,12 @@ namespace GraphOperations
         return b;
     }
     
-    void calculateX()
+    std::vector<std::vector<float>> calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
     {
-
+        //Eigen::Matrix <float, 3, 3> martixA;
+        //martixA.setZero();
+        //std::cout << martixA << std::endl;
+        return {};
     }
 
 
