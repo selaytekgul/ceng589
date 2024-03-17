@@ -28,7 +28,9 @@ namespace GraphOperations
     inline std::vector<Edge*> findAnyBoundaries(const Mesh* mesh);
     inline std::vector<Edge*> findOrderedEntireBoundaryList(std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<Edge*>> findOrderedEntireBoundaryListImproved(std::vector<Edge*> boundaryEdges);
-    inline std::vector<Edge*> returnLongestBoundary(std::vector<std::vector<Edge*>> boundaryEdges);
+    //inline std::vector<Edge*> returnLongestBoundary(std::vector<std::vector<Edge*>> boundaryEdges);
+    inline std::vector<Edge*> returnLongestBoundary(Mesh* mesh, std::vector<std::vector<Edge*>> boundaryEdges);
+
 
 
     inline std::vector<std::vector<int>> adjacencyMatrixFromEdges(Mesh* mesh, const std::vector<Edge*>& boundaryEdges);
@@ -62,12 +64,11 @@ namespace GraphOperations
         std::vector<Edge*> boundaryEdges = findAnyBoundaries(mesh);
         //std::vector<Edge*> boundaryList = findOrderedEntireBoundaryList(boundaryEdges);
         std::vector<std::vector<Edge*>> boundaryListImproved = findOrderedEntireBoundaryListImproved(boundaryEdges);
+        std::vector<Edge*> longestBoundaryList = returnLongestBoundary(mesh, boundaryListImproved);
 
-        //std::vector<Edge*> longestBoundaryList = returnLongestBoundary();
-
-        std::vector<std::vector<int>> graph = adjacencyMatrixFromEdges(mesh, boundaryEdges);
-        std::vector<int> longestBoundary = longestCycleConnectedComponent(graph);
-        longestCycleConnectedComponentSetToEdgeInfo(mesh, longestBoundary);
+        //std::vector<std::vector<int>> graph = adjacencyMatrixFromEdges(mesh, boundaryEdges);
+        //std::vector<int> longestBoundary = longestCycleConnectedComponent(graph);
+        //longestCycleConnectedComponentSetToEdgeInfo(mesh, longestBoundary);
         int x = 0;
     }
 
@@ -235,7 +236,7 @@ namespace GraphOperations
         return listedBounds;
     }
 
-    std::vector<Edge*> returnLongestBoundary(std::vector<std::vector<Edge*>> boundaryEdges)
+    std::vector<Edge*> returnLongestBoundary(Mesh* mesh, std::vector<std::vector<Edge*>> boundaryEdges)
     {
         std::vector<Edge*> listedEdges = {};
         int maxLengtListIndex = 0;
@@ -256,6 +257,24 @@ namespace GraphOperations
             boundaryOptionIndex++;
         }
         listedEdges = boundaryEdges[maxLengtListIndex];
+
+        std::vector<int> listedEdgeIdx = {};
+        for (auto edge : listedEdges)
+        {
+            const int edgeIdx = edge->edge_idx;
+            listedEdgeIdx.push_back(edgeIdx);
+        }
+
+        for (auto edge : mesh->edges)
+        {
+            const int edgeIdx = edge->edge_idx;
+            const auto iter = std::find(listedEdgeIdx.begin(), listedEdgeIdx.end(), edgeIdx);
+            if (iter != listedEdgeIdx.end())
+            {
+                edge->isItInLongestBoundary = true;
+            }
+        }
+
         return listedEdges;
     }
 
