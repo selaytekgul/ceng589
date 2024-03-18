@@ -28,7 +28,7 @@ int main(int, char ** argv)
 	//mesh->loadOff("for timing/centaur.off");
 	//mesh->loadOff("for timing/man.off");
 	//mesh->loadOff("for timing/weirdSphere.off");
-	//mesh->loadOff("for fprinting/horse0.off");
+	mesh->loadOff("for fprinting/horse0.off");
 	//mesh->loadOff("for fprinting/man0.off");
 	//mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
@@ -36,7 +36,7 @@ int main(int, char ** argv)
 	//mesh->loadOff("bunny.off");
 	//mesh->loadOff("cube3.off");
 	//mesh->loadOff("faces/face.off");
-	mesh->loadOff("faces/face-low.off");
+	//mesh->loadOff("faces/face-low.off");
 	//mesh->loadOff("faces/facem.off");
 	//mesh->loadOff("faces/facem-low.off");
 
@@ -45,13 +45,13 @@ int main(int, char ** argv)
 	//mesh->createOpenCube(20.0f);
 	//mesh->createDoubleOpenCube(20.0f);
 
-	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM);
+	//GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM);
 	//Segmentor segmentor(mesh);
-	//KMeans kmeans(mesh);
+	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
 	//segmentor.setColorValuesToVertices();
 	//kmeans.assignClusterIdsOfVertices();
-	//kmeans.setColorValuesToVertices();
+	kmeans.setColorValuesToVertices();
 
 
 	//cout << "my (verts[4]) 1-ring neighborhood is: \n";
@@ -81,15 +81,15 @@ int main(int, char ** argv)
 	Graph gmesh = Dijstra::meshToGraph(mesh);
 	Dijstra::timing(gmesh, source_vert_Id, dest_vert_Id);
 	//Dijstra::fprinting(gmesh);
-	//Dijstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id);
+	Dijstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id);
 
 	for (size_t i = 0; i < mesh->edges.size(); i++)
 	{
 		//if (mesh->edges[i]->isItBoundary)
-		if (mesh->edges[i]->isItInLongestBoundary)
+		//if (mesh->edges[i]->isItInLongestBoundary)
 		//if (mesh->edges[i]->isItPathPart)
 		//if (mesh->edges[i]->isItTraversed)
-		//if (mesh->edges[i]->isInShortestPath)
+		if (mesh->edges[i]->isInShortestPath)
 			root->addChild(painter->getThickLineSep(mesh, i));
 	}
 

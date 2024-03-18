@@ -64,14 +64,12 @@ namespace Dijstra
 		while (!sourceIsFound)
 		{
 			int wasAt = path[index];
-			for (Edge* edge : mesh->edges)
+			for (const auto neighEdge : mesh->verts[index]->edgeList)
 			{
-				const int v1Idx = edge->v1i;
-				const int v2Idx = edge->v2i;
-				if (wasAt == v1Idx && index == v2Idx
-					|| index == v1Idx && wasAt == v2Idx)
+				if (mesh->edges[neighEdge]->v1i == index && mesh->edges[neighEdge]->v2i == wasAt
+					|| mesh->edges[neighEdge]->v2i == index && mesh->edges[neighEdge]->v1i == wasAt)
 				{
-					edge->isInShortestPath = true;
+					mesh->edges[neighEdge]->isInShortestPath = true;
 				}
 			}
 			index = wasAt;
