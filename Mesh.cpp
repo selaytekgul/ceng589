@@ -254,12 +254,20 @@ void Mesh::addEdge(int v1, int v2)
 
 void Mesh::modifyEdge(int v1, int v2)
 {
-	int edges_size = edges.size();
-	for (size_t i = 0; i < edges_size; i++)
+	//int edges_size = edges.size();
+	//for (size_t i = 0; i < edges_size; i++)
+	//{
+	//	if ((edges[i]->v1i == v1 && edges[i]->v2i == v2) || (edges[i]->v2i == v1 && edges[i]->v1i == v2))
+	//	{
+	//		edges[i]->existedTriangeNumber++;
+	//	}
+	//}
+	for (const auto neighEdge : verts[v1]->edgeList)
 	{
-		if ((edges[i]->v1i == v1 && edges[i]->v2i == v2) || (edges[i]->v2i == v1 && edges[i]->v1i == v2))
+		if (edges[neighEdge]->v1i == v1 && edges[neighEdge]->v2i == v2
+			|| edges[neighEdge]->v2i == v1 && edges[neighEdge]->v1i == v2)
 		{
-			edges[i]->existedTriangeNumber++;
+			edges[neighEdge]->existedTriangeNumber++;
 		}
 	}
 }

@@ -38,6 +38,7 @@ namespace Dijstra
 
 	void timing(Graph g, int source, int dest)
 	{
+		std::cout << "Time is started." << std::endl;
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 		g.shortestPath(source, false, dest);
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

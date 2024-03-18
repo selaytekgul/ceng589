@@ -77,9 +77,9 @@ vector<int> Graph::shortestPath(int src, bool printOpen, int dest)
 		int u = pq.top().second;
 		// mark the node u as visited
 		// early termination possible here in the query timing
-		if (!printOpen && u == dest)
+		if (u == dest && !printOpen)
 		{
-			printf("dest is arrived.");
+			//printf("dest is arrived.");
 			return arrivedFrom;
 		}
 		pq.pop();
