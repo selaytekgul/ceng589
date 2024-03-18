@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdjListGraph.h" />
+    <ClInclude Include="DijstraImplementations.h" />
     <ClInclude Include="GraphOperations.h" />
     <ClInclude Include="KMeans.h" />
     <ClInclude Include="Mesh.h" />

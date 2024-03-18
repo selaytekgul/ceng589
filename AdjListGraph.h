@@ -11,25 +11,25 @@ using namespace std;
 #define INF 0x3f3f3f3f
 
 // iPair ==> Integer Pair
-typedef pair<int, int> iPair;
+typedef pair<int, float> iPair;
 
 // This class represents a directed graph using
 // adjacency list representation
 class Graph {
-	int V; // No. of vertices
 
 	// In a weighted graph, we need to store vertex
 	// and weight pair for every edge
-	list<pair<int, int> >* adj;
+	list<pair<int, float> >* adj;
 
 public:
+	int V; // No. of vertices
 	Graph(int V); // Constructor
 
 	// function to add an edge to graph
-	void addEdge(int u, int v, int w);
+	void addEdge(int u, int v, float w);
 
 	// prints shortest path from s
-	void shortestPath(int s);
+	void Graph::shortestPath(int src, bool printOpen);
 };
 
 // Allocates memory for adjacency list
@@ -39,14 +39,14 @@ Graph::Graph(int V)
 	adj = new list<iPair>[V];
 }
 
-void Graph::addEdge(int u, int v, int w)
+void Graph::addEdge(int u, int v, float w)
 {
 	adj[u].push_back(make_pair(v, w));
 	adj[v].push_back(make_pair(u, w));
 }
 
 // Prints shortest paths from src to all other vertices
-void Graph::shortestPath(int src)
+void Graph::shortestPath(int src, bool printOpen)
 {
 	// Create a priority queue to store vertices that
 	// are being preprocessed. This is weird syntax in C++.
@@ -57,13 +57,14 @@ void Graph::shortestPath(int src)
 
 	// Create a vector for distances and initialize all
 	// distances as infinite (INF)
-	vector<int> dist(V, INF);
+	vector<float> dist(V, INF);
+	vector<int> arrivedFrom(V, -1);
 
 	// Insert source itself in priority queue and initialize
 	// its distance as 0.
 	pq.push(make_pair(0, src));
 	dist[src] = 0;
-
+	arrivedFrom[src] = -5;
 	/* Looping till priority queue becomes empty (or all
 	distances are not finalized) */
 	while (!pq.empty()) {
@@ -76,11 +77,16 @@ void Graph::shortestPath(int src)
 		int u = pq.top().second;
 		// mark the node u as visited
 		// early termination possible here in the query timing
+		if (!printOpen)
+		{
+			printf("dest is arrived.");
+			break;
+		}
 		pq.pop();
 
 		// 'i' is used to get all adjacent vertices of a
 		// vertex
-		list<pair<int, int> >::iterator i;
+		list<pair<int, float> >::iterator i;
 		for (i = adj[u].begin(); i != adj[u].end(); ++i) {
 			// Get vertex label and weight of current
 			// adjacent of u.
@@ -91,42 +97,19 @@ void Graph::shortestPath(int src)
 			if (dist[v] > dist[u] + weight) {
 				// Updating distance of v
 				dist[v] = dist[u] + weight;
+				arrivedFrom[v] = u;
 				pq.push(make_pair(dist[v], v));
 			}
 		}
 	}
 
 	// Print shortest distances stored in dist[]
-	printf("Vertex Distance from Source %d\n", src);
-	for (int i = 0; i < V; ++i)
-		printf("%d \t\t %d\n", i, dist[i]);
+	if (printOpen)
+	{
+		printf("Vertex Distance from Source %d\n", src);
+		for (int i = 0; i < V; ++i)
+			printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
+	}
 }
 
-//// Driver's code
-//int main()
-//{
-//	// create the graph given in above figure
-//	int V = 9;
-//	Graph g(V);
-//
-//	// making above shown graph
-//	g.addEdge(0, 1, 4);
-//	g.addEdge(0, 7, 8);
-//	g.addEdge(1, 2, 8);
-//	g.addEdge(1, 7, 11);
-//	g.addEdge(2, 3, 7);
-//	g.addEdge(2, 8, 2);
-//	g.addEdge(2, 5, 4);
-//	g.addEdge(3, 4, 9);
-//	g.addEdge(3, 5, 14);
-//	g.addEdge(4, 5, 10);
-//	g.addEdge(5, 6, 2);
-//	g.addEdge(6, 7, 1);
-//	g.addEdge(6, 8, 6);
-//	g.addEdge(7, 8, 7);
-//
-//	// Function call
-//	g.shortestPath(0);
-//
-//	return 0;
-//}
+
