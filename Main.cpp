@@ -26,8 +26,8 @@ int main(int, char ** argv)
 	//mesh->loadOff("for timing/centaur.off");
 	//mesh->loadOff("for timing/man.off");
 	//mesh->loadOff("for timing/weirdSphere.off");
-	//mesh->loadOff("for fprinting/horse0.off");
-	mesh->loadOff("for fprinting/man0.off");
+	mesh->loadOff("for fprinting/horse0.off");
+	//mesh->loadOff("for fprinting/man0.off");
 	//mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
 	//mesh->loadOff("coffeecup.off");
@@ -68,20 +68,23 @@ int main(int, char ** argv)
 
 	root->addChild( painter->getShapeSep(mesh) );
 
+	int source_vert_Id = 3;
+	int dest_vert_Id = 28;
+	mesh->samples = { mesh->verts[source_vert_Id]->idx , mesh->verts[dest_vert_Id]->idx };
+	Graph gmesh = Dijstra::meshToGraph(mesh);
+	Dijstra::timing(gmesh, source_vert_Id, dest_vert_Id);
+	//Dijstra::fprinting(gmesh);
+	Dijstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id);
+
 	for (size_t i = 0; i < mesh->edges.size(); i++)
 	{
 		//if (mesh->edges[i]->isItBoundary)
-		if (mesh->edges[i]->isItInLongestBoundary)
+		//if (mesh->edges[i]->isItInLongestBoundary)
 		//if (mesh->edges[i]->isItPathPart)
+		//if (mesh->edges[i]->isItTraversed)
+		if (mesh->edges[i]->isInShortestPath)
 			root->addChild(painter->getThickLineSep(mesh, i));
 	}
-
-	int source_vert_Id = 3;
-	int dest_vert_Id = 8;
-	mesh->samples = { mesh->verts[3]->idx , mesh->verts[8]->idx };
-	Graph gmesh = Dijstra::meshToGraph(mesh);
-	Dijstra::timing(gmesh, source_vert_Id, dest_vert_Id);
-	Dijstra::fprinting(gmesh);
 
 	root->addChild(painter->getSpheresSep(mesh, 0.f, 0.f, 1.f));
 

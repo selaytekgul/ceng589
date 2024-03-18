@@ -32,18 +32,51 @@ namespace Dijstra
 		const int numNodes = g.V;
 		for (size_t i = 0; i < numNodes; i++)
 		{
-			g.shortestPath(i, true);
+			g.shortestPath(i, true, -1);
 		}
 	}
 
 	void timing(Graph g, int source, int dest)
 	{
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-		g.shortestPath(source, false);
+		g.shortestPath(source, false, dest);
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+	}
+
+	void pathDrawing(Mesh* mesh, Graph g, int source, int dest)
+	{
+		std::vector<int> path = g.shortestPath(source, false, dest);
+		for (Edge* edge : mesh->edges)
+		{
+			const int v1Idx = edge->v1i;
+			const int v2Idx = edge->v2i;
+			auto iter1 = std::find(path.begin(), path.end(), v1Idx);
+			auto iter2 = std::find(path.begin(), path.end(), v2Idx);
+			if (iter1 != path.end() || iter2 != path.end())
+				edge->isItTraversed = true;
+		}
+		bool sourceIsFound = false;
+		int index = dest;
+		while (!sourceIsFound)
+		{
+			int wasAt = path[index];
+			for (Edge* edge : mesh->edges)
+			{
+				const int v1Idx = edge->v1i;
+				const int v2Idx = edge->v2i;
+				if (wasAt == v1Idx && index == v2Idx
+					|| index == v1Idx && wasAt == v2Idx)
+				{
+					edge->isInShortestPath = true;
+				}
+			}
+			index = wasAt;
+			if (index == source)
+				sourceIsFound = true;
+		}
 	}
 }
 

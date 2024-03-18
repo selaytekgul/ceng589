@@ -29,7 +29,7 @@ public:
 	void addEdge(int u, int v, float w);
 
 	// prints shortest path from s
-	void Graph::shortestPath(int src, bool printOpen);
+	vector<int> Graph::shortestPath(int src, bool printOpen, int dest);
 };
 
 // Allocates memory for adjacency list
@@ -46,7 +46,7 @@ void Graph::addEdge(int u, int v, float w)
 }
 
 // Prints shortest paths from src to all other vertices
-void Graph::shortestPath(int src, bool printOpen)
+vector<int> Graph::shortestPath(int src, bool printOpen, int dest)
 {
 	// Create a priority queue to store vertices that
 	// are being preprocessed. This is weird syntax in C++.
@@ -77,10 +77,10 @@ void Graph::shortestPath(int src, bool printOpen)
 		int u = pq.top().second;
 		// mark the node u as visited
 		// early termination possible here in the query timing
-		if (!printOpen)
+		if (!printOpen && u == dest)
 		{
 			printf("dest is arrived.");
-			break;
+			return arrivedFrom;
 		}
 		pq.pop();
 
@@ -110,6 +110,8 @@ void Graph::shortestPath(int src, bool printOpen)
 		for (int i = 0; i < V; ++i)
 			printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
 	}
+
+	return arrivedFrom;
 }
 
 
