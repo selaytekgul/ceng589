@@ -27,7 +27,7 @@ int main(int, char ** argv)
 	//mesh->loadOff("for timing/weirdSphere.off");
 	//mesh->loadOff("for fprinting/horse0.off");
 	//mesh->loadOff("for fprinting/man0.off");
-	//mesh->loadOff("0.off");
+	mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
 	//mesh->loadOff("coffeecup.off");
 	//mesh->loadOff("bunny.off");
@@ -37,7 +37,7 @@ int main(int, char ** argv)
 	//mesh->loadOff("faces/facem.off");
 	//mesh->loadOff("faces/facem-low.off");
 
-	mesh->loadOff("doubleOpenCube3.off");
+	//mesh->loadOff("doubleOpenCube3.off");
 	//mesh->createCube(20.0f);
 	//mesh->createOpenCube(20.0f);
 	//mesh->createDoubleOpenCube(20.0f);

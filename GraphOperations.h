@@ -204,6 +204,8 @@ namespace GraphOperations
 
     std::vector<Edge*> returnLongestBoundary(Mesh* mesh, std::vector<std::vector<Edge*>> boundaryEdges)
     {
+        if (boundaryEdges.size() == 0)
+            return {};
         std::vector<Edge*> listedEdges = {};
         int maxLengtListIndex = 0;
         int maxLength = 0;
@@ -341,6 +343,8 @@ namespace GraphOperations
         printVectorOfVectors(b);
 
         const int boundaryEdgesLength = boundaryEdges.size();
+        if (boundaryEdgesLength == 0)
+            return b;
         Edge* firstEdge = boundaryEdges[0];
         int firstEdgeIndex = firstEdge->edge_idx;
         Vertex* firstV1 = mesh->verts[firstEdge->v1i];
