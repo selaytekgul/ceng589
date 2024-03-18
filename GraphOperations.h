@@ -268,7 +268,7 @@ namespace GraphOperations
             {
                 float weight = 1.0;
                 W = createWUniform(mesh, weight);
-                printVectorOfVectors(W);
+                //printVectorOfVectors(W);
                 int a = 1;
             }
             break;
@@ -340,7 +340,7 @@ namespace GraphOperations
 
         const int length = mesh->verts.size();
         std::vector<std::vector<float>> b(length, std::vector<float>(1, 0.0));
-        printVectorOfVectors(b);
+        //printVectorOfVectors(b);
 
         const int boundaryEdgesLength = boundaryEdges.size();
         if (boundaryEdgesLength == 0)
@@ -377,7 +377,7 @@ namespace GraphOperations
             prevV1idx = V1->idx;
             prevV2idx = V2->idx;
         }
-        printVectorOfVectors(b);
+        //printVectorOfVectors(b);
 
         return b;
     }

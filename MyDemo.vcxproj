@@ -88,6 +88,7 @@
     <ClCompile Include="Segmentor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdjListGraph.h" />
     <ClInclude Include="GraphOperations.h" />
     <ClInclude Include="KMeans.h" />
     <ClInclude Include="Mesh.h" />
