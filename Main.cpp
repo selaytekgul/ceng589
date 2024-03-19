@@ -25,9 +25,9 @@ int main(int, char ** argv)
 	//Painter* painter = new Painter();
 
 	//mesh->loadOff("tr_reg_000.off");
-	mesh->loadOff("for timing/centaur.off");
+	//mesh->loadOff("for timing/centaur.off");
 	//mesh->loadOff("for timing/man.off");
-	//mesh->loadOff("for timing/weirdSphere.off");
+	mesh->loadOff("for timing/weirdSphere.off");
 	//mesh->loadOff("for fprinting/horse0.off");
 	//mesh->loadOff("for fprinting/man0.off");
 	//mesh->loadOff("0.off");
