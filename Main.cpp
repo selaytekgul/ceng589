@@ -80,9 +80,9 @@ int main(int, char ** argv)
 	mesh->samples = { mesh->verts[source_vert_Id]->idx , mesh->verts[dest_vert_Id]->idx };
 	Graph gmesh = Dijkstra::meshToGraph(mesh);
 	Dijkstra::timing(gmesh, source_vert_Id, dest_vert_Id, Dijkstra::ARRAY);
-	//Dijkstra::fprinting(gmesh, Dijkstra::ARRAY);
+	Dijkstra::fprinting(gmesh, Dijkstra::ARRAY);
 	//Dijkstra::fprintingOnce(gmesh,source_vert_Id, dest_vert_Id, Dijkstra::ARRAY);
-	Dijkstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id, Dijkstra::MIN_HEAP);
+	//Dijkstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id, Dijkstra::MIN_HEAP);
 
 	for (size_t i = 0; i < mesh->edges.size(); i++)
 	{

@@ -17,7 +17,7 @@ typedef pair<int, float> iPair;
 // This class represents a directed graph using
 // adjacency list representation
 class Graph {
-
+	std::vector<std::vector<float>> matrix = {};
 	// In a weighted graph, we need to store vertex
 	// and weight pair for every edge
 	list<pair<int, float> >* adj;
@@ -42,6 +42,13 @@ Graph::Graph(int V)
 {
 	this->V = V;
 	adj = new list<iPair>[V];
+	matrix.resize(V);
+
+	// Resize each inner vector and initialize with zeros
+	for (int i = 0; i < V; ++i) {
+		matrix[i].resize(V, 0.0f); // Initialize with zeros
+	}
+
 }
 
 void Graph::addEdge(int u, int v, float w)
@@ -110,9 +117,11 @@ vector<int> Graph::shortestPath(int src, bool printOpen, int dest, bool earlyTer
 		// Print shortest distances stored in dist[]
 		if (printOpen)
 		{
-			printf("Vertex Distance from Source %d\n", src);
+			//printf("Vertex Distance from Source %d\n", src);
+			//for (int i = 0; i < V; ++i)
+			//	printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
 			for (int i = 0; i < V; ++i)
-				printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
+				matrix[src][i] = dist[i];
 		}
 	
 		return arrivedFrom;
@@ -245,9 +254,11 @@ vector<int> Graph::shortestPathArray(int src, bool printOpen, int dest, bool ear
 	}
 	if (printOpen)
 	{
-		printf("Vertex Distance from Source %d\n", src);
+		//printf("Vertex Distance from Source %d\n", src);
+		//for (int i = 0; i < V; ++i)
+		//	printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
 		for (int i = 0; i < V; ++i)
-			printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
+			matrix[src][i] = dist[i];
 	}
 
 	return arrivedFrom;
