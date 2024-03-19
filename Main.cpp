@@ -75,13 +75,13 @@ int main(int, char ** argv)
 	const int range = max - min + 1;
 	const int num1 = std::rand() % range + min;
 	const int num2 = std::rand() % range + min;
-	const int source_vert_Id = num1;
-	const int dest_vert_Id = num2;
+	const int source_vert_Id = 213;
+	const int dest_vert_Id = 451;
 	mesh->samples = { mesh->verts[source_vert_Id]->idx , mesh->verts[dest_vert_Id]->idx };
 	Graph gmesh = Dijkstra::meshToGraph(mesh);
-	Dijkstra::timing(gmesh, source_vert_Id, dest_vert_Id, Dijkstra::MIN_HEAP);
-	Dijkstra::fprinting(gmesh, Dijkstra::MIN_HEAP);
-	Dijkstra::fprintingOnce(gmesh,source_vert_Id, dest_vert_Id, Dijkstra::MIN_HEAP);
+	Dijkstra::timing(gmesh, source_vert_Id, dest_vert_Id, Dijkstra::ARRAY);
+	//Dijkstra::fprinting(gmesh, Dijkstra::ARRAY);
+	//Dijkstra::fprintingOnce(gmesh,source_vert_Id, dest_vert_Id, Dijkstra::ARRAY);
 	Dijkstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id, Dijkstra::MIN_HEAP);
 
 	for (size_t i = 0; i < mesh->edges.size(); i++)

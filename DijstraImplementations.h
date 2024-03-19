@@ -41,13 +41,13 @@ namespace Dijkstra
 			switch (method)
 			{
 			case Dijkstra::MIN_HEAP:
-				g.shortestPath(i, true, -1);
+				g.shortestPath(i, true, -1,  false);
 				break;
 			case Dijkstra::ARRAY:
-				g.shortestPathArray(i, true, -1);
+				g.shortestPathArray(i, true, -1, false);
 				break;
 			case Dijkstra::FIB_HEAP:
-				//g.shortestPathFibHeap(i, true, -1);
+				//g.shortestPathFibHeap(i, true, -1, false);
 				break;
 			default:
 				break;
@@ -60,13 +60,13 @@ namespace Dijkstra
 		switch (method)
 		{
 		case Dijkstra::MIN_HEAP:
-			g.shortestPath(source, true, dest);
+			g.shortestPath(source, true, dest, false);
 			break;
 		case Dijkstra::ARRAY:
-			g.shortestPathArray(source, true, dest);
+			g.shortestPathArray(source, true, dest, false);
 			break;
 		case Dijkstra::FIB_HEAP:
-			//g.shortestPathFibHeap(source, true, dest);
+			//g.shortestPathFibHeap(source, true, dest, false);
 			break;
 		default:
 			break;
@@ -82,19 +82,19 @@ namespace Dijkstra
 		case Dijkstra::MIN_HEAP:
 			std::cout << "Time is started." << std::endl;
 			begin = std::chrono::steady_clock::now();
-			g.shortestPath(source, false, dest);
+			g.shortestPath(source, false, dest, true);
 			end = std::chrono::steady_clock::now();
 			break;
 		case Dijkstra::ARRAY:
 			std::cout << "Time is started." << std::endl;
 			begin = std::chrono::steady_clock::now();
-			g.shortestPathArray(source, false, dest);
+			g.shortestPathArray(source, false, dest, true);
 			end = std::chrono::steady_clock::now();			
 			break;
 		case Dijkstra::FIB_HEAP:
 			std::cout << "Time is started." << std::endl;
 			begin = std::chrono::steady_clock::now();
-			//g.shortestPathFibHeap(source, false, dest);
+			//g.shortestPathFibHeap(source, false, dest, true);
 			end = std::chrono::steady_clock::now();			
 			break;
 		default:
@@ -111,13 +111,13 @@ namespace Dijkstra
 		switch (method)
 		{
 		case Dijkstra::MIN_HEAP:
-			path = g.shortestPath(source, false, dest);
+			path = g.shortestPath(source, false, dest, true);
 			break;
 		case Dijkstra::ARRAY:
-			path = g.shortestPathArray(source, false, dest);
+			path = g.shortestPathArray(source, false, dest, true);
 			break;
 		case Dijkstra::FIB_HEAP:
-			//path = g.shortestPathFibHeap(source, false, dest);
+			//path = g.shortestPathFibHeap(source, false, dest, true);
 			break;
 		default:
 			break;
