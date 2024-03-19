@@ -52,7 +52,8 @@ namespace VectorMath
 		const float deltaY = y[1] - v[1];
 		const float deltaZ = y[2] - v[2];
 
-		return fabs(sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+		//return fabs(sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+		return sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 	}
 
 	float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2)

@@ -14,6 +14,14 @@ namespace Dijkstra
 		ARRAY,
 		FIB_HEAP
 	};
+
+	inline Graph meshToGraph(const Mesh* mesh);
+	inline void fprinting(Graph g, MinFindMethod method);
+	inline void fprintingCompare(Graph g, MinFindMethod method);
+	inline void fprintingOnce(Graph g, int source, int dest, MinFindMethod method);
+	inline void timing(Graph g, int source, int dest, MinFindMethod method);
+	inline void pathDrawing(Mesh* mesh, Graph g, int source, int dest, MinFindMethod method);
+
 	Graph meshToGraph(const Mesh* mesh)
 	{
 		const int V = mesh->verts.size();
@@ -47,7 +55,29 @@ namespace Dijkstra
 				g.shortestPathArray(i, true, -1, false);
 				break;
 			case Dijkstra::FIB_HEAP:
-				//g.shortestPathFibHeap(i, true, -1, false);
+				g.shortestPathFibHeap(i, true, -1, false);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+			
+	void fprintingCompare(Graph g, MinFindMethod method)
+	{
+		const int numNodes = g.V;
+		for (size_t i = 0; i < numNodes; i++)
+		{
+			switch (method)
+			{
+			case Dijkstra::MIN_HEAP:
+				g.shortestPath(i, true, -1,  false);
+				break;
+			case Dijkstra::ARRAY:
+				g.shortestPathArray(i, true, -1, false);
+				break;
+			case Dijkstra::FIB_HEAP:
+				g.shortestPathFibHeap(i, true, -1, false);
 				break;
 			default:
 				break;
@@ -66,7 +96,7 @@ namespace Dijkstra
 			g.shortestPathArray(source, true, dest, false);
 			break;
 		case Dijkstra::FIB_HEAP:
-			//g.shortestPathFibHeap(source, true, dest, false);
+			g.shortestPathFibHeap(source, true, dest, false);
 			break;
 		default:
 			break;
@@ -94,7 +124,7 @@ namespace Dijkstra
 		case Dijkstra::FIB_HEAP:
 			std::cout << "Time is started." << std::endl;
 			begin = std::chrono::steady_clock::now();
-			//g.shortestPathFibHeap(source, false, dest, true);
+			g.shortestPathFibHeap(source, false, dest, true);
 			end = std::chrono::steady_clock::now();			
 			break;
 		default:
@@ -117,7 +147,7 @@ namespace Dijkstra
 			path = g.shortestPathArray(source, false, dest, true);
 			break;
 		case Dijkstra::FIB_HEAP:
-			//path = g.shortestPathFibHeap(source, false, dest, true);
+			path = g.shortestPathFibHeap(source, false, dest, true);
 			break;
 		default:
 			break;
