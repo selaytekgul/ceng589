@@ -27,9 +27,9 @@ int main(int, char ** argv)
 	//mesh->loadOff("tr_reg_000.off");
 	//mesh->loadOff("for timing/centaur.off");
 	//mesh->loadOff("for timing/man.off");
-	mesh->loadOff("for timing/weirdSphere.off");
+	//mesh->loadOff("for timing/weirdSphere.off");
 	//mesh->loadOff("for fprinting/horse0.off");
-	//mesh->loadOff("for fprinting/man0.off");
+	mesh->loadOff("for fprinting/man0.off");
 	//mesh->loadOff("0.off");
 	//mesh->loadOff("car.off");
 	//mesh->loadOff("coffeecup.off");
@@ -79,7 +79,7 @@ int main(int, char ** argv)
 	const int dest_vert_Id = num2;
 	mesh->samples = { mesh->verts[source_vert_Id]->idx , mesh->verts[dest_vert_Id]->idx };
 	Graph gmesh = Dijstra::meshToGraph(mesh);
-	Dijstra::timing(gmesh, source_vert_Id, dest_vert_Id);
+	//Dijstra::timing(gmesh, source_vert_Id, dest_vert_Id);
 	//Dijstra::fprinting(gmesh);
 	Dijstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id);
 

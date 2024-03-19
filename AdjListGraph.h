@@ -31,7 +31,7 @@ public:
 
 	// prints shortest path from s
 	vector<int> Graph::shortestPath(int src, bool printOpen, int dest);
-	vector<int> Graph::shortestPathFibHeap(int src, bool printOpen, int dest);
+	//vector<int> Graph::shortestPathFibHeap(int src, bool printOpen, int dest);
 	vector<int> Graph::shortestPathArray(int src, bool printOpen, int dest);
 
 };
@@ -106,6 +106,15 @@ vector<int> Graph::shortestPath(int src, bool printOpen, int dest)
 			}
 		}
 	}
+		// Print shortest distances stored in dist[]
+		if (printOpen)
+		{
+			printf("Vertex Distance from Source %d\n", src);
+			for (int i = 0; i < V; ++i)
+				printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
+		}
+	
+		return arrivedFrom;
 }
 
 //// Prints shortest paths from src to all other vertices
@@ -170,15 +179,7 @@ vector<int> Graph::shortestPath(int src, bool printOpen, int dest)
 //		}
 //	}
 //
-//	// Print shortest distances stored in dist[]
-//	if (printOpen)
-//	{
-//		printf("Vertex Distance from Source %d\n", src);
-//		for (int i = 0; i < V; ++i)
-//			printf("%d \t\t %f \tfrom %d\n", i, dist[i], arrivedFrom[i]);
-//	}
-//
-//	return arrivedFrom;
+
 //}
 
 int returnMinWeightIndexInAnArray(const std::vector<float> weights, const std::vector<bool> visited)

@@ -33,7 +33,16 @@ namespace Dijstra
 		for (size_t i = 0; i < numNodes; i++)
 		{
 			g.shortestPath(i, true, -1);
+			//g.shortestPathArray(i, true, -1);
+			//g.shortestPathFibHeap(i, true, -1);
 		}
+	}
+		
+	void fprintingOnce(Graph g, int source, int dest)
+	{
+			g.shortestPath(source, true, dest);
+			//g.shortestPathArray(source, true, dest);
+			//g.shortestPathFibHeap(source, true, dest);
 	}
 
 	void timing(Graph g, int source, int dest)
@@ -52,6 +61,8 @@ namespace Dijstra
 	void pathDrawing(Mesh* mesh, Graph g, int source, int dest)
 	{
 		std::vector<int> path = g.shortestPath(source, false, dest);
+		//std::vector<int> path = g.shortestPathArray(source, false, dest);
+		//std::vector<int> path = g.shortestPathFibHeap(source, false, dest);
 		for (Edge* edge : mesh->edges)
 		{
 			const int v1Idx = edge->v1i;
