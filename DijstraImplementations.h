@@ -6,8 +6,14 @@
 //https://stackoverflow.com/a/27739925
 #include <chrono>
 
-namespace Dijstra
+namespace Dijkstra
 {
+	enum MinFindMethod
+	{
+		MIN_HEAP,
+		ARRAY,
+		FIB_HEAP
+	};
 	Graph meshToGraph(const Mesh* mesh)
 	{
 		const int V = mesh->verts.size();
@@ -27,42 +33,95 @@ namespace Dijstra
 		return gmesh;
 	}
 	
-	void fprinting(Graph g)
+	void fprinting(Graph g, MinFindMethod method)
 	{
 		const int numNodes = g.V;
 		for (size_t i = 0; i < numNodes; i++)
 		{
-			g.shortestPath(i, true, -1);
-			//g.shortestPathArray(i, true, -1);
-			//g.shortestPathFibHeap(i, true, -1);
+			switch (method)
+			{
+			case Dijkstra::MIN_HEAP:
+				g.shortestPath(i, true, -1);
+				break;
+			case Dijkstra::ARRAY:
+				g.shortestPathArray(i, true, -1);
+				break;
+			case Dijkstra::FIB_HEAP:
+				break;
+			default:
+				//g.shortestPathFibHeap(i, true, -1);
+				break;
+			}
 		}
 	}
 		
-	void fprintingOnce(Graph g, int source, int dest)
+	void fprintingOnce(Graph g, int source, int dest, MinFindMethod method)
 	{
+		switch (method)
+		{
+		case Dijkstra::MIN_HEAP:
 			g.shortestPath(source, true, dest);
+			break;
+		case Dijkstra::ARRAY:
 			//g.shortestPathArray(source, true, dest);
+			break;
+		case Dijkstra::FIB_HEAP:
+			break;
+		default:
 			//g.shortestPathFibHeap(source, true, dest);
+			break;
+		}
 	}
 
-	void timing(Graph g, int source, int dest)
+	void timing(Graph g, int source, int dest, MinFindMethod method)
 	{
-		std::cout << "Time is started." << std::endl;
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-		//g.shortestPath(source, false, dest);
-		g.shortestPathArray(source, false, dest);
-		//g.shortestPathFibHeap(source, false, dest);
-		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::time_point begin;
+		std::chrono::steady_clock::time_point end;
+		switch (method)
+		{
+		case Dijkstra::MIN_HEAP:
+			std::cout << "Time is started." << std::endl;
+			begin = std::chrono::steady_clock::now();
+			g.shortestPath(source, false, dest);
+			end = std::chrono::steady_clock::now();
+			break;
+		case Dijkstra::ARRAY:
+			std::cout << "Time is started." << std::endl;
+			begin = std::chrono::steady_clock::now();
+			g.shortestPathArray(source, false, dest);
+			end = std::chrono::steady_clock::now();			
+			break;
+		case Dijkstra::FIB_HEAP:
+			std::cout << "Time is started." << std::endl;
+			begin = std::chrono::steady_clock::now();
+			//g.shortestPathFibHeap(source, false, dest);
+			end = std::chrono::steady_clock::now();			
+			break;
+		default:
+			break;
+		}
 		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
 		std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 	}
 
-	void pathDrawing(Mesh* mesh, Graph g, int source, int dest)
+	void pathDrawing(Mesh* mesh, Graph g, int source, int dest, MinFindMethod method)
 	{
-		std::vector<int> path = g.shortestPath(source, false, dest);
-		//std::vector<int> path = g.shortestPathArray(source, false, dest);
-		//std::vector<int> path = g.shortestPathFibHeap(source, false, dest);
+		std::vector<int> path = {};
+		switch (method)
+		{
+		case Dijkstra::MIN_HEAP:
+			path = g.shortestPath(source, false, dest);
+			break;
+		case Dijkstra::ARRAY:
+			path = g.shortestPathArray(source, false, dest);
+			break;
+		case Dijkstra::FIB_HEAP:
+			break;
+		default:
+			//path = g.shortestPathFibHeap(source, false, dest);
+			break;
+		}
 		for (Edge* edge : mesh->edges)
 		{
 			const int v1Idx = edge->v1i;
