@@ -47,9 +47,9 @@ namespace Dijkstra
 				g.shortestPathArray(i, true, -1);
 				break;
 			case Dijkstra::FIB_HEAP:
+				//g.shortestPathFibHeap(i, true, -1);
 				break;
 			default:
-				//g.shortestPathFibHeap(i, true, -1);
 				break;
 			}
 		}
@@ -63,12 +63,12 @@ namespace Dijkstra
 			g.shortestPath(source, true, dest);
 			break;
 		case Dijkstra::ARRAY:
-			//g.shortestPathArray(source, true, dest);
+			g.shortestPathArray(source, true, dest);
 			break;
 		case Dijkstra::FIB_HEAP:
+			//g.shortestPathFibHeap(source, true, dest);
 			break;
 		default:
-			//g.shortestPathFibHeap(source, true, dest);
 			break;
 		}
 	}
@@ -117,9 +117,9 @@ namespace Dijkstra
 			path = g.shortestPathArray(source, false, dest);
 			break;
 		case Dijkstra::FIB_HEAP:
+			//path = g.shortestPathFibHeap(source, false, dest);
 			break;
 		default:
-			//path = g.shortestPathFibHeap(source, false, dest);
 			break;
 		}
 		for (Edge* edge : mesh->edges)
