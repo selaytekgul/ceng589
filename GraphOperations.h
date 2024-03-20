@@ -326,7 +326,7 @@ namespace GraphOperations
         std::string writefn = fileName + std::to_string(method) + ".off";
         manipulateFirstNLines(verticesx, verticesy, readfn, writefn);
     }
-
+    
     std::vector<std::vector<float>> createWUniform(const Mesh* mesh, const float weight)
     {
         int length = mesh->verts.size();

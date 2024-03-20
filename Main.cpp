@@ -41,9 +41,9 @@ int main(int, char ** argv)
 	//std::string fileName = { "cube3" };
 	
 	//std::string fileName = { "faces/face" };
-	std::string fileName = { "faces/face-low" };
+	//std::string fileName = { "faces/face-low" };
 	//std::string fileName = { "faces/facem" };
-	//std::string fileName = { "faces/facem-low" };
+	std::string fileName = { "faces/facem-low" };
 	
 	//std::string fileName = { "doubleOpenCube3" };
 
