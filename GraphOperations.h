@@ -445,8 +445,8 @@ namespace GraphOperations
     
     Eigen::VectorXf calculateXDense(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
     {
-        Eigen::MatrixXf matrixW = createEigenMatrix(W);
-        //Eigen::MatrixXf matrixW = createEigenMatrix(W).transpose();
+        //Eigen::MatrixXf matrixW = createEigenMatrix(W);
+        Eigen::MatrixXf matrixW = createEigenMatrix(W).transpose();
 
         Eigen::VectorXf eigenVector(W.size());
 
@@ -459,10 +459,11 @@ namespace GraphOperations
         Eigen::VectorXf x = matrixW.colPivHouseholderQr().solve(eigenVector);
 
         //std::cout << x << std::endl;
-        std::ofstream fout;
-        fout.open("matrixW.txt");
-        fout << matrixW;
-        fout.close();
+        //printVectorOfVectors(W);
+        //std::ofstream fout;
+        //fout.open("matrixW.txt");
+        //std::cout << matrixW;
+        //fout.close();
 
         return x;
     }
@@ -589,8 +590,9 @@ namespace GraphOperations
 
         return copiedEigenMatrix;
     }
-    double cot(double angle) {
-        return 1.0 / tan(angle);
+    float cot(float angle) {
+        float retVal = sinf(angle) == 0 ? 0 : cosf(angle) / sinf(angle);
+        return retVal;
     }
 
     float returnWeight(Mesh* mesh, const int vertIdxi, const int vertIdxj, const ParameterizationMethod method)
@@ -619,9 +621,11 @@ namespace GraphOperations
                 if (endPoint1Idx == vertIdxi && endPoint2Idx == vertIdxj
                     || endPoint2Idx == vertIdxi && endPoint1Idx == vertIdxj)
                 {
-                    float weight = calculateCotForEdge(mesh, edgeIdx);
+                    weight = calculateCotForEdge(mesh, edgeIdx);
+                    return weight;
                 }
             }
+            return weight;
         }
             break;
         case ParameterizationMethod::MEAN:

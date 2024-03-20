@@ -75,11 +75,15 @@ namespace TriangleMeshMath
 		triVertsIds vertIdxsInTri = getVertexIdsOfTriangle(mesh, triangleIndex);
 		edgeVertsIds edgeIdxs = getVertexIdsOfEdge(mesh, edgeId);
 		int retVertId = 0;
-		for (size_t i = 0; i < 2; i++)
+		for (size_t i = 0; i < 3; i++)
 		{
-			const int v = edgeIdxs[i];
-			auto it = std::find(vertIdxsInTri.begin(), vertIdxsInTri.end(), v);
-			if (it == vertIdxsInTri.end()) {
+			const int v = vertIdxsInTri[i];
+			//auto it = std::find(vertIdxsInTri.begin(), vertIdxsInTri.end(), v);
+			//if (it == vertIdxsInTri.end()) {
+			//	retVertId = v;
+			//}
+			auto it = std::find(edgeIdxs.begin(), edgeIdxs.end(), v);
+			if (it == edgeIdxs.end()) {
 				retVertId = v;
 			}
 		}

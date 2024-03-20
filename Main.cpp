@@ -41,9 +41,9 @@ int main(int, char ** argv)
 	//std::string fileName = { "cube3" };
 	
 	//std::string fileName = { "faces/face" };
-	//std::string fileName = { "faces/face-low" };
+	std::string fileName = { "faces/face-low" };
 	//std::string fileName = { "faces/facem" };
-	std::string fileName = { "faces/facem-low" };
+	//std::string fileName = { "faces/facem-low" };
 	
 	//std::string fileName = { "doubleOpenCube3" };
 
@@ -53,7 +53,7 @@ int main(int, char ** argv)
 
 	mesh->loadOff(fileName + ".off");
 
-	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC, fileName);
+	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM, fileName);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
