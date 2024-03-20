@@ -772,8 +772,7 @@ namespace GraphOperations
             int vertIdx = TriangleMeshMath::getOtherVertexIdOfTriangle(mesh, triIdx, edgeIdx);
 
             float angle = findAngleForTan(mesh, triIdx, vertIdxi);
-            //angle = findAngle(mesh, edgeIdx, vertIdx);
-            totalTanHalf += cot(angle);
+            //totalTanHalf += cot(angle); //Creates improved (more closed mouth)
 
             totalTanHalf += tan(angle / 2.0f);
         }
