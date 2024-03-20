@@ -775,13 +775,13 @@ namespace GraphOperations
             //angle = findAngle(mesh, edgeIdx, vertIdx);
             totalTanHalf += cot(angle);
 
-            //totalTanHalf += tan(angle / 2.0f);
+            totalTanHalf += tan(angle / 2.0f);
         }
 
         mesh->computeLength(edgeIdx);
         const float edgeLength = edge->length;
-        //return totalTanHalf / (static_cast<float>(neighborTriangleNum) * edgeLength);
-        return totalTanHalf / static_cast<float>(neighborTriangleNum);
+        return totalTanHalf / (static_cast<float>(neighborTriangleNum) * edgeLength);
+        //return totalTanHalf / static_cast<float>(neighborTriangleNum);
 
     }
 
