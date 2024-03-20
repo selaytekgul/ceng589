@@ -54,7 +54,7 @@ namespace GraphOperations
     inline Eigen::MatrixXf createEigenMatrix(const std::vector<std::vector<float>>& data);
 
     inline float findAngle(Mesh* mesh, const int edgeIdx, const int vertIdx);
-    //inline float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi);
+    inline float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi);
 
     inline float cot(float angle);
     inline float returnWeight(Mesh* mesh, const int vertIdxi, const int vertIdxj, const ParameterizationMethod method);
@@ -715,21 +715,22 @@ namespace GraphOperations
     }
 
 
-    //float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi)
-    //{
-    //    //const float* edgeVert1coords = mesh->verts[mesh->edges[edgeIdx]->v1i]->coords;
-    //    //const float* edgeVert2coords = mesh->verts[mesh->edges[edgeIdx]->v2i]->coords;
+    float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi)
+    {
+        //const float* edgeVert1coords = mesh->verts[mesh->edges[edgeIdx]->v1i]->coords;
+        //const float* edgeVert2coords = mesh->verts[mesh->edges[edgeIdx]->v2i]->coords;
 
-    //    //const float* otherVertcoords = mesh->verts[vertIdx]->coords;
+        //const float* otherVertcoords = mesh->verts[vertIdx]->coords;
 
-    //    //float vector1[3] = {};
-    //    //float vector2[3] = {};
-    //    //VectorMath::vector(vector1, edgeVert1coords, otherVertcoords);
-    //    //VectorMath::vector(vector2, edgeVert2coords, otherVertcoords);
+        //float vector1[3] = {};
+        //float vector2[3] = {};
+        //VectorMath::vector(vector1, edgeVert1coords, otherVertcoords);
+        //VectorMath::vector(vector2, edgeVert2coords, otherVertcoords);
 
-    //    //const float angle = VectorMath::calculateAngleBetweenVectors(vector1, vector2);
-    //    return angle;
-    //}
+        //const float angle = VectorMath::calculateAngleBetweenVectors(vector1, vector2);
+        return {};
+        //return angle;
+    }
 
 
     float calculateCotForEdge(Mesh* mesh, const int edgeIdx)
