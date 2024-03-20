@@ -38,9 +38,9 @@ int main(int, char ** argv)
 	//mesh->loadOff("faces/face.off");
 	//mesh->loadOff("faces/face-low.off");
 	//mesh->loadOff("faces/facem.off");
-	mesh->loadOff("faces/facem-low.off");
+	//mesh->loadOff("faces/facem-low.off");
 
-	//mesh->loadOff("doubleOpenCube3.off");
+	mesh->loadOff("doubleOpenCube3.off");
 	//mesh->createCube(20.0f);
 	//mesh->createOpenCube(20.0f);
 	//mesh->createDoubleOpenCube(20.0f);

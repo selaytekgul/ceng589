@@ -16,6 +16,7 @@
 #include <stack>
 #include <algorithm>
 #include <map>
+#include <string>
 
 #include <fstream>
 #include <iomanip>
@@ -41,11 +42,14 @@ namespace GraphOperations
     inline void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, float weight);
-    inline std::vector<std::vector<float>> calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
+    inline Eigen::VectorXf calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
 
     inline void printMatrixToAFile(std::vector<std::vector<float>> W);
     inline void printVectorOfVectors(const std::vector<std::vector<float>>& vec);
 
+    inline Eigen::MatrixXf createEigenMatrix(const std::vector<std::vector<float>>& data);
+    inline void writeOFF(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename);
+    inline void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename);
 
     std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList)
     {
@@ -291,10 +295,9 @@ namespace GraphOperations
             break;
         }
 
-
-        calculateX(W, bx);
-        calculateX(W, by);
-
+        const Eigen::VectorXf& verticesx = calculateX(W, bx);
+        const Eigen::VectorXf& verticesy = calculateX(W, by);
+        manipulateFirstNLines(verticesx, verticesy, "doubleOpenCube3.off");
     }
 
     std::vector<std::vector<float>> createWUniform(const Mesh* mesh,float weight)
@@ -392,12 +395,84 @@ namespace GraphOperations
         return b;
     }
     
-    std::vector<std::vector<float>> calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
+    Eigen::VectorXf calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
     {
-        Eigen::Matrix <float, 3, 3> martixA;
-        martixA.setZero();
-        std::cout << martixA << std::endl;
-        return {};
+        Eigen::MatrixXf matrixW = createEigenMatrix(W);
+
+        Eigen::VectorXf eigenVector(W.size());
+
+        // Fill the Eigen vector with data from std::vector<std::vector<float>>
+        for (int i = 0; i < W.size(); ++i) {
+            eigenVector(i) = b[i][0];
+        }
+        Eigen::VectorXf x = matrixW.colPivHouseholderQr().solve(eigenVector);
+
+        std::cout << x << std::endl;
+
+
+        return x;
+    }
+
+    void writeOFF(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename) {
+        std::ofstream ofs(filename);
+        if (!ofs.is_open()) {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
+
+        // Write the header for OFF file
+        ofs << "OFF" << std::endl;
+        ofs << verticesx.size()<< " 0 0" << std::endl;
+
+        // Write the vertices
+        for (int i = 0; i < verticesx.size(); i++) {
+            ofs << verticesx(i) << " " << verticesy(i) << " 0" << std::endl;
+        }
+
+        ofs.close();
+        std::cout << "OFF file saved: " << filename << std::endl;
+    }
+
+    void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename) {
+        std::ifstream ifs(filename);
+        if (!ifs.is_open()) {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
+
+        // Read the entire file into a vector of strings
+        std::vector<std::string> lines;
+        std::string line;
+        while (std::getline(ifs, line)) {
+            lines.push_back(line);
+        }
+
+        ifs.close();
+        //lines[0] = "OFF\n";
+
+        // Manipulate the first n lines
+        for (int i = 2; i < verticesx.size() + 2 && i < lines.size(); ++i) {
+            // Manipulate line i here
+            // For example, you can print the line:
+            //std::cout << "Original line " << i << ": " << lines[i] << std::endl;
+            // Or you can modify the line, e.g., lines[i] = "new content";
+            lines[i] = std::to_string(verticesx(i-2)) + " " + std::to_string(verticesy(i-2)) + " 0";
+        }
+
+        // Write the modified lines back to the file
+        std::ofstream ofs(filename);
+        if (!ofs.is_open()) {
+            std::cerr << "Error opening file for writing: " << filename << std::endl;
+            return;
+        }
+
+        for (const std::string& line : lines) {
+            ofs << line << std::endl;
+        }
+
+        ofs.close();
+
+        std::cout << "Manipulation complete for the first " << std::to_string(verticesx.size()) << " lines of " << filename << std::endl;
     }
 
     void printMatrixToAFile(std::vector<std::vector<float>> W)
@@ -413,6 +488,34 @@ namespace GraphOperations
             fout << std::endl;
         }
         fout.close();
+    }
+
+    Eigen::MatrixXf createEigenMatrix(const std::vector<std::vector<float>>& data) {
+        // Get the dimensions of the data
+        int rows = static_cast<float>(data.size());
+        int cols = rows > 0 ? static_cast<float>(data[0].size()) : 0;
+
+        // Create a dynamically allocated array to hold the data
+        float* dataArray = new float[rows * cols];
+
+        // Copy data from vector<vector<int>> to the dynamically allocated array
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                dataArray[i * cols + j] = data[i][j];
+            }
+        }
+
+        // Create Eigen MatrixXx using the copied data
+        Eigen::Map<Eigen::MatrixXf> eigenMatrix(dataArray, rows, cols);
+
+        // Optionally, you can copy the data if you want to keep it after deleting the original array
+        Eigen::MatrixXf copiedEigenMatrix = eigenMatrix;
+
+        // Free the dynamically allocated memory
+        delete[] dataArray;
+
+        // Return the Eigen MatrixXx
+        return copiedEigenMatrix;
     }
 
 }
