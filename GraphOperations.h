@@ -759,10 +759,10 @@ namespace GraphOperations
         for (size_t i = 0; i < neighborTriangleNum; i++)
         {
             int triIdx = edge->triList[i];
-            //float angle = findAngleForTan(mesh, triIdx, vertIdxi);
             int vertIdx = TriangleMeshMath::getOtherVertexIdOfTriangle(mesh, triIdx, edgeIdx);
 
-            float angle = findAngle(mesh, edgeIdx, vertIdx);
+            float angle = findAngleForTan(mesh, triIdx, vertIdxi);
+            angle = findAngle(mesh, edgeIdx, vertIdx);
             totalTanHalf += cot(angle);
 
             //totalTanHalf += tan(angle / 2.0f);
