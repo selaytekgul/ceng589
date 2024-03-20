@@ -9,6 +9,7 @@
 //#include <Inventor/nodes/SoLineSet.h>
 //#include <Inventor/nodes/SoDrawStyle.h>
 #include <random>
+#include <string>
 
 #include <Eigen/Dense>
 
@@ -24,28 +25,35 @@ int main(int, char ** argv)
 	Mesh* mesh = new Mesh();
 	//Painter* painter = new Painter();
 
-	//mesh->loadOff("tr_reg_000.off");
-	//mesh->loadOff("for timing/centaur.off");
-	//mesh->loadOff("for timing/man.off");
-	//mesh->loadOff("for timing/weirdSphere.off");
-	//mesh->loadOff("for fprinting/horse0.off");
-	//mesh->loadOff("for fprinting/man0.off");
-	//mesh->loadOff("0.off");
-	//mesh->loadOff("car.off");
-	//mesh->loadOff("coffeecup.off");
-	//mesh->loadOff("bunny.off");
-	//mesh->loadOff("cube3.off");
-	//mesh->loadOff("faces/face.off");
-	//mesh->loadOff("faces/face-low.off");
-	//mesh->loadOff("faces/facem.off");
-	//mesh->loadOff("faces/facem-low.off");
+	//std::string fileName = { "tr_reg_000" };
+	//
+	//std::string fileName = { "for timing/centaur" };
+	//std::string fileName = { "for timing/man" };
+	//
+	//std::string fileName = { "for timing/weirdSphere" };
+	//std::string fileName = { "for fprinting/horse0" };
+	//std::string fileName = { "for fprinting/man0" };
 
-	mesh->loadOff("doubleOpenCube3.off");
+	//std::string fileName = { "0" };
+	//std::string fileName = { "car" };
+	//std::string fileName = { "coffeecup" };
+	//std::string fileName = { "bunny" };
+	//std::string fileName = { "cube3" };
+	
+	//std::string fileName = { "faces/face" };
+	//std::string fileName = { "faces/face-low" };
+	//std::string fileName = { "faces/facem" };
+	std::string fileName = { "faces/facem-low" };
+	
+	//std::string fileName = { "doubleOpenCube3" };
+
 	//mesh->createCube(20.0f);
 	//mesh->createOpenCube(20.0f);
 	//mesh->createDoubleOpenCube(20.0f);
 
-	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM);
+	mesh->loadOff(fileName + ".off");
+
+	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::HARMONIC, fileName);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();

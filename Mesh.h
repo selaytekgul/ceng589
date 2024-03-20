@@ -5,6 +5,7 @@
 #include <map>
 #include "TypeDefinitions.h"
 #include "VectorMath.h"
+class Mesh;
 
 struct Vertex
 {
@@ -25,7 +26,7 @@ struct Edge
 {
 	int edge_idx; //edges[idx]
 	int v1i, v2i; //endpnts
-	float length;
+	float length = 1.0;
 	int existedTriangeNumber = 0;
 	bool isItBoundary = false;
 	bool isItPathPart = false;
@@ -33,12 +34,8 @@ struct Edge
 	bool isItTraversed = false;
 	bool isInShortestPath = false;
 	std::vector< int > triList;
-	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) { computeLength(); };
 
-	void computeLength()
-	{
-		length = 1;
-	}
+	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) {};
 };
 
 struct Triangle
@@ -66,9 +63,11 @@ public:
 	std::map<int, int> boundIndexToMeshId;
 	std::map<int, int> meshIndexToBoundId;
 
-	Mesh() {} ;
+	Mesh() {};
 	void createCube(float side);
 	void createOpenCube(float side);
 	void createDoubleOpenCube(float side);
-	void loadOff(char* name);
+	void loadOff(std::string name);
+	void computeLength(int edgeIdx);
+
 };

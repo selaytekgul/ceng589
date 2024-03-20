@@ -33,23 +33,33 @@ namespace GraphOperations
     };
 
     inline std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList);
-    inline void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method);
+    inline void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method, std::string fileName);
     inline std::vector<Edge*> findAnyBoundaries(const Mesh* mesh);
     inline std::vector<Edge*> findOrderedEntireBoundaryList(std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<Edge*>> findOrderedEntireBoundaryListImproved(std::vector<Edge*> boundaryEdges);
     inline std::vector<Edge*> returnLongestBoundary(Mesh* mesh, std::vector<std::vector<Edge*>> boundaryEdges);
 
-    inline void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges);
+    inline void parameterize(Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges, std::string fileName);
     inline std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
-    inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, float weight);
-    inline Eigen::VectorXf calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
+    inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, const float weight);
+    inline std::vector<std::vector<float>> createWHarmonic(Mesh* mesh);
+    inline Eigen::VectorXf calculateXDense(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
 
+    inline void printVec(std::vector<int> vec);
     inline void printMatrixToAFile(std::vector<std::vector<float>> W);
     inline void printVectorOfVectors(const std::vector<std::vector<float>>& vec);
 
     inline Eigen::MatrixXf createEigenMatrix(const std::vector<std::vector<float>>& data);
+
+    inline float findAngle(Mesh* mesh, const int edgeIdx, const int vertIdx);
+    inline double cot(double angle);
+    inline float returnWeight(Mesh* mesh, const int vertIdxi, const int vertIdxj, const ParameterizationMethod method);
+
     inline void writeOFF(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename);
-    inline void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename);
+    inline void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& readfilename, const std::string& writefilename);
+
+    inline float calculateCotForEdge(Mesh* mesh, const int edgeIdx);
+
 
     std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList)
     {
@@ -68,13 +78,13 @@ namespace GraphOperations
         return { closest, minDistance };
     }
 
-    void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method)
+    void generateDiskParameterization(Mesh* mesh, const ParameterizationMethod method, std::string fileName)
     {
         std::vector<Edge*> boundaryEdges = findAnyBoundaries(mesh);
         //std::vector<Edge*> boundaryList = findOrderedEntireBoundaryList(boundaryEdges);
         std::vector<std::vector<Edge*>> boundaryListImproved = findOrderedEntireBoundaryListImproved(boundaryEdges);
         std::vector<Edge*> longestBoundaryList = returnLongestBoundary(mesh, boundaryListImproved);
-        parameterize(mesh, method, longestBoundaryList);
+        parameterize(mesh, method, longestBoundaryList, fileName);
 
         int x = 0;
     }
@@ -268,7 +278,7 @@ namespace GraphOperations
         }
     }
 
-    void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges)
+    void parameterize(Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges, std::string fileName)
     {
         std::vector<std::vector<float>> bx = createb(mesh, 0, boundaryEdges);
         std::vector<std::vector<float>> by = createb(mesh, 1, boundaryEdges);
@@ -281,12 +291,17 @@ namespace GraphOperations
                 float weight = 1.0;
                 W = createWUniform(mesh, weight);
                 //printVectorOfVectors(W);
-                printMatrixToAFile(W);
+                //printMatrixToAFile(W);
                 int a = 1;
             }
             break;
         case ParameterizationMethod::HARMONIC:
-
+            {
+                W = createWHarmonic(mesh);
+                //printVectorOfVectors(W);
+                printMatrixToAFile(W);
+                int a = 1;
+            }
             break;
         case ParameterizationMethod::MEAN:
 
@@ -295,12 +310,14 @@ namespace GraphOperations
             break;
         }
 
-        const Eigen::VectorXf& verticesx = calculateX(W, bx);
-        const Eigen::VectorXf& verticesy = calculateX(W, by);
-        manipulateFirstNLines(verticesx, verticesy, "doubleOpenCube3.off");
+        const Eigen::VectorXf& verticesx = calculateXDense(W, bx);
+        const Eigen::VectorXf& verticesy = calculateXDense(W, by);
+        std::string readfn = fileName + ".off";
+        std::string writefn = fileName + std::to_string(method) + ".off";
+        manipulateFirstNLines(verticesx, verticesy, readfn, writefn);
     }
 
-    std::vector<std::vector<float>> createWUniform(const Mesh* mesh,float weight)
+    std::vector<std::vector<float>> createWUniform(const Mesh* mesh, const float weight)
     {
         int length = mesh->verts.size();
         std::vector<std::vector<float>> W(length, std::vector<float>(length, 0.0));
@@ -316,9 +333,40 @@ namespace GraphOperations
                 int numberOfNeighbors = vert->vertList.size();
                 for (size_t j = 0; j < numberOfNeighbors; j++)
                 {
-                    W[i][j] = weight;
+                    int vertIdx = vert->vertList[j];
+                    W[i][vertIdx] = weight;
                 }
                 W[i][i] = -numberOfNeighbors;
+            }
+        }
+        return W;
+    }
+    
+    std::vector<std::vector<float>> createWHarmonic(Mesh* mesh)
+    {
+        int length = mesh->verts.size();
+        std::vector<std::vector<float>> W(length, std::vector<float>(length, 0.0));
+        for (size_t i = 0; i < length; i++)
+        {
+            Vertex* vert = mesh->verts[i];
+            if (vert->isItInLongestBoundary)
+            {
+                W[i][i] = 1.0;
+            }
+            else
+            {
+                int numberOfNeighbors = vert->vertList.size();
+                float weightsSum = 0.0;
+                for (size_t j = 0; j < numberOfNeighbors; j++)
+                {
+                    if (i == j)
+                        continue;
+                    int vertIdx = vert->vertList[j];
+                    float weight = returnWeight(mesh, i, vertIdx, ParameterizationMethod::HARMONIC);
+                    W[i][vertIdx] = weight;
+                    weightsSum += weight;
+                }
+                W[i][i] = -weightsSum;
             }
         }
         return W;
@@ -366,7 +414,7 @@ namespace GraphOperations
         int prevV2idx = firstV2->idx;
         float angle = boundaryEdgeIndexToAngle[firstEdgeIndex];
         
-        const float r = 25.0;
+        const float r = 1.0;
         b[firstV1->idx][0] = coordinate == 0 ? r * cos(0) : r * sin(0);
         b[firstV2->idx][0] = coordinate == 0 ? r * cos(angle) : r * sin(angle);
         for (size_t i = 1; i < boundaryEdgesLength - 1; i++)
@@ -395,9 +443,10 @@ namespace GraphOperations
         return b;
     }
     
-    Eigen::VectorXf calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
+    Eigen::VectorXf calculateXDense(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
     {
         Eigen::MatrixXf matrixW = createEigenMatrix(W);
+        //Eigen::MatrixXf matrixW = createEigenMatrix(W).transpose();
 
         Eigen::VectorXf eigenVector(W.size());
 
@@ -405,10 +454,15 @@ namespace GraphOperations
         for (int i = 0; i < W.size(); ++i) {
             eigenVector(i) = b[i][0];
         }
+
+        //std::cout << std::endl << eigenVector << std::endl;
         Eigen::VectorXf x = matrixW.colPivHouseholderQr().solve(eigenVector);
 
-        std::cout << x << std::endl;
-
+        //std::cout << x << std::endl;
+        std::ofstream fout;
+        fout.open("matrixW.txt");
+        fout << matrixW;
+        fout.close();
 
         return x;
     }
@@ -433,10 +487,10 @@ namespace GraphOperations
         std::cout << "OFF file saved: " << filename << std::endl;
     }
 
-    void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename) {
-        std::ifstream ifs(filename);
+    void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& readfilename, const std::string& writefilename) {
+        std::ifstream ifs(readfilename);
         if (!ifs.is_open()) {
-            std::cerr << "Error opening file: " << filename << std::endl;
+            std::cerr << "Error opening file: " << readfilename << std::endl;
             return;
         }
 
@@ -450,6 +504,21 @@ namespace GraphOperations
         ifs.close();
         //lines[0] = "OFF\n";
 
+
+        std::ofstream ofscopy(writefilename);
+        if (!ofscopy.is_open()) {
+            std::cerr << "Error opening file for writing: " << writefilename << std::endl;
+            return;
+        }
+
+        for (const std::string& line : lines) {
+            ofscopy << line << std::endl;
+        }
+
+        ofscopy.close();
+
+
+
         // Manipulate the first n lines
         for (int i = 2; i < verticesx.size() + 2 && i < lines.size(); ++i) {
             // Manipulate line i here
@@ -460,9 +529,9 @@ namespace GraphOperations
         }
 
         // Write the modified lines back to the file
-        std::ofstream ofs(filename);
+        std::ofstream ofs(writefilename);
         if (!ofs.is_open()) {
-            std::cerr << "Error opening file for writing: " << filename << std::endl;
+            std::cerr << "Error opening file for writing: " << writefilename << std::endl;
             return;
         }
 
@@ -472,7 +541,7 @@ namespace GraphOperations
 
         ofs.close();
 
-        std::cout << "Manipulation complete for the first " << std::to_string(verticesx.size()) << " lines of " << filename << std::endl;
+        std::cout << "Manipulation complete for the first " << std::to_string(verticesx.size()) << " lines of " << writefilename << std::endl;
     }
 
     void printMatrixToAFile(std::vector<std::vector<float>> W)
@@ -510,12 +579,95 @@ namespace GraphOperations
 
         // Optionally, you can copy the data if you want to keep it after deleting the original array
         Eigen::MatrixXf copiedEigenMatrix = eigenMatrix;
-
+        //std::cout << copiedEigenMatrix;
         // Free the dynamically allocated memory
         delete[] dataArray;
 
+        //std::cout << std::endl << std::endl << copiedEigenMatrix << std::endl;
+
         // Return the Eigen MatrixXx
+
         return copiedEigenMatrix;
+    }
+    double cot(double angle) {
+        return 1.0 / tan(angle);
+    }
+
+    float returnWeight(Mesh* mesh, const int vertIdxi, const int vertIdxj, const ParameterizationMethod method)
+    {
+        float weight = 0.0;
+        switch (method)
+        {
+        case ParameterizationMethod::UNIFORM:
+        {
+            weight = 1.0;
+        }
+        break;
+        case ParameterizationMethod::HARMONIC:
+        {
+            if (vertIdxi == vertIdxj)
+                return 0.0f;
+            const Vertex* verti = mesh->verts[vertIdxi];
+            const Vertex* vertj = mesh->verts[vertIdxj];
+            const int neighEdgeNum = verti->edgeList.size();
+            for (size_t eachNeighEdge = 0; eachNeighEdge < neighEdgeNum; eachNeighEdge++)
+            {
+                const int edgeIdx = verti->edgeList[eachNeighEdge];
+                Edge* edge = mesh->edges[edgeIdx];
+                const int endPoint1Idx = edge->v1i;
+                const int endPoint2Idx = edge->v2i;
+                if (endPoint1Idx == vertIdxi && endPoint2Idx == vertIdxj
+                    || endPoint2Idx == vertIdxi && endPoint1Idx == vertIdxj)
+                {
+                    float weight = calculateCotForEdge(mesh, edgeIdx);
+                }
+            }
+        }
+            break;
+        case ParameterizationMethod::MEAN:
+        {
+                // take the endPointNum into consideration
+            weight = 0.0f;
+        }
+            break;
+        default:
+            weight = 0.0f;
+            break;
+        }
+        return weight;
+    }
+
+    float findAngle(Mesh* mesh, const int edgeIdx, const int vertIdx)
+    {
+        const float* edgeVert1coords = mesh->verts[mesh->edges[edgeIdx]->v1i]->coords;
+        const float* edgeVert2coords = mesh->verts[mesh->edges[edgeIdx]->v2i]->coords;
+        
+        const float* otherVertcoords = mesh->verts[vertIdx]->coords;
+
+        float vector1[3] = {};
+        float vector2[3] = {};
+        VectorMath::vector(vector1, edgeVert1coords, otherVertcoords);
+        VectorMath::vector(vector2, edgeVert2coords, otherVertcoords);
+
+        const float angle = VectorMath::calculateAngleBetweenVectors(vector1, vector2);
+        return angle;
+    }
+
+    float calculateCotForEdge(Mesh* mesh, const int edgeIdx)
+    {
+        float totalCot = 0.0;
+        Edge* edge = mesh->edges[edgeIdx];
+        const int neighborTriangleNum = edge->existedTriangeNumber;
+        //mesh->computeLength(edgeIdx);
+        //const float edgeLength = edge->length;
+        for (size_t i = 0; i < neighborTriangleNum; i++)
+        {
+            int triIdx = edge->triList[i];
+            int vertIdx = TriangleMeshMath::getOtherVertexIdOfTriangle(mesh, triIdx, edgeIdx);
+            float angle = findAngle(mesh, edgeIdx, vertIdx);
+            totalCot += cot(angle);
+        }
+        return totalCot/static_cast<float>(neighborTriangleNum);
     }
 
 }

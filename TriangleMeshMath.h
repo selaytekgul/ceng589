@@ -5,9 +5,11 @@
 namespace TriangleMeshMath
 {
 	inline triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex);
+	inline edgeVertsIds getVertexIdsOfEdge(const Mesh* mesh, const int edgeIndex);
 	inline triVertsCoords getCoordsOfTriangle(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
 	inline triOtherVertsCoords getOtherCoordsOfTriangle(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber);
 	inline triOtherVertsCoords getVectorsToTheOtherVertices(const triOtherVertsCoords& coordsOfOtherVertices, const int selectedVertexNumber, const triVertsCoords& coordsOfVerticesOfTriangle);
+	inline int getOtherVertexIdOfTriangle(const Mesh* mesh, const int triangleIndex, const int edgeId);
 
 	triVertsIds getVertexIdsOfTriangle(const Mesh* mesh, const int triangleIndex)
 	{
@@ -16,6 +18,14 @@ namespace TriangleMeshMath
 		vertexIdsOfTriangle[1] = mesh->tris[triangleIndex]->v2i;
 		vertexIdsOfTriangle[2] = mesh->tris[triangleIndex]->v3i;
 		return vertexIdsOfTriangle;
+	}
+	
+	edgeVertsIds getVertexIdsOfEdge(const Mesh* mesh, const int edgeIndex)
+	{
+		edgeVertsIds vertexIdsOfEdge;
+		vertexIdsOfEdge[0] = mesh->edges[edgeIndex]->v1i;
+		vertexIdsOfEdge[1] = mesh->edges[edgeIndex]->v2i;
+		return vertexIdsOfEdge;
 	}
 	
 	triVertsCoords getCoordsOfTriangle(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
@@ -58,5 +68,21 @@ namespace TriangleMeshMath
 			}
 		}
 		return vectorsToTheOtherVertices;
+	}
+
+	int getOtherVertexIdOfTriangle(const Mesh* mesh, const int triangleIndex, const int edgeId)
+	{
+		triVertsIds vertIdxsInTri = getVertexIdsOfTriangle(mesh, triangleIndex);
+		edgeVertsIds edgeIdxs = getVertexIdsOfEdge(mesh, edgeId);
+		int retVertId = 0;
+		for (size_t i = 0; i < 2; i++)
+		{
+			const int v = edgeIdxs[i];
+			auto it = std::find(vertIdxsInTri.begin(), vertIdxsInTri.end(), v);
+			if (it == vertIdxsInTri.end()) {
+				retVertId = v;
+			}
+		}
+		return retVertId;
 	}
 }

@@ -3,9 +3,9 @@
 float Vertex::minDiameter = std::numeric_limits<float>::max();
 float Vertex::maxDiameter = std::numeric_limits<float>::min();
 
-void Mesh::loadOff(char* name)
+void Mesh::loadOff(std::string name)
 {
-	FILE* fPtr = fopen(name, "r");
+	FILE* fPtr = fopen(name.c_str(), "r");
 	char str[334];
 
 	fscanf(fPtr, "%s", str);
@@ -299,4 +299,14 @@ void Mesh::discardInfAndNegativeDiameters()
 		if (std::isinf(selectedVertex->diameter))
 			selectedVertex->diameter = Vertex::maxDiameter;
 	}
+}
+
+
+void Mesh::computeLength(int edgeIdx)
+{
+	int endP1 = edges[edgeIdx]->v1i;
+	int endP2 = edges[edgeIdx]->v2i;
+	const float* v1coords = verts[endP1]->coords;
+	const float* v2coords = verts[endP2]->coords;
+	edges[edgeIdx]->length = VectorMath::distanceBetweenVectors(v1coords, v2coords);
 }
