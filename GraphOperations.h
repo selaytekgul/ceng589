@@ -688,7 +688,7 @@ namespace GraphOperations
                     return weight;
                 }
             }
-            weight = 0.0f;
+            return weight;
         }
             break;
         default:
@@ -759,14 +759,19 @@ namespace GraphOperations
         {
             int triIdx = edge->triList[i];
             //float angle = findAngleForTan(mesh, triIdx, vertIdxi);
-            float angle = findAngle(mesh, edgeIdx, vertIdxi);
+            int vertIdx = TriangleMeshMath::getOtherVertexIdOfTriangle(mesh, triIdx, edgeIdx);
 
-            totalTanHalf += tan(angle / 2.0f);
+            float angle = findAngle(mesh, edgeIdx, vertIdx);
+            totalTanHalf += cot(angle);
+
+            //totalTanHalf += tan(angle / 2.0f);
         }
 
         mesh->computeLength(edgeIdx);
         const float edgeLength = edge->length;
-        return totalTanHalf / (static_cast<float>(neighborTriangleNum) * edgeLength);
+        //return totalTanHalf / (static_cast<float>(neighborTriangleNum) * edgeLength);
+        return totalTanHalf / static_cast<float>(neighborTriangleNum);
+
     }
 
 }
