@@ -43,6 +43,8 @@ namespace GraphOperations
     inline std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, const float weight);
     inline std::vector<std::vector<float>> createWHarmonic(Mesh* mesh);
+    inline std::vector<std::vector<float>> createWMean(Mesh* mesh);
+
     inline Eigen::VectorXf calculateXDense(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
 
     inline void printVec(std::vector<int> vec);
@@ -52,13 +54,16 @@ namespace GraphOperations
     inline Eigen::MatrixXf createEigenMatrix(const std::vector<std::vector<float>>& data);
 
     inline float findAngle(Mesh* mesh, const int edgeIdx, const int vertIdx);
-    inline double cot(double angle);
+    //inline float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi);
+
+    inline float cot(float angle);
     inline float returnWeight(Mesh* mesh, const int vertIdxi, const int vertIdxj, const ParameterizationMethod method);
 
     inline void writeOFF(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& filename);
     inline void manipulateFirstNLines(const Eigen::VectorXf& verticesx, const Eigen::VectorXf& verticesy, const std::string& readfilename, const std::string& writefilename);
 
     inline float calculateCotForEdge(Mesh* mesh, const int edgeIdx);
+    inline float calculateTanHalfForEdge(Mesh* mesh, const int edgeIdx, int vertIdxi);
 
 
     std::pair<float*, float> findClosestVertex(const float* source, std::vector<float*> targetList)
@@ -304,7 +309,12 @@ namespace GraphOperations
             }
             break;
         case ParameterizationMethod::MEAN:
-
+            {
+                W = createWMean(mesh);
+                //printVectorOfVectors(W);
+                printMatrixToAFile(W);
+                int a = 1;
+            }
             break;
         default:
             break;
@@ -363,6 +373,36 @@ namespace GraphOperations
                         continue;
                     int vertIdx = vert->vertList[j];
                     float weight = returnWeight(mesh, i, vertIdx, ParameterizationMethod::HARMONIC);
+                    W[i][vertIdx] = weight;
+                    weightsSum += weight;
+                }
+                W[i][i] = -weightsSum;
+            }
+        }
+        return W;
+    }
+        
+    std::vector<std::vector<float>> createWMean(Mesh* mesh)
+    {
+        int length = mesh->verts.size();
+        std::vector<std::vector<float>> W(length, std::vector<float>(length, 0.0));
+        for (size_t i = 0; i < length; i++)
+        {
+            Vertex* vert = mesh->verts[i];
+            if (vert->isItInLongestBoundary)
+            {
+                W[i][i] = 1.0;
+            }
+            else
+            {
+                int numberOfNeighbors = vert->vertList.size();
+                float weightsSum = 0.0;
+                for (size_t j = 0; j < numberOfNeighbors; j++)
+                {
+                    if (i == j)
+                        continue;
+                    int vertIdx = vert->vertList[j];
+                    float weight = returnWeight(mesh, i, vertIdx, ParameterizationMethod::MEAN);
                     W[i][vertIdx] = weight;
                     weightsSum += weight;
                 }
@@ -630,7 +670,24 @@ namespace GraphOperations
             break;
         case ParameterizationMethod::MEAN:
         {
-                // take the endPointNum into consideration
+            if (vertIdxi == vertIdxj)
+                return 0.0f;
+            const Vertex* verti = mesh->verts[vertIdxi];
+            const Vertex* vertj = mesh->verts[vertIdxj];
+            const int neighEdgeNum = verti->edgeList.size();
+            for (size_t eachNeighEdge = 0; eachNeighEdge < neighEdgeNum; eachNeighEdge++)
+            {
+                const int edgeIdx = verti->edgeList[eachNeighEdge];
+                Edge* edge = mesh->edges[edgeIdx];
+                const int endPoint1Idx = edge->v1i;
+                const int endPoint2Idx = edge->v2i;
+                if (endPoint1Idx == vertIdxi && endPoint2Idx == vertIdxj
+                    || endPoint2Idx == vertIdxi && endPoint1Idx == vertIdxj)
+                {
+                    weight = calculateTanHalfForEdge(mesh, edgeIdx, vertIdxi);
+                    return weight;
+                }
+            }
             weight = 0.0f;
         }
             break;
@@ -657,6 +714,24 @@ namespace GraphOperations
         return angle;
     }
 
+
+    //float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi)
+    //{
+    //    //const float* edgeVert1coords = mesh->verts[mesh->edges[edgeIdx]->v1i]->coords;
+    //    //const float* edgeVert2coords = mesh->verts[mesh->edges[edgeIdx]->v2i]->coords;
+
+    //    //const float* otherVertcoords = mesh->verts[vertIdx]->coords;
+
+    //    //float vector1[3] = {};
+    //    //float vector2[3] = {};
+    //    //VectorMath::vector(vector1, edgeVert1coords, otherVertcoords);
+    //    //VectorMath::vector(vector2, edgeVert2coords, otherVertcoords);
+
+    //    //const float angle = VectorMath::calculateAngleBetweenVectors(vector1, vector2);
+    //    return angle;
+    //}
+
+
     float calculateCotForEdge(Mesh* mesh, const int edgeIdx)
     {
         float totalCot = 0.0;
@@ -672,6 +747,26 @@ namespace GraphOperations
             totalCot += cot(angle);
         }
         return totalCot/static_cast<float>(neighborTriangleNum);
+    }
+
+    float calculateTanHalfForEdge(Mesh* mesh, const int edgeIdx, int vertIdxi)
+    {
+        float totalTanHalf = 0.0;
+        Edge* edge = mesh->edges[edgeIdx];
+        const int neighborTriangleNum = edge->existedTriangeNumber;
+        
+        for (size_t i = 0; i < neighborTriangleNum; i++)
+        {
+            int triIdx = edge->triList[i];
+            //float angle = findAngleForTan(mesh, triIdx, vertIdxi);
+            float angle = findAngle(mesh, edgeIdx, vertIdxi);
+
+            totalTanHalf += tan(angle / 2.0f);
+        }
+
+        mesh->computeLength(edgeIdx);
+        const float edgeLength = edge->length;
+        return totalTanHalf / (static_cast<float>(neighborTriangleNum) * edgeLength);
     }
 
 }

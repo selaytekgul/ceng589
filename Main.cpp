@@ -53,7 +53,7 @@ int main(int, char ** argv)
 
 	mesh->loadOff(fileName + ".off");
 
-	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM, fileName);
+	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::MEAN, fileName);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
