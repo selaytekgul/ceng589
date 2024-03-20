@@ -323,8 +323,10 @@ namespace GraphOperations
             break;
         }
 
-        const Eigen::VectorXf& verticesx = calculateXDense(W, bx);
-        const Eigen::VectorXf& verticesy = calculateXDense(W, by);
+        //const Eigen::VectorXf& verticesx = calculateXDense(W, bx);
+        //const Eigen::VectorXf& verticesy = calculateXDense(W, by);
+        const Eigen::VectorXf& verticesx = calculateXSparse(mesh, W, bx);
+        const Eigen::VectorXf& verticesy = calculateXSparse(mesh, W, by);
         std::string readfn = fileName + ".off";
         std::string writefn = fileName + std::to_string(method) + ".off";
         manipulateFirstNLines(verticesx, verticesy, readfn, writefn);
@@ -356,31 +358,37 @@ namespace GraphOperations
         //coefficients.reserve();
         for (size_t i = 0; i < W.size(); i++)
         {
-            for (size_t j = 0; j < W.size(); j++)
+            if (mesh->verts[i]->isItInLongestBoundary)
             {
-                //if (mesh->verts[i]->isItInLongestBoundary)
-                if (isAlmostZero(W[i][j]))
+                coefficients.push_back(Eigen::Triplet<float>(i, i, W[i][i]));
+            }
+            else
+            {
+                int numNeigh = mesh->verts[i]->vertList.size();
+                for (size_t j = 0; j < numNeigh; j++)
                 {
-                    coefficients.push_back(Eigen::Triplet<float>(i, j, W[i][j]));
+                    //coefficients.push_back(Eigen::Triplet<float>(i, mesh->verts[i]->vertList[j], W[i][mesh->verts[i]->vertList[j]]));
+                    coefficients.push_back(Eigen::Triplet<float>(mesh->verts[i]->vertList[j], i, W[mesh->verts[i]->vertList[j]][i]));
                 }
+                coefficients.push_back(Eigen::Triplet<float>(i, i, W[i][i]));
             }
         }
 
         sparseMatrix.setFromTriplets(coefficients.begin(), coefficients.end());
 
-        //Eigen::SimplicialCholesky<Eigen::SparseMatrix<float>> chol(sparseMatrix);  // performs a Cholesky factorization of A
-        //x = chol.solve(eigenVector);         // use the factorization to solve for the given right hand side
+        Eigen::SimplicialCholesky<Eigen::SparseMatrix<float>> chol(sparseMatrix.transpose());  // performs a Cholesky factorization of A
+        x = chol.solve(eigenVector);         // use the factorization to solve for the given right hand side
 
 
 
-        Eigen::SparseLU<Eigen::SparseMatrix<float>, Eigen::COLAMDOrdering<int> >   solver;
-        // fill A and b;
-        // Compute the ordering permutation vector from the structural pattern of A
-        solver.analyzePattern(sparseMatrix);
-        // Compute the numerical factorization 
-        solver.factorize(sparseMatrix);
-        //Use the factors to solve the linear system 
-        x = solver.solve(eigenVector);
+        //Eigen::SparseLU<Eigen::SparseMatrix<float>, Eigen::COLAMDOrdering<int> >   solver;
+        //// fill A and b;
+        //// Compute the ordering permutation vector from the structural pattern of A
+        //solver.analyzePattern(sparseMatrix);
+        //// Compute the numerical factorization 
+        //solver.factorize(sparseMatrix);
+        ////Use the factors to solve the linear system 
+        //x = solver.solve(eigenVector);
         return x;
     }
 
