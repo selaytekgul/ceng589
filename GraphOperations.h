@@ -17,6 +17,9 @@
 #include <algorithm>
 #include <map>
 
+#include <fstream>
+#include <iomanip>
+
 namespace GraphOperations
 {
     enum ParameterizationMethod
@@ -36,8 +39,8 @@ namespace GraphOperations
     inline void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, float weight);
-
-
+    
+    inline void printMatrixToAFile(std::vector<std::vector<float>> W);
     inline void printVectorOfVectors(const std::vector<std::vector<float>>& vec);
 
 
@@ -271,6 +274,7 @@ namespace GraphOperations
                 float weight = 1.0;
                 W = createWUniform(mesh, weight);
                 //printVectorOfVectors(W);
+                printMatrixToAFile(W);
                 int a = 1;
             }
             break;
@@ -392,5 +396,19 @@ namespace GraphOperations
         return {};
     }
 
+    void printMatrixToAFile(std::vector<std::vector<float>> W)
+    {
+        std::ofstream fout;
+        fout.open("matrixW.txt");
+        for (int i = 0; i < W.size(); ++i)
+        {
+            for (size_t j = 0; j < W.size(); j++)
+            {
+                fout << std::fixed << std::setprecision(4) << W[i][j] << " ";
+            }
+            fout << std::endl;
+        }
+        fout.close();
+    }
 
 }

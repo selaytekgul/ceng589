@@ -32,6 +32,7 @@ struct Edge
 	bool isItInLongestBoundary = false;
 	bool isItTraversed = false;
 	bool isInShortestPath = false;
+	std::vector< int > triList;
 	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) { computeLength(); };
 
 	void computeLength()
@@ -51,10 +52,10 @@ class Mesh
 {
 private:
 	void addTriangle(int v1, int v2, int v3);
-	void addEdge(int v1, int v2);
-	void modifyEdge(int v1, int v2);
+	void addEdge(int v1, int v2, int triIdx);
+	void modifyEdge(int v1, int v2, int triIdx);
 	void addVertex(float x, float y, float z);
-	bool makeVertsNeighbor(int v1i, int v2i);
+	bool makeVertsNeighbor(int v1i, int v2i, int triIdx);
 public:
 	void setMinMaxDiameters();
 	void discardInfAndNegativeDiameters();

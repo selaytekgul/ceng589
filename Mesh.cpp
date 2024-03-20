@@ -199,18 +199,18 @@ void Mesh::addTriangle(int v1, int v2, int v3)
 	verts[v2]->triList.push_back(idx);
 	verts[v3]->triList.push_back(idx);
 
-	if (! makeVertsNeighbor(v1, v2) )
-		addEdge(v1, v2);
+	if (! makeVertsNeighbor(v1, v2, idx))
+		addEdge(v1, v2, idx);
 
-	if (! makeVertsNeighbor(v1, v3) )
-		addEdge(v1, v3);
+	if (!makeVertsNeighbor(v1, v3, idx))
+		addEdge(v1, v3, idx);
 
-	if (! makeVertsNeighbor(v2, v3) )
-		addEdge(v2, v3);
+	if (!makeVertsNeighbor(v2, v3, idx))
+		addEdge(v2, v3, idx);
 
 }
 
-bool Mesh::makeVertsNeighbor(int v1i, int v2i)
+bool Mesh::makeVertsNeighbor(int v1i, int v2i, int triIdx)
 {
 	//returns true if v1i already neighbor w/ v2i; false o/w
 
@@ -218,7 +218,7 @@ bool Mesh::makeVertsNeighbor(int v1i, int v2i)
 	{
 		if (verts[v1i]->vertList[i] == v2i)
 		{
-			modifyEdge(v1i, v2i);
+			modifyEdge(v1i, v2i, triIdx);
 			return true;
 		}
 	}
@@ -240,19 +240,19 @@ void Mesh::addVertex(float x, float y, float z)
 	verts.push_back( new Vertex(idx, c) );
 }
 
-void Mesh::addEdge(int v1, int v2)
+void Mesh::addEdge(int v1, int v2, int triIdx)
 {
 	int idx = edges.size();
 	Edge* edge = new Edge(idx, v1, v2);
 	edge->existedTriangeNumber++;
-
+	edge->triList.push_back(triIdx);
 	edges.push_back(edge);
 
 	verts[v1]->edgeList.push_back(idx);
 	verts[v2]->edgeList.push_back(idx);
 }
 
-void Mesh::modifyEdge(int v1, int v2)
+void Mesh::modifyEdge(int v1, int v2, int triIdx)
 {
 	//int edges_size = edges.size();
 	//for (size_t i = 0; i < edges_size; i++)
@@ -268,6 +268,7 @@ void Mesh::modifyEdge(int v1, int v2)
 			|| edges[neighEdge]->v2i == v1 && edges[neighEdge]->v1i == v2)
 		{
 			edges[neighEdge]->existedTriangeNumber++;
+			edges[neighEdge]->triList.push_back(triIdx);
 		}
 	}
 }

@@ -10,7 +10,7 @@
 //#include <Inventor/nodes/SoDrawStyle.h>
 #include <random>
 
-//#include <Eigen/Dense>
+#include <Eigen/Dense>
 
 int main(int, char ** argv)
 {
@@ -25,7 +25,7 @@ int main(int, char ** argv)
 	//Painter* painter = new Painter();
 
 	//mesh->loadOff("tr_reg_000.off");
-	mesh->loadOff("for timing/centaur.off");
+	//mesh->loadOff("for timing/centaur.off");
 	//mesh->loadOff("for timing/man.off");
 	//mesh->loadOff("for timing/weirdSphere.off");
 	//mesh->loadOff("for fprinting/horse0.off");
@@ -38,14 +38,14 @@ int main(int, char ** argv)
 	//mesh->loadOff("faces/face.off");
 	//mesh->loadOff("faces/face-low.off");
 	//mesh->loadOff("faces/facem.off");
-	//mesh->loadOff("faces/facem-low.off");
+	mesh->loadOff("faces/facem-low.off");
 
 	//mesh->loadOff("doubleOpenCube3.off");
 	//mesh->createCube(20.0f);
 	//mesh->createOpenCube(20.0f);
 	//mesh->createDoubleOpenCube(20.0f);
 
-	//GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM);
+	GraphOperations::generateDiskParameterization(mesh, GraphOperations::ParameterizationMethod::UNIFORM);
 	//Segmentor segmentor(mesh);
 	KMeans kmeans(mesh);
 	//segmentor.assignDiameterValuesOfVertices();
@@ -69,17 +69,19 @@ int main(int, char ** argv)
 //		cout << mesh->verts[4]->vertList[nv] << " neighbb\n";
 
 	//root->addChild( painter->getShapeSep(mesh) );
-	std::srand(std::time(NULL)); //seeding for the first time only!
-	const int min = 0;
-	const int max = mesh->verts.size();
-	const int range = max - min + 1;
-	const int num1 = std::rand() % range + min;
-	const int num2 = std::rand() % range + min;
-	const int source_vert_Id = 213;
-	const int dest_vert_Id = 451;
-	mesh->samples = { mesh->verts[source_vert_Id]->idx , mesh->verts[dest_vert_Id]->idx };
-	Graph gmesh = Dijkstra::meshToGraph(mesh);
-	Dijkstra::timing(gmesh, source_vert_Id, dest_vert_Id, Dijkstra::FIB_HEAP);
+	
+	//Part-1
+	//std::srand(std::time(NULL)); //seeding for the first time only!
+	//const int min = 0;
+	//const int max = mesh->verts.size();
+	//const int range = max - min + 1;
+	//const int num1 = std::rand() % range + min;
+	//const int num2 = std::rand() % range + min;
+	//const int source_vert_Id = 213;
+	//const int dest_vert_Id = 451;
+	//mesh->samples = { mesh->verts[source_vert_Id]->idx , mesh->verts[dest_vert_Id]->idx };
+	//Graph gmesh = Dijkstra::meshToGraph(mesh);
+	//Dijkstra::timing(gmesh, source_vert_Id, dest_vert_Id, Dijkstra::FIB_HEAP);
 	//Dijkstra::fprinting(gmesh, Dijkstra::FIB_HEAP);
 	//Dijkstra::fprintingOnce(gmesh,source_vert_Id, dest_vert_Id, Dijkstra::ARRAY);
 	//Dijkstra::pathDrawing(mesh, gmesh, source_vert_Id, dest_vert_Id, Dijkstra::MIN_HEAP);
