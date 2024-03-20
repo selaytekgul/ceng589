@@ -22,7 +22,7 @@
 #include <iomanip>
 
 #include <Eigen/Dense>
-
+#include<Eigen/SparseLU> 
 namespace GraphOperations
 {
     enum ParameterizationMethod
@@ -46,6 +46,7 @@ namespace GraphOperations
     inline std::vector<std::vector<float>> createWMean(Mesh* mesh);
 
     inline Eigen::VectorXf calculateXDense(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
+    inline Eigen::VectorXf calculateXSparse(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
 
     inline void printVec(std::vector<int> vec);
     inline void printMatrixToAFile(std::vector<std::vector<float>> W);
@@ -304,7 +305,7 @@ namespace GraphOperations
             {
                 W = createWHarmonic(mesh);
                 //printVectorOfVectors(W);
-                printMatrixToAFile(W);
+                //printMatrixToAFile(W);
                 int a = 1;
             }
             break;
@@ -312,7 +313,7 @@ namespace GraphOperations
             {
                 W = createWMean(mesh);
                 //printVectorOfVectors(W);
-                printMatrixToAFile(W);
+                //printMatrixToAFile(W);
                 int a = 1;
             }
             break;
@@ -325,6 +326,36 @@ namespace GraphOperations
         std::string readfn = fileName + ".off";
         std::string writefn = fileName + std::to_string(method) + ".off";
         manipulateFirstNLines(verticesx, verticesy, readfn, writefn);
+    }
+
+    Eigen::VectorXf calculateXSparse(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
+    {
+        ////Eigen::MatrixXf matrixW = createEigenMatrix(W);
+        //Eigen::MatrixXf matrixW = createEigenMatrix(W).transpose();
+
+        //Eigen::VectorXf eigenVector(W.size());
+        //Eigen::VectorXf x(W.size());
+
+        //// Fill the Eigen vector with data from std::vector<std::vector<float>>
+        //for (int i = 0; i < W.size(); ++i) {
+        //    eigenVector(i) = b[i][0];
+        //}
+
+        ////std::cout << std::endl << eigenVector << std::endl;
+        //Eigen::VectorXf x = matrixW.colPivHouseholderQr().solve(eigenVector);
+
+
+        ////VectorXd x(n), b(n);
+        //SparseMatrix<double> A;
+        //SparseLU<SparseMatrix<double>, COLAMDOrdering<int> >   solver;
+        //// fill A and b;
+        //// Compute the ordering permutation vector from the structural pattern of A
+        //solver.analyzePattern(A);
+        //// Compute the numerical factorization 
+        //solver.factorize(A);
+        ////Use the factors to solve the linear system 
+        //x = solver.solve(b);
+        return {};
     }
     
     std::vector<std::vector<float>> createWUniform(const Mesh* mesh, const float weight)
