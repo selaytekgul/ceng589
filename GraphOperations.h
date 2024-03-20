@@ -23,6 +23,8 @@
 
 #include <Eigen/Dense>
 #include<Eigen/SparseLU> 
+#include <Eigen/Sparse>
+
 namespace GraphOperations
 {
     enum ParameterizationMethod
@@ -46,8 +48,8 @@ namespace GraphOperations
     inline std::vector<std::vector<float>> createWMean(Mesh* mesh);
 
     inline Eigen::VectorXf calculateXDense(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
-    inline Eigen::VectorXf calculateXSparse(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
-
+    inline Eigen::VectorXf calculateXSparse(Mesh* mesh, std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
+    inline bool isAlmostZero(float value);
     inline void printVec(std::vector<int> vec);
     inline void printMatrixToAFile(std::vector<std::vector<float>> W);
     inline void printVectorOfVectors(const std::vector<std::vector<float>>& vec);
@@ -328,34 +330,63 @@ namespace GraphOperations
         manipulateFirstNLines(verticesx, verticesy, readfn, writefn);
     }
 
-    Eigen::VectorXf calculateXSparse(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
+    Eigen::VectorXf calculateXSparse(Mesh* mesh, std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
     {
-        ////Eigen::MatrixXf matrixW = createEigenMatrix(W);
-        //Eigen::MatrixXf matrixW = createEigenMatrix(W).transpose();
+        //Eigen::MatrixXf matrixW = createEigenMatrix(W);
+        Eigen::MatrixXf matrixW = createEigenMatrix(W).transpose();
 
-        //Eigen::VectorXf eigenVector(W.size());
-        //Eigen::VectorXf x(W.size());
+        Eigen::VectorXf eigenVector(W.size());
+        Eigen::VectorXf x(W.size());
 
-        //// Fill the Eigen vector with data from std::vector<std::vector<float>>
-        //for (int i = 0; i < W.size(); ++i) {
-        //    eigenVector(i) = b[i][0];
-        //}
+        // Fill the Eigen vector with data from std::vector<std::vector<float>>
+        for (int i = 0; i < W.size(); ++i) {
+            eigenVector(i) = b[i][0];
+        }
 
-        ////std::cout << std::endl << eigenVector << std::endl;
+        //std::cout << std::endl << eigenVector << std::endl;
         //Eigen::VectorXf x = matrixW.colPivHouseholderQr().solve(eigenVector);
 
 
-        ////VectorXd x(n), b(n);
-        //SparseMatrix<double> A;
-        //SparseLU<SparseMatrix<double>, COLAMDOrdering<int> >   solver;
-        //// fill A and b;
-        //// Compute the ordering permutation vector from the structural pattern of A
-        //solver.analyzePattern(A);
-        //// Compute the numerical factorization 
-        //solver.factorize(A);
-        ////Use the factors to solve the linear system 
-        //x = solver.solve(b);
-        return {};
+        //VectorXd x(n), b(n);
+        //Eigen::SparseMatrix<double> A;
+
+        // Convert dense matrix to sparse matrix
+        Eigen::SparseMatrix<float> sparseMatrix(W.size(), W.size());
+        std::vector<Eigen::Triplet<float>> coefficients;            // list of non-zeros coefficients
+        //coefficients.reserve();
+        for (size_t i = 0; i < W.size(); i++)
+        {
+            for (size_t j = 0; j < W.size(); j++)
+            {
+                //if (mesh->verts[i]->isItInLongestBoundary)
+                if (isAlmostZero(W[i][j]))
+                {
+                    coefficients.push_back(Eigen::Triplet<float>(i, j, W[i][j]));
+                }
+            }
+        }
+
+        sparseMatrix.setFromTriplets(coefficients.begin(), coefficients.end());
+
+        //Eigen::SimplicialCholesky<Eigen::SparseMatrix<float>> chol(sparseMatrix);  // performs a Cholesky factorization of A
+        //x = chol.solve(eigenVector);         // use the factorization to solve for the given right hand side
+
+
+
+        Eigen::SparseLU<Eigen::SparseMatrix<float>, Eigen::COLAMDOrdering<int> >   solver;
+        // fill A and b;
+        // Compute the ordering permutation vector from the structural pattern of A
+        solver.analyzePattern(sparseMatrix);
+        // Compute the numerical factorization 
+        solver.factorize(sparseMatrix);
+        //Use the factors to solve the linear system 
+        x = solver.solve(eigenVector);
+        return x;
+    }
+
+    bool isAlmostZero(float value) {
+        float tolerance = 1e-6;
+        return fabs(value) < tolerance;
     }
     
     std::vector<std::vector<float>> createWUniform(const Mesh* mesh, const float weight)
