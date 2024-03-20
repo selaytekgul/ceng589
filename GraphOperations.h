@@ -717,19 +717,29 @@ namespace GraphOperations
 
     float findAngleForTan(Mesh* mesh, const int triIdx, const int vertIdxOfi)
     {
-        //const float* edgeVert1coords = mesh->verts[mesh->edges[edgeIdx]->v1i]->coords;
-        //const float* edgeVert2coords = mesh->verts[mesh->edges[edgeIdx]->v2i]->coords;
+        const float* myVertcoords = mesh->verts[vertIdxOfi]->coords;
 
-        //const float* otherVertcoords = mesh->verts[vertIdx]->coords;
+        triVertsIds triVertIdxs = TriangleMeshMath::getVertexIdsOfTriangle(mesh, triIdx);
+        int selectedVertNumInTri = 0;
+        for (size_t i = 0; i < triVertIdxs.size(); i++)
+        {
+            if (vertIdxOfi == triVertIdxs[i])
+                selectedVertNumInTri = i;
+        }
 
-        //float vector1[3] = {};
-        //float vector2[3] = {};
-        //VectorMath::vector(vector1, edgeVert1coords, otherVertcoords);
-        //VectorMath::vector(vector2, edgeVert2coords, otherVertcoords);
+        triVertsCoords tri3VertsCoords = TriangleMeshMath::getCoordsOfTriangle(mesh, triVertIdxs);
+        triOtherVertsCoords tri2VertsCoords = TriangleMeshMath::getOtherCoordsOfTriangle(tri3VertsCoords, selectedVertNumInTri);
 
-        //const float angle = VectorMath::calculateAngleBetweenVectors(vector1, vector2);
-        return {};
-        //return angle;
+        const float* otherVert1coords = tri2VertsCoords[0].data();
+        const float* otherVert2coords = tri2VertsCoords[1].data();
+
+        float vector1[3] = {};
+        float vector2[3] = {};
+        VectorMath::vector(vector1, otherVert1coords, myVertcoords);
+        VectorMath::vector(vector2, otherVert2coords, myVertcoords);
+
+        const float angle = VectorMath::calculateAngleBetweenVectors(vector1, vector2);
+        return angle;
     }
 
 
