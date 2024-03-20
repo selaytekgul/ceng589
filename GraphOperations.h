@@ -20,6 +20,8 @@
 #include <fstream>
 #include <iomanip>
 
+#include <Eigen/Dense>
+
 namespace GraphOperations
 {
     enum ParameterizationMethod
@@ -39,7 +41,8 @@ namespace GraphOperations
     inline void parameterize(const Mesh* mesh, const ParameterizationMethod method, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createb(const Mesh* mesh, int coordinate, std::vector<Edge*> boundaryEdges);
     inline std::vector<std::vector<float>> createWUniform(const Mesh* mesh, float weight);
-    
+    inline std::vector<std::vector<float>> calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b);
+
     inline void printMatrixToAFile(std::vector<std::vector<float>> W);
     inline void printVectorOfVectors(const std::vector<std::vector<float>>& vec);
 
@@ -289,7 +292,8 @@ namespace GraphOperations
         }
 
 
-
+        calculateX(W, bx);
+        calculateX(W, by);
 
     }
 
@@ -390,9 +394,9 @@ namespace GraphOperations
     
     std::vector<std::vector<float>> calculateX(std::vector<std::vector<float>> W, std::vector<std::vector<float>> b)
     {
-        //Eigen::Matrix <float, 3, 3> martixA;
-        //martixA.setZero();
-        //std::cout << martixA << std::endl;
+        Eigen::Matrix <float, 3, 3> martixA;
+        martixA.setZero();
+        std::cout << martixA << std::endl;
         return {};
     }
 
