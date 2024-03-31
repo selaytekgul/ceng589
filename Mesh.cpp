@@ -349,12 +349,57 @@ void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi)
 {
 	const int endP1i = edge->v1i;
 	const int endP2i = edge->v2i;
+	//delete vertices
+	mesh->verts[endP1i]->deleted = true;
+	mesh->verts[endP2i]->deleted = true;
+
+	//delete edge
+	mesh->edges[edge->edge_idx]->deleted = true;
+
+	//delete triangles
+	for (size_t t = 0; t < edge->triList.size(); t++)
+	{
+		int trid = mesh->verts[endP2i]->triList[t];
+		mesh->tris[trid]->deleted = true;
+	}
 
 	if (endP1i == tovi)
 	{
+		//modify connected triangles
 		for (size_t t = 0; t < mesh->verts[endP2i]->triList.size(); t++)
 		{
+			int trid = mesh->verts[endP2i]->triList[t];
+			if (mesh->tris[trid]->deleted == true)
+				continue;
 
+			if (endP2i == mesh->tris[trid]->v1i)
+			{
+				mesh->tris[trid]->v1i = endP1i;
+			}
+			else if (endP2i == mesh->tris[trid]->v2i)
+			{
+				mesh->tris[trid]->v2i = endP1i;
+			}
+			else // if (endP2i == mesh->tris[trid]->v3i)
+			{
+				mesh->tris[trid]->v3i = endP1i;
+			}
+		}
+
+		//modify connected edges
+		for (size_t e = 0; e < mesh->verts[endP2i]->edgeList.size(); e++)
+		{
+			int edgeid = mesh->verts[endP2i]->edgeList[e];
+			if (mesh->edges[edgeid]->deleted == true)
+				continue;
+			if (endP2i == mesh->edges[edgeid]->v1i)
+			{
+				mesh->edges[edgeid]->v1i = endP1i;
+			}
+			else //if (endP2i == mesh->edges[edgeid]->v2i)
+			{
+				mesh->edges[edgeid]->v2i = endP1i;
+			}
 		}
 	}
 	else
