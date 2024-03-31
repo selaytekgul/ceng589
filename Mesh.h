@@ -6,6 +6,8 @@
 #include "TypeDefinitions.h"
 #include "VectorMath.h"
 class Mesh;
+struct Triangle;
+struct Edge;
 
 struct Vertex
 {
@@ -21,6 +23,7 @@ struct Vertex
 	std::vector< int > edgeList;
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 	double winding;
+	bool deleted = false;
 };
 
 struct Edge
@@ -35,15 +38,17 @@ struct Edge
 	bool isItTraversed = false;
 	bool isInShortestPath = false;
 	std::vector< int > triList;
-
+	bool deleted = false;
 	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) {};
 };
+
 
 struct Triangle
 {
 	int tri_idx; //tris[idx]
 	int v1i, v2i, v3i;
 	Triangle(int id, int v1, int v2, int v3) : tri_idx(id), v1i(v1), v2i(v2), v3i(v3) {};
+	bool deleted = false;
 };
 
 class Mesh
@@ -72,5 +77,6 @@ public:
 	void createDoubleOpenCube(float side);
 	void loadOff(std::string name);
 	void computeLength(int edgeIdx);
+	void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi);
 
 };

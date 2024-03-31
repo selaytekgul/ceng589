@@ -10,6 +10,9 @@
 
 void windingNumberTest(Mesh* mesh)
 {
+	float ptr3[3] = { -5.8959f, -16.9698f, 128.8068f };
+	Vertex v3 = { (int)mesh->verts.size(), ptr3 };
+	mesh->windingNumberByYusufSahillioglu(&v3);
 	mesh->windingNumberByYusufSahillioglu(mesh->verts[0]);
 	mesh->windingNumberByYusufSahillioglu(mesh->verts[1]);
 	for (size_t i = 0; i < mesh->verts.size(); i++)
@@ -20,9 +23,6 @@ void windingNumberTest(Mesh* mesh)
 			std::cout << i << ": " << mesh->verts[i]->winding << std::endl;
 		}
 	}
-	float ptr3[3] = { -5.8959f, -16.9698f, 128.8068f };
-	Vertex v3 = { (int)mesh->verts.size(), ptr3 };
-	mesh->windingNumberByYusufSahillioglu(&v3);
 }
 
 int main(int, char ** argv)
@@ -57,6 +57,7 @@ int main(int, char ** argv)
 	//mesh->createDoubleOpenCube(20.0f);
 
 	mesh->loadOff(fileName + ".off");
+	windingNumberTest(mesh);
 
 	return 0;
 }

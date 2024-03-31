@@ -344,3 +344,21 @@ void Mesh::windingNumberByYusufSahillioglu(Vertex* pnt)
 	else
 		pnt->winding = 0.0; //outside
 }
+
+void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi)
+{
+	const int endP1i = edge->v1i;
+	const int endP2i = edge->v2i;
+
+	if (endP1i == tovi)
+	{
+		for (size_t t = 0; t < mesh->verts[endP2i]->triList.size(); t++)
+		{
+
+		}
+	}
+	else
+	{
+
+	}
+};
