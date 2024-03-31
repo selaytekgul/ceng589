@@ -11,7 +11,6 @@
 int main(int, char ** argv)
 {
 	Mesh* mesh = new Mesh();
-	//Painter* painter = new Painter();
 
 	//std::string fileName = { "tr_reg_000" };
 	//
