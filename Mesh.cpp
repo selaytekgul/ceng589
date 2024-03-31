@@ -1,5 +1,7 @@
 #include "Mesh.h"
-
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 float Vertex::minDiameter = std::numeric_limits<float>::max();
 float Vertex::maxDiameter = std::numeric_limits<float>::min();
 
@@ -309,4 +311,36 @@ void Mesh::computeLength(int edgeIdx)
 	const float* v1coords = verts[endP1]->coords;
 	const float* v2coords = verts[endP2]->coords;
 	edges[edgeIdx]->length = VectorMath::distanceBetweenVectors(v1coords, v2coords);
+}
+
+void Mesh::windingNumberByYusufSahillioglu(Vertex* pnt)
+{
+	//computes generalized winding number (eq. 5 in Jacobson'13) of pnt to see whether it is inside the mesh (winding=1) or not (winding=0); holds for watertight meshes (still well-behaved otherwise)
+
+	double a[3], b[3], c[3], aLen, bLen, cLen, twoPI = 2.0 * M_PI;
+	pnt->winding = 0.0;
+	for (int t = 0; t < (int)tris.size(); t++)
+	{
+		for (int ci = 0; ci < 3; ci++)
+		{
+			a[ci] = verts[tris[t]->v1i]->coords[ci] - pnt->coords[ci];
+			b[ci] = verts[tris[t]->v2i]->coords[ci] - pnt->coords[ci];
+			c[ci] = verts[tris[t]->v3i]->coords[ci] - pnt->coords[ci];
+		}
+		aLen = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+		bLen = sqrt(b[0] * b[0] + b[1] * b[1] + b[2] * b[2]);
+		cLen = sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
+		double atan2val= atan2(//determinant(a, b, c), writing the formula below instead of calling a function
+			a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0]) + a[2] * (b[0] * c[1] - b[1] * c[0]),
+			aLen * bLen * cLen + cLen * (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]) + aLen * (c[0] * b[0] + c[1] * b[1] + c[2] * b[2]) + bLen * (a[0] * c[0] + a[1] * c[1] + a[2] * c[2]));
+		//pnt->winding += atan2(5.0, 2.0); //get the value of tan-1(5.0 / 2.0) which is 1.19029 (return in radians: [-pi,pi], 0 if both 2 params=0.0)
+		pnt->winding += atan2val;
+	}
+	float compare1 = pnt->winding;
+	float compare2 = twoPI;
+	//if (pnt->winding >= twoPI)
+	if (abs(pnt->winding - twoPI) < 0.0001)
+		pnt->winding = 1.0; //inside
+	else
+		pnt->winding = 0.0; //outside
 }

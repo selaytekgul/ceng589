@@ -20,6 +20,7 @@ struct Vertex
 	std::vector< int > triList;
 	std::vector< int > edgeList;
 	Vertex(int i, float* c) : idx(i), coords(c) {};
+	double winding;
 };
 
 struct Edge
@@ -62,6 +63,8 @@ public:
 	std::vector< int > samples;
 	std::map<int, int> boundIndexToMeshId;
 	std::map<int, int> meshIndexToBoundId;
+	void windingNumberByYusufSahillioglu(Vertex* pnt);
+
 
 	Mesh() {};
 	void createCube(float side);
