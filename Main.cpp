@@ -1,13 +1,8 @@
 #define HAVE_INT8_T
-//#include "Painter.h"
 #include "Segmentor.h"
 #include "KMeans.h"
 #include "GraphOperations.h"
 #include "DijstraImplementations.h"
-//#include <Inventor/Win/SoWin.h>
-//#include <Inventor/Win/viewers/SoWinExaminerViewer.h>
-//#include <Inventor/nodes/SoLineSet.h>
-//#include <Inventor/nodes/SoDrawStyle.h>
 #include <random>
 #include <string>
 
@@ -15,13 +10,6 @@
 
 int main(int, char ** argv)
 {
-	//HWND window = SoWin::init(argv[0]);
-	//SoWinExaminerViewer* viewer = new SoWinExaminerViewer(window);
-
-	////make a dead simple scene graph by using the Coin library, only containing a single cone under the scenegraph root
-	//SoSeparator* root = new SoSeparator;
-	//root->ref();
-
 	Mesh* mesh = new Mesh();
 	//Painter* painter = new Painter();
 
@@ -53,13 +41,6 @@ int main(int, char ** argv)
 	//mesh->createDoubleOpenCube(20.0f);
 
 	mesh->loadOff(fileName + ".off");
-
-	//Segmentor segmentor(mesh);
-	//KMeans kmeans(mesh);
-	//segmentor.assignDiameterValuesOfVertices();
-	//segmentor.setColorValuesToVertices();
-	//kmeans.assignClusterIdsOfVertices();
-	//kmeans.setColorValuesToVertices();
 
 	mesh->windingNumberByYusufSahillioglu(mesh->verts[0]);
 	mesh->windingNumberByYusufSahillioglu(mesh->verts[1]);
