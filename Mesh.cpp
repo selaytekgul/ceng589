@@ -434,6 +434,85 @@ void Mesh::collapseEdgeTo(Edge* edge, int tovi)
 	}
 };
 
+void Mesh::collapseEdge(Edge* edge)
+{
+	//delete edge
+	if (edges[edge->edge_idx]->deleted == false)
+	{
+		numDeletedEdge++;
+		edges[edge->edge_idx]->deleted = true;
+	}
+
+	//delete triangles
+	for (size_t t = 0; t < edge->triList.size(); t++)
+	{
+		int trid = edge->triList[t];
+		if (tris[trid]->deleted == false)
+		{
+			numDeletedTri++;
+			tris[trid]->deleted = true;
+		}
+	}
+
+	const int endP1i = edge->v1i;
+	const int endP2i = edge->v2i;
+	
+	float coords[3];
+	VectorMath::midpoint(coords, verts[endP1i]->coords, verts[endP2i]->coords);
+
+	int fromvid = endP1i;
+	int tovid = endP2i;
+
+	//delete vertex
+	if (verts[fromvid]->deleted == false)
+	{
+		verts[fromvid]->deleted = true;
+		numDeletedVert++;
+	}
+
+	//modify remaining vertex coords
+	verts[tovid]->coords[0] = coords[0];
+	verts[tovid]->coords[1] = coords[1];
+	verts[tovid]->coords[2] = coords[2];
+
+	//modify connected triangles
+	for (size_t t = 0; t < verts[fromvid]->triList.size(); t++)
+	{
+		int trid = verts[fromvid]->triList[t];
+		if (tris[trid]->deleted == true)
+			continue;
+
+		if (fromvid == tris[trid]->v1i)
+		{
+			tris[trid]->v1i = tovid;
+		}
+		else if (fromvid == tris[trid]->v2i)
+		{
+			tris[trid]->v2i = tovid;
+		}
+		else // if (fromvid == tris[trid]->v3i)
+		{
+			tris[trid]->v3i = tovid;
+		}
+	}
+	
+	//modify connected edges
+	for (size_t e = 0; e < verts[fromvid]->edgeList.size(); e++)
+	{
+		int edgeid = verts[fromvid]->edgeList[e];
+		if (edges[edgeid]->deleted == true)
+			continue;
+		if (fromvid == edges[edgeid]->v1i)
+		{
+			edges[edgeid]->v1i = tovid;
+		}
+		else //if (fromvid == edges[edgeid]->v2i)
+		{
+			edges[edgeid]->v2i = tovid;
+		}
+	}
+}
+
 void Mesh::toOFF(const std::string& filename)
 {
 	const int numVerts = verts.size() - numDeletedVert;

@@ -41,11 +41,11 @@ int main(int, char ** argv)
 	//std::string fileName = { "for fprinting/man0" };
 
 	//std::string fileName = { "0" };
-	std::string fileName = { "1" };
+	//std::string fileName = { "1" };
 	//std::string fileName = { "car" };
 	//std::string fileName = { "coffeecup" };
 	//std::string fileName = { "bunny" };
-	//std::string fileName = { "cube3" };
+	std::string fileName = { "cube3" };
 	//std::string fileName = { "equal_cube3" };
 	
 	//std::string fileName = { "faces/face" };
@@ -69,12 +69,12 @@ int main(int, char ** argv)
 	//	mesh->collapseEdgeTo(mesh->edges[ind], mesh->edges[ind++]->v1i);
 	//}
 
-	for (size_t i = 0; i < mesh->verts.size(); i++)
-	{
-		if (mesh->verts[i]->deleted)
-			continue;
-		original_mesh->inflatePoint(mesh->verts[i]);
-	}
+	//for (size_t i = 0; i < mesh->verts.size(); i++)
+	//{
+	//	if (mesh->verts[i]->deleted)
+	//		continue;
+	//	original_mesh->inflatePoint(mesh->verts[i]);
+	//}
 
 	// Create a priority queue of pairs of integers (max heap)
 	//std::priority_queue<std::pair<int, int>> maxHeap;
@@ -95,8 +95,9 @@ int main(int, char ** argv)
 	//	mesh->collapseEdgeTo(mesh->edges[kvp.first], mesh->edges[kvp.first]->v1i);
 	//	maxHeap.pop(); // Remove the top element
 	//}
+	mesh->collapseEdge(mesh->edges[0]);
 
-	mesh->toOFF(fileName + "_inflate.off");
+	mesh->toOFF(fileName + "_collapse.off");
 	return 0;
 }
 

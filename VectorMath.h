@@ -14,6 +14,8 @@ namespace VectorMath
 	inline float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
 	inline float calculateAngleBetweenVectors(const float* vertex1, const float* vertex2);
 	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
+	inline void midpoint(float v_A[3], const float v_B[3], const float v_C[3]);
+
 
 	//v_A = v_B - v_C
 	void vector(float v_A[3], const float v_B[3], const float v_C[3])
@@ -123,5 +125,14 @@ namespace VectorMath
 		const float dot11 = innerProduct(vertex1, vertex1);
 		const float dot22 = innerProduct(vertex2, vertex2);
 		return std::acos(dot12 / std::sqrt(dot11 * dot22));
+	}
+
+	//v_A : midpoint between v_B and v_C
+	void midpoint(float v_A[3], const float v_B[3], const float v_C[3])
+	{
+		// Calculate the midpoint between v_B and v_C
+		v_A[0] = (v_B[0] + v_C[0]) / 2.0f;
+		v_A[1] = (v_B[1] + v_C[1]) / 2.0f;
+		v_A[2] = (v_B[2] + v_C[2]) / 2.0f;
 	}
 }
