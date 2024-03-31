@@ -3,6 +3,12 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+inline triVertsIds getVertexIdsOfTriangleMesh(const Mesh* mesh, const int triangleIndex);
+inline triVertsCoords getCoordsOfTriangleMesh(const Mesh* mesh, triVertsIds vertexIdsOfTriangle);
+inline triOtherVertsCoords getOtherCoordsOfTriangleMesh(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber);
+inline triOtherVertsCoords getVectorsToTheOtherVerticesMesh(const triOtherVertsCoords& coordsOfOtherVertices, const int selectedVertexNumber, const triVertsCoords& coordsOfVerticesOfTriangle);
+
+
 float Vertex::minDiameter = std::numeric_limits<float>::max();
 float Vertex::maxDiameter = std::numeric_limits<float>::min();
 
@@ -461,3 +467,127 @@ void Mesh::toOFF(const std::string& filename)
 	std::cout << "OFF file saved: " << filename << std::endl;
 }
 
+void Mesh::inflatePoint(Vertex* vert)
+{
+	if (vert->deleted)
+		return;
+	windingNumberByYusufSahillioglu(vert);
+	//if (vert->winding == 0)
+	//	return;
+	float* normal = returnPointNormal(vert);
+	float alpha = 5;
+	vert->coords[0] += normal[0] * alpha;
+	vert->coords[1] += normal[1] * alpha;
+	vert->coords[2] += normal[2] * alpha;
+	int a = 5;
+}
+
+void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
+{
+	//find the other 2 vertices of the triangle
+	triOtherVertsCoords coordinatesOfOtherVertices = getOtherCoordsOfTriangleMesh(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+
+	//create two vectors from the selected vertex
+	triOtherVertsCoords vectorsToTheOtherVertices = getVectorsToTheOtherVerticesMesh(coordinatesOfOtherVertices, selectedVertexNumber, coordinatesOfVerticesOfTriangle);
+
+	//store two vectors from the selected vertices in a 2D array
+	float vectorsToTheOtherVerticesArray[2][3];
+	for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
+		TD::fillWith(vectorsToTheOtherVerticesArray[otherVertexNumber], vectorsToTheOtherVertices[otherVertexNumber], 3);
+
+	//calculate cross product of the two vectors
+	VectorMath::crossProduct(crossProductVector, vectorsToTheOtherVerticesArray[0], vectorsToTheOtherVerticesArray[1]);
+}
+
+
+float* Mesh::returnPointNormal(Vertex* point)
+{
+	float normal[3] = { 0.0f, 0.0f, 0.0f };
+	float numParticipated = 0.0f;
+	//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add diameters to vertex's diameter attribute
+	for (size_t t= 0; t< point->triList.size(); t++)
+	{
+		if (tris[t]->deleted)
+			continue;
+		int triangleIndex = tris[t]->tri_idx;
+		//get the vertex index number of the vertices of the triangle at hand
+		triVertsIds vertexIdsOfTriangle = getVertexIdsOfTriangleMesh(this, triangleIndex);
+
+		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
+		triVertsCoords coordinatesOfVerticesOfTriangle = getCoordsOfTriangleMesh(this, vertexIdsOfTriangle);
+
+		int selectedVertexNumber = 0;
+		//from the selected vertex of base triangle
+		for (size_t v = 0; v < 3; v++)
+		{
+			if (point->idx == tris[t]->v1i)
+			{
+				selectedVertexNumber = v;
+				break;
+			}
+		}
+		//d is the normal vector from the selected vertex of the base triangle
+		float d[3];
+		calculateNormalVectorMesh(d, coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+		normal[0] += d[0];
+		normal[1] += d[1];
+		normal[2] += d[2];
+		numParticipated++;
+	}
+	normal[0] /= numParticipated;
+	normal[1] /= numParticipated;
+	normal[2] /= numParticipated;
+	return normal;
+}
+
+
+triVertsIds getVertexIdsOfTriangleMesh(const Mesh* mesh, const int triangleIndex)
+{
+	triVertsIds vertexIdsOfTriangle;
+	vertexIdsOfTriangle[0] = mesh->tris[triangleIndex]->v1i;
+	vertexIdsOfTriangle[1] = mesh->tris[triangleIndex]->v2i;
+	vertexIdsOfTriangle[2] = mesh->tris[triangleIndex]->v3i;
+	return vertexIdsOfTriangle;
+}
+
+triVertsCoords getCoordsOfTriangleMesh(const Mesh* mesh, const triVertsIds vertexIdsOfTriangle)
+{
+	triVertsCoords coordinatesOfVerticesOfTriangle;
+	for (size_t vertexNumber = 0; vertexNumber < 3; vertexNumber++)
+	{
+		for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+			coordinatesOfVerticesOfTriangle[vertexNumber][coordinate] = mesh->verts[vertexIdsOfTriangle[vertexNumber]]->coords[coordinate];
+		}
+	}
+	return coordinatesOfVerticesOfTriangle;
+}
+
+triOtherVertsCoords getOtherCoordsOfTriangleMesh(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber)
+{
+	triOtherVertsCoords coordsOfOtherVertices;
+	int number = 0;
+	for (size_t otherVertexNumber = 0; otherVertexNumber < 3; otherVertexNumber++)
+	{
+		if (selectedVertexNumber == otherVertexNumber)
+			continue;
+		//fill the coordinate values of other 2 vertices' array
+		for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+			coordsOfOtherVertices[number][coordinate] = coordsOfVerticesOfTriangle[otherVertexNumber][coordinate];
+		}
+		number++;
+	}
+	return coordsOfOtherVertices;
+}
+
+triOtherVertsCoords getVectorsToTheOtherVerticesMesh(const triOtherVertsCoords& coordsOfOtherVertices, const int selectedVertexNumber, const triVertsCoords& coordsOfVerticesOfTriangle) {
+	triOtherVertsCoords vectorsToTheOtherVertices;
+	for (size_t otherVertexNumber = 0; otherVertexNumber < 2; otherVertexNumber++)
+	{
+		for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+			vectorsToTheOtherVertices[otherVertexNumber][coordinate] =
+				coordsOfOtherVertices[otherVertexNumber][coordinate]
+				- coordsOfVerticesOfTriangle[selectedVertexNumber][coordinate];
+		}
+	}
+	return vectorsToTheOtherVertices;
+}

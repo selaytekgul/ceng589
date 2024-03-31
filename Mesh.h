@@ -67,14 +67,15 @@ public:
 	int numDeletedVert = 0;
 	int numDeletedTri = 0;
 	int numDeletedEdge = 0;
-	void setMinMaxDiameters();
-	void discardInfAndNegativeDiameters();
 	std::vector< Vertex* > verts;
 	std::vector< Triangle* > tris;
 	std::vector< Edge* > edges;
 	std::vector< int > samples;
 	std::map<int, int> boundIndexToMeshId;
 	std::map<int, int> meshIndexToBoundId;
+	
+	void setMinMaxDiameters();
+	void discardInfAndNegativeDiameters();
 	void windingNumberByYusufSahillioglu(Vertex* pnt);
 
 
@@ -86,5 +87,9 @@ public:
 	void computeLength(int edgeIdx);
 	void collapseEdgeTo(Edge* edge, int tovi);
 	void toOFF(const std::string& filename);
+	void inflatePoint(Vertex* vert);
+	void calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber);
+	float* returnPointNormal(Vertex* point);
+
 
 };
