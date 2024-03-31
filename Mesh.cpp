@@ -2,6 +2,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
 float Vertex::minDiameter = std::numeric_limits<float>::max();
 float Vertex::maxDiameter = std::numeric_limits<float>::min();
 
@@ -345,24 +346,29 @@ void Mesh::windingNumberByYusufSahillioglu(Vertex* pnt)
 		pnt->winding = 0.0; //outside
 }
 
-void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi)
+void Mesh::collapseEdgeTo(Edge* edge, int tovi)
 {
-	const int endP1i = edge->v1i;
-	const int endP2i = edge->v2i;
-	//delete vertices
-	mesh->verts[endP1i]->deleted = true;
-	mesh->verts[endP2i]->deleted = true;
-
 	//delete edge
-	mesh->edges[edge->edge_idx]->deleted = true;
+	if (edges[edge->edge_idx]->deleted == false)
+	{
+		numDeletedEdge++;
+		edges[edge->edge_idx]->deleted = true;
+	}
 
 	//delete triangles
 	for (size_t t = 0; t < edge->triList.size(); t++)
 	{
-		int trid = mesh->verts[endP2i]->triList[t];
-		mesh->tris[trid]->deleted = true;
+		int trid = edge->triList[t];
+		if (tris[trid]->deleted == false)
+		{
+			numDeletedTri++;
+			tris[trid]->deleted = true;
+		}
 	}
-	
+
+	const int endP1i = edge->v1i;
+	const int endP2i = edge->v2i;
+
 	int fromvid;
 	int tovid;
 
@@ -377,41 +383,81 @@ void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi)
 		tovid = endP2i;
 	}
 
-	//modify connected triangles
-	for (size_t t = 0; t < mesh->verts[fromvid]->triList.size(); t++)
+	//delete vertex
+	if (verts[fromvid]->deleted == false)
 	{
-		int trid = mesh->verts[fromvid]->triList[t];
-		if (mesh->tris[trid]->deleted == true)
+		verts[fromvid]->deleted = true;
+		numDeletedVert++;
+	}
+	
+	//modify connected triangles
+	for (size_t t = 0; t < verts[fromvid]->triList.size(); t++)
+	{
+		int trid = verts[fromvid]->triList[t];
+		if (tris[trid]->deleted == true)
 			continue;
 
-		if (fromvid == mesh->tris[trid]->v1i)
+		if (fromvid == tris[trid]->v1i)
 		{
-			mesh->tris[trid]->v1i = tovid;
+			tris[trid]->v1i = tovid;
 		}
-		else if (fromvid == mesh->tris[trid]->v2i)
+		else if (fromvid == tris[trid]->v2i)
 		{
-			mesh->tris[trid]->v2i = tovid;
+			tris[trid]->v2i = tovid;
 		}
-		else // if (fromvid == mesh->tris[trid]->v3i)
+		else // if (fromvid == tris[trid]->v3i)
 		{
-			mesh->tris[trid]->v3i = tovid;
+			tris[trid]->v3i = tovid;
 		}
 	}
 
 	//modify connected edges
-	for (size_t e = 0; e < mesh->verts[fromvid]->edgeList.size(); e++)
+	for (size_t e = 0; e < verts[fromvid]->edgeList.size(); e++)
 	{
-		int edgeid = mesh->verts[fromvid]->edgeList[e];
-		if (mesh->edges[edgeid]->deleted == true)
+		int edgeid = verts[fromvid]->edgeList[e];
+		if (edges[edgeid]->deleted == true)
 			continue;
-		if (fromvid == mesh->edges[edgeid]->v1i)
+		if (fromvid == edges[edgeid]->v1i)
 		{
-			mesh->edges[edgeid]->v1i = tovid;
+			edges[edgeid]->v1i = tovid;
 		}
-		else //if (fromvid == mesh->edges[edgeid]->v2i)
+		else //if (fromvid == edges[edgeid]->v2i)
 		{
-			mesh->edges[edgeid]->v2i = tovid;
+			edges[edgeid]->v2i = tovid;
 		}
 	}
 };
+
+void Mesh::toOFF(const std::string& filename)
+{
+	const int numVerts = verts.size() - numDeletedVert;
+	const int numEdges = edges.size() - numDeletedEdge;
+	const int numTris = tris.size() - numDeletedTri;
+
+	std::ofstream ofs(filename);
+	if (!ofs.is_open()) {
+		std::cerr << "Error opening file: " << filename << std::endl;
+		return;
+	}
+
+	// Write the header for OFF file
+	ofs << "OFF" << std::endl;
+	//ofs << numVerts << " " << numTris << " 0" << std::endl;
+	ofs << verts.size() << " " << numTris << " 0" << std::endl;
+
+	for (size_t i = 0; i < verts.size(); i++)
+	{
+		ofs << verts[i]->coords[0] << " " << verts[i]->coords[1] << " " << verts[i]->coords[2] << std::endl;
+	}
+	
+	for (size_t i = 0; i < tris.size(); i++)
+	{
+		if (tris[i]->deleted)
+			continue;
+		ofs << "3 " << tris[i]->v1i << " " << tris[i]->v2i << " " << tris[i]->v3i << std::endl;
+	}
+
+	ofs.close();
+	std::cout << "OFF file saved: " << filename << std::endl;
+}
 

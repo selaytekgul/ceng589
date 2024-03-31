@@ -1,10 +1,14 @@
 #pragma once
 
+#include <fstream>
+#include <iomanip>
+#include <string>
 #include <iostream>
 #include <vector>
 #include <map>
 #include "TypeDefinitions.h"
 #include "VectorMath.h"
+
 class Mesh;
 struct Triangle;
 struct Edge;
@@ -60,6 +64,9 @@ private:
 	void addVertex(float x, float y, float z);
 	bool makeVertsNeighbor(int v1i, int v2i, int triIdx);
 public:
+	int numDeletedVert = 0;
+	int numDeletedTri = 0;
+	int numDeletedEdge = 0;
 	void setMinMaxDiameters();
 	void discardInfAndNegativeDiameters();
 	std::vector< Vertex* > verts;
@@ -77,6 +84,7 @@ public:
 	void createDoubleOpenCube(float side);
 	void loadOff(std::string name);
 	void computeLength(int edgeIdx);
-	void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi);
+	void collapseEdgeTo(Edge* edge, int tovi);
+	void toOFF(const std::string& filename);
 
 };

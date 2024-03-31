@@ -42,7 +42,7 @@ int main(int, char ** argv)
 	//std::string fileName = { "car" };
 	//std::string fileName = { "coffeecup" };
 	//std::string fileName = { "bunny" };
-	//std::string fileName = { "cube3" };
+	std::string fileName = { "cube3" };
 	
 	//std::string fileName = { "faces/face" };
 	//std::string fileName = { "faces/face-low" };
@@ -50,7 +50,7 @@ int main(int, char ** argv)
 	//std::string fileName = { "faces/facem-low" };
 	
 	//std::string fileName = { "doubleOpenCube3" };
-	std::string fileName = { "man0" };
+	//std::string fileName = { "man0" };
 
 	//mesh->createCube(20.0f);
 	//mesh->createOpenCube(20.0f);
@@ -58,7 +58,8 @@ int main(int, char ** argv)
 
 	mesh->loadOff(fileName + ".off");
 	windingNumberTest(mesh);
-
+	mesh->collapseEdgeTo(mesh->edges[0], mesh->edges[0]->v1i);
+	mesh->toOFF("deneme_out.off");
 	return 0;
 }
 
