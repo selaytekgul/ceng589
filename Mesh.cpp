@@ -362,48 +362,56 @@ void Mesh::collapseEdgeTo(Mesh* mesh, Edge* edge, int tovi)
 		int trid = mesh->verts[endP2i]->triList[t];
 		mesh->tris[trid]->deleted = true;
 	}
+	
+	int fromvid;
+	int tovid;
 
 	if (endP1i == tovi)
 	{
-		//modify connected triangles
-		for (size_t t = 0; t < mesh->verts[endP2i]->triList.size(); t++)
-		{
-			int trid = mesh->verts[endP2i]->triList[t];
-			if (mesh->tris[trid]->deleted == true)
-				continue;
+		fromvid = endP2i;
+		tovid = endP1i;
+	}
+	else //if (endP2i == tovi)
+	{
+		fromvid = endP1i;
+		tovid = endP2i;
+	}
 
-			if (endP2i == mesh->tris[trid]->v1i)
-			{
-				mesh->tris[trid]->v1i = endP1i;
-			}
-			else if (endP2i == mesh->tris[trid]->v2i)
-			{
-				mesh->tris[trid]->v2i = endP1i;
-			}
-			else // if (endP2i == mesh->tris[trid]->v3i)
-			{
-				mesh->tris[trid]->v3i = endP1i;
-			}
+	//modify connected triangles
+	for (size_t t = 0; t < mesh->verts[fromvid]->triList.size(); t++)
+	{
+		int trid = mesh->verts[fromvid]->triList[t];
+		if (mesh->tris[trid]->deleted == true)
+			continue;
+
+		if (fromvid == mesh->tris[trid]->v1i)
+		{
+			mesh->tris[trid]->v1i = tovid;
 		}
-
-		//modify connected edges
-		for (size_t e = 0; e < mesh->verts[endP2i]->edgeList.size(); e++)
+		else if (fromvid == mesh->tris[trid]->v2i)
 		{
-			int edgeid = mesh->verts[endP2i]->edgeList[e];
-			if (mesh->edges[edgeid]->deleted == true)
-				continue;
-			if (endP2i == mesh->edges[edgeid]->v1i)
-			{
-				mesh->edges[edgeid]->v1i = endP1i;
-			}
-			else //if (endP2i == mesh->edges[edgeid]->v2i)
-			{
-				mesh->edges[edgeid]->v2i = endP1i;
-			}
+			mesh->tris[trid]->v2i = tovid;
+		}
+		else // if (fromvid == mesh->tris[trid]->v3i)
+		{
+			mesh->tris[trid]->v3i = tovid;
 		}
 	}
-	else
-	{
 
+	//modify connected edges
+	for (size_t e = 0; e < mesh->verts[fromvid]->edgeList.size(); e++)
+	{
+		int edgeid = mesh->verts[fromvid]->edgeList[e];
+		if (mesh->edges[edgeid]->deleted == true)
+			continue;
+		if (fromvid == mesh->edges[edgeid]->v1i)
+		{
+			mesh->edges[edgeid]->v1i = tovid;
+		}
+		else //if (fromvid == mesh->edges[edgeid]->v2i)
+		{
+			mesh->edges[edgeid]->v2i = tovid;
+		}
 	}
 };
+
