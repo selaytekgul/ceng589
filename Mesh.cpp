@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <algorithm>
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -434,8 +435,38 @@ void Mesh::collapseEdgeTo(Edge* edge, int tovi)
 	}
 };
 
-void Mesh::collapseEdge(Edge* edge)
+void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap)
 {
+	const int endP1i = edge->v1i;
+	const int endP2i = edge->v2i;
+
+	float coords[3];
+	VectorMath::midpoint(coords, verts[endP1i]->coords, verts[endP2i]->coords);
+
+	int fromvid = endP1i;
+	int tovid = endP2i;
+	int numIntersectNeighVerts = 0;
+	for (size_t i = 0; i < verts[endP1i]->vertList.size(); i++)
+	{
+		int neighIdx = verts[endP1i]->vertList[i];
+		for (size_t j = 0; j < verts[endP2i]->vertList.size(); j++)
+		{
+			int neighIdx2 = verts[endP2i]->vertList[j];
+			if (neighIdx == neighIdx2)
+				numIntersectNeighVerts++;
+		}
+	}
+
+	if (numIntersectNeighVerts >= 3)
+		return;
+
+	//delete vertex
+	if (verts[fromvid]->deleted == false)
+	{
+		verts[fromvid]->deleted = true;
+		numDeletedVert++;
+	}
+
 	//delete edge
 	if (edges[edge->edge_idx]->deleted == false)
 	{
@@ -452,22 +483,6 @@ void Mesh::collapseEdge(Edge* edge)
 			numDeletedTri++;
 			tris[trid]->deleted = true;
 		}
-	}
-
-	const int endP1i = edge->v1i;
-	const int endP2i = edge->v2i;
-	
-	float coords[3];
-	VectorMath::midpoint(coords, verts[endP1i]->coords, verts[endP2i]->coords);
-
-	int fromvid = endP1i;
-	int tovid = endP2i;
-
-	//delete vertex
-	if (verts[fromvid]->deleted == false)
-	{
-		verts[fromvid]->deleted = true;
-		numDeletedVert++;
 	}
 
 	//modify remaining vertex coords
@@ -490,7 +505,7 @@ void Mesh::collapseEdge(Edge* edge)
 		{
 			tris[trid]->v2i = tovid;
 		}
-		else // if (fromvid == tris[trid]->v3i)
+		else if (fromvid == tris[trid]->v3i)
 		{
 			tris[trid]->v3i = tovid;
 		}
@@ -506,10 +521,30 @@ void Mesh::collapseEdge(Edge* edge)
 		{
 			edges[edgeid]->v1i = tovid;
 		}
-		else //if (fromvid == edges[edgeid]->v2i)
+		else if (fromvid == edges[edgeid]->v2i)
 		{
 			edges[edgeid]->v2i = tovid;
 		}
+		computeLength(edgeid);
+		minHeap->push({ edges[edgeid]->length, edgeid});
+	}
+
+	//modify connected edges
+	for (size_t e = 0; e < verts[tovid]->edgeList.size(); e++)
+	{
+		int edgeid = verts[tovid]->edgeList[e];
+		if (edges[edgeid]->deleted == true)
+			continue;
+		//if (fromvid == edges[edgeid]->v1i)
+		//{
+		//	edges[edgeid]->v1i = tovid;
+		//}
+		//else if (fromvid == edges[edgeid]->v2i)
+		//{
+		//	edges[edgeid]->v2i = tovid;
+		//}
+		computeLength(edgeid);
+		minHeap->push({ edges[edgeid]->length, edgeid });
 	}
 }
 
@@ -551,14 +586,18 @@ void Mesh::inflatePoint(Vertex* vert)
 	if (vert->deleted)
 		return;
 	windingNumberByYusufSahillioglu(vert);
-	//if (vert->winding == 0)
-	//	return;
-	float* normal = returnPointNormal(vert);
-	float alpha = 5;
-	vert->coords[0] += normal[0] * alpha;
-	vert->coords[1] += normal[1] * alpha;
-	vert->coords[2] += normal[2] * alpha;
-	int a = 5;
+	if (vert->winding == 0.0f)
+		return;
+	while (vert->winding == 1.0f)
+	{
+		float* normal = returnPointNormal(vert);
+		float alpha = 0.01;
+		vert->coords[0] += normal[0] * alpha;
+		vert->coords[1] += normal[1] * alpha;
+		vert->coords[2] += normal[2] * alpha;
+		windingNumberByYusufSahillioglu(vert);
+		int a = 5;
+	}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)

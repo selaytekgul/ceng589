@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <map>
 #include "TypeDefinitions.h"
 #include "VectorMath.h"
@@ -86,7 +87,7 @@ public:
 	void loadOff(std::string name);
 	void computeLength(int edgeIdx);
 	void collapseEdgeTo(Edge* edge, int tovi);
-	void collapseEdge(Edge* edge);
+	void collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap);
 	void toOFF(const std::string& filename);
 	void inflatePoint(Vertex* vert);
 	void calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber);
