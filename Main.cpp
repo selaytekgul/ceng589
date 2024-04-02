@@ -91,14 +91,14 @@ int main(int, char ** argv)
 		minHeap.pop(); // Remove the top element
 	}
 
-	//for (size_t i = 0; i < mesh->verts.size(); i++)
-	//{
-	//	if (mesh->verts[i]->deleted)
-	//		continue;
-	//	original_mesh->inflatePoint(mesh->verts[i]);
-	//}
+	for (size_t i = 0; i < mesh->verts.size(); i++)
+	{
+		if (mesh->verts[i]->deleted)
+			continue;
+		original_mesh->inflatePoint(mesh->verts[i]);
+	}
 
-	mesh->toOFF(fileName + "_collapse50.off");
+	mesh->toOFF(fileName + "_collapse_inflate50.off");
 	return 0;
 }
 
