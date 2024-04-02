@@ -150,19 +150,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KMeans.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Segmentor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdjListGraph.h" />
     <ClInclude Include="DijstraImplementations.h" />
     <ClInclude Include="FibHeap.hpp" />
     <ClInclude Include="GraphOperations.h" />
-    <ClInclude Include="KMeans.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Segmentor.h" />
     <ClInclude Include="TriangleMeshMath.h" />
     <ClInclude Include="TypeDefinitions.h" />
     <ClInclude Include="VectorMath.h" />
