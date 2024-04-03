@@ -25,6 +25,8 @@ int main(int, char ** argv)
 		minHeap.push({ mesh->edges[i]->length, edgeidx});
 	}
 
+
+	//CHANGE
 	mesh->toOFF(fileName + "_.off");
 	return 0;
 }
