@@ -156,7 +156,6 @@
   <ItemGroup>
     <ClInclude Include="AdjListGraph.h" />
     <ClInclude Include="FibHeap.hpp" />
-    <ClInclude Include="GraphOperations.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="TriangleMeshMath.h" />
     <ClInclude Include="TypeDefinitions.h" />

@@ -1,5 +1,5 @@
 #define HAVE_INT8_T
-#include "GraphOperations.h"
+#include "Mesh.h"
 #include <random>
 #include <string>
 #include <queue>
