@@ -9,7 +9,6 @@ inline triVertsCoords getCoordsOfTriangleMesh(const Mesh* mesh, triVertsIds vert
 inline triOtherVertsCoords getOtherCoordsOfTriangleMesh(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber);
 inline triOtherVertsCoords getVectorsToTheOtherVerticesMesh(const triOtherVertsCoords& coordsOfOtherVertices, const int selectedVertexNumber, const triVertsCoords& coordsOfVerticesOfTriangle);
 
-
 float Vertex::minDiameter = std::numeric_limits<float>::max();
 float Vertex::maxDiameter = std::numeric_limits<float>::min();
 
