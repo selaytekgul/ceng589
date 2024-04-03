@@ -4,8 +4,6 @@
 #include <string>
 #include <queue>
 
-#include <Eigen/Dense>
-
 int main(int, char ** argv)
 {
 	Mesh* mesh = new Mesh();
