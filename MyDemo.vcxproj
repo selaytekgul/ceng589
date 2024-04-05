@@ -154,7 +154,6 @@
     <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AdjListGraph.h" />
     <ClInclude Include="FibHeap.hpp" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="TriangleMeshMath.h" />

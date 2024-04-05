@@ -282,35 +282,6 @@ void Mesh::modifyEdge(int v1, int v2, int triIdx)
 	}
 }
 
-void Mesh::setMinMaxDiameters()
-{
-	//loop through vertices (this->verts): find min & max values
-	for (Vertex* selectedVertex : this->verts)
-	{
-		//find min & max values
-		if (std::isfinite(selectedVertex->diameter) && selectedVertex->diameter > 0.0001f)
-		{
-			Vertex::maxDiameter = std::max(Vertex::maxDiameter, selectedVertex->diameter);
-			Vertex::minDiameter = std::min(Vertex::minDiameter, selectedVertex->diameter);
-		}
-	}
-}
-
-void Mesh::discardInfAndNegativeDiameters()
-{
-	//loop through vertices (this->verts): select a vertex from this->verts to discard the negative & inf values
-	for(Vertex* selectedVertex : this->verts)
-	{
-		if (selectedVertex->diameter < 0.0f)
-			selectedVertex->diameter = Vertex::minDiameter;
-
-
-		if (std::isinf(selectedVertex->diameter))
-			selectedVertex->diameter = Vertex::maxDiameter;
-	}
-}
-
-
 void Mesh::computeLength(int edgeIdx)
 {
 	int endP1 = edges[edgeIdx]->v1i;
@@ -585,18 +556,18 @@ void Mesh::inflatePoint(Vertex* vert)
 	if (vert->deleted)
 		return;
 	windingNumberByYusufSahillioglu(vert);
-	//if (vert->winding == 0.0f)
-	//	return;
-	//while (vert->winding == 1.0f)
-	//{
+	if (vert->winding == 0.0f)
+		return;
+	while (vert->winding == 1.0f)
+	{
 		float* normal = returnPointNormal(vert);
-		float alpha = 5;
+		float alpha = 0.1;
 		vert->coords[0] += normal[0] * alpha;
 		vert->coords[1] += normal[1] * alpha;
 		vert->coords[2] += normal[2] * alpha;
 		windingNumberByYusufSahillioglu(vert);
 		int a = 5;
-	//}
+	}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
@@ -644,8 +615,21 @@ float* Mesh::returnPointNormal(Vertex* point)
 			}
 		}
 		//d is the normal vector from the selected vertex of the base triangle
-		float d[3];
+		float d[3] = { 0.0f, 0.0f, 0.0f };
 		calculateNormalVectorMesh(d, coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+
+
+		triOtherVertsCoords otherCoords = getOtherCoordsOfTriangleMesh(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
+		float vectorsOtherVerticesArray1[3];
+		TD::fillWith(vectorsOtherVerticesArray1, otherCoords[0], 3);
+		float vectorsOtherVerticesArray2[3];
+		TD::fillWith(vectorsOtherVerticesArray2, otherCoords[1], 3);
+		float length = VectorMath::distanceBetweenVectors(vectorsOtherVerticesArray1, vectorsOtherVerticesArray2);
+
+		d[0] /= length;
+		d[1] /= length;
+		d[2] /= length;
+
 		normal[0] += d[0];
 		normal[1] += d[1];
 		normal[2] += d[2];

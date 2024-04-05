@@ -32,9 +32,6 @@
     <ClInclude Include="TypeDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AdjListGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FibHeap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

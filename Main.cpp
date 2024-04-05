@@ -7,7 +7,7 @@ int main(int, char ** argv)
 {
 	Mesh* mesh = new Mesh();
 	Mesh* original_mesh = new Mesh();
-	std::string fileName = { "equal_cube3" };
+	std::string fileName = { "cube_24" };
 	mesh->loadOff(fileName + ".off");
 	original_mesh->loadOff(fileName + ".off");
 
@@ -23,8 +23,34 @@ int main(int, char ** argv)
 	}
 
 
+
+	////Print the elements of the max heap
+	//std::cout << "Max heap elements (key-value pairs):" << std::endl;
+	//while (!minHeap.empty() && mesh->numDeletedTri < mesh->verts.size()/2.0) {
+	//	auto kvp = minHeap.top(); // Get the top element
+	//	mesh->computeLength(kvp.second);
+	//	if (kvp.first - mesh->edges[kvp.second]->length > 0.0001)
+	//	{
+	//		std::cout << "Skipped Key: " << kvp.first << ", Value: " << kvp.second << std::endl;
+	//		minHeap.pop(); // Remove the top element
+	//		continue;
+	//	}
+	//	std::cout << "Key: " << kvp.first << ", Value: " << kvp.second << std::endl;
+	//	//mesh->collapseEdgeTo(mesh->edges[kvp.first], mesh->edges[kvp.first]->v1i);
+	//	mesh->collapseEdge(mesh->edges[kvp.second], &minHeap);
+	//	minHeap.pop(); // Remove the top element
+	//}
+
+	for (size_t i = 0; i < mesh->verts.size(); i++)
+	{
+		if (mesh->verts[i]->deleted)
+			continue;
+		original_mesh->inflatePoint(mesh->verts[i]);
+	}
+
+
 	//CHANGE
-	mesh->toOFF(fileName + "_.off");
+	mesh->toOFF(fileName + "_inflate.off");
 	return 0;
 }
 

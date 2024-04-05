@@ -17,15 +17,15 @@ struct Edge;
 struct Vertex
 {
 	//float* coords, * normals; //3d coordinates etc
-	float* coords, color[3] = {0.0f, 0.0f, 0.0f}, diameter = -5.0f; //3d coordinates etc
+	float* coords, color[3] = { 0.0f, 0.0f, 0.0f };
 	int clusterId = 3;
 	static float minDiameter;
 	static float maxDiameter;
 	bool isItInLongestBoundary = false;
 	int idx; //who am i; verts[idx]
-	std::vector< int > vertList; //adj vertices;
-	std::vector< int > triList;
-	std::vector< int > edgeList;
+	std::vector <int> vertList; //adj vertices;
+	std::vector <int> triList;
+	std::vector <int> edgeList;
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 	double winding;
 	bool deleted = false;
@@ -73,12 +73,6 @@ public:
 	std::vector< Vertex* > verts;
 	std::vector< Triangle* > tris;
 	std::vector< Edge* > edges;
-	std::vector< int > samples;
-	std::map<int, int> boundIndexToMeshId;
-	std::map<int, int> meshIndexToBoundId;
-	
-	void setMinMaxDiameters();
-	void discardInfAndNegativeDiameters();
 	void windingNumberByYusufSahillioglu(Vertex* pnt);
 
 
