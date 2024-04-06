@@ -114,4 +114,7 @@ namespace VectorMath
 		v_A[1] = (v_B[1] + v_C[1]) / 2.0f;
 		v_A[2] = (v_B[2] + v_C[2]) / 2.0f;
 	}
+
+
+
 }
