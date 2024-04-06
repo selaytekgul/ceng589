@@ -561,7 +561,7 @@ void Mesh::inflatePoint(Vertex* vert)
 	//while (vert->winding == 1.0f)
 	//{
 		float* normal = returnPointNormal(vert);
-		float alpha = 10;
+		float alpha = 0.5;
 		float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
 		normal_to_be_added[0] = normal[0] - vert->coords[0];
 		normal_to_be_added[1] = normal[1] - vert->coords[1];
@@ -595,7 +595,6 @@ void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVerts
 float* Mesh::returnPointNormal(Vertex* point)
 {
 	float normal[3] = { 0.0f, 0.0f, 0.0f };
-	float numParticipated = 0.0f;
 	//loop through the triangles to trace each vertex, find normals, draw rays, calculate and add diameters to vertex's diameter attribute
 	for (size_t t= 0; t< point->triList.size(); t++)
 	{
@@ -605,47 +604,34 @@ float* Mesh::returnPointNormal(Vertex* point)
 		//get the vertex index number of the vertices of the triangle at hand
 		triVertsIds vertexIdsOfTriangle = getVertexIdsOfTriangleMesh(this, triangleIndex);
 
-		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
-		triVertsCoords coordinatesOfVerticesOfTriangle = getCoordsOfTriangleMesh(this, vertexIdsOfTriangle);
-
-		int selectedVertexNumber = 0;
+		int selectedVertexNumber = -1;
 		//from the selected vertex of base triangle
 		for (size_t v = 0; v < 3; v++)
 		{
-			if (point->idx == tris[t]->v1i)
+			if (point->idx == vertexIdsOfTriangle[v])
 			{
 				selectedVertexNumber = v;
 				break;
 			}
 		}
+		//get the coordinates of the vertices of the triangle at hand (by using the vertex index numbers)
+		triVertsCoords coordinatesOfVerticesOfTriangle = getCoordsOfTriangleMesh(this, vertexIdsOfTriangle);
 		//d is the normal vector from the selected vertex of the base triangle
+		if (selectedVertexNumber == -1)
+		{
+			int a = 5;
+			continue;
+		}
 		float d[3] = { 0.0f, 0.0f, 0.0f };
 		calculateNormalVectorMesh(d, coordinatesOfVerticesOfTriangle, selectedVertexNumber);
-
-
-		triOtherVertsCoords otherCoords = getOtherCoordsOfTriangleMesh(coordinatesOfVerticesOfTriangle, selectedVertexNumber);
-		float vectorsOtherVerticesArray1[3];
-		TD::fillWith(vectorsOtherVerticesArray1, otherCoords[0], 3);
-		float vectorsOtherVerticesArray2[3];
-		TD::fillWith(vectorsOtherVerticesArray2, otherCoords[1], 3);
-		//float length = VectorMath::distanceBetweenVectors(vectorsOtherVerticesArray1, vectorsOtherVerticesArray2);
-
-		//d[0] /= length;
-		//d[1] /= length;
-		//d[2] /= length;
-
 		normal[0] += d[0];
 		normal[1] += d[1];
 		normal[2] += d[2];
-		//numParticipated++;
 	}
-	//normal[0] /= numParticipated;
-	//normal[1] /= numParticipated;
-	//normal[2] /= numParticipated;
-
 	float zero[3] = { 0.0f, 0.0f, 0.0f };
 	float distance = VectorMath::distanceBetweenVectors(zero, normal);
-	
+	if (distance - 0.0f < 0.001)
+		distance = 0.001;
 	normal[0] /= distance;
 	normal[1] /= distance;
 	normal[2] /= distance;
