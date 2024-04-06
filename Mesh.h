@@ -36,7 +36,7 @@ struct Edge
 {
 	int edge_idx; //edges[idx]
 	int v1i, v2i; //endpnts
-	float length = 1.0;
+	float length = -1.0;
 	int existedTriangeNumber = 0;
 	bool isItBoundary = false;
 	bool isItPathPart = false;
@@ -56,6 +56,7 @@ struct Triangle
 	Triangle(int id, int v1, int v2, int v3) : tri_idx(id), v1i(v1), v2i(v2), v3i(v3) {};
 	bool deleted = false;
 	float* center_of_mass_normal[3];
+	float* triangle_normal[3];
 };
 
 class Mesh
