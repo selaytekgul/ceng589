@@ -29,7 +29,9 @@ struct Vertex
 	Vertex(int i, float* c) : idx(i), coords(c) {};
 	double winding;
 	bool deleted = false;
-	float* point_normal[3];
+	float point_normal[3];
+	float tangent_plane_normal[3];
+	float tangent_plane_origin[3];
 };
 
 struct Edge
@@ -55,7 +57,9 @@ struct Triangle
 	int v1i, v2i, v3i;
 	Triangle(int id, int v1, int v2, int v3) : tri_idx(id), v1i(v1), v2i(v2), v3i(v3) {};
 	bool deleted = false;
-	float* triangle_normal[3];
+	float triangle_normal[3];
+	float tangent_plane_normal[3];
+	float tangent_plane_origin[3];
 };
 
 class Mesh
@@ -88,6 +92,9 @@ public:
 	void inflatePoint(Vertex* vert);
 	void calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber);
 	float* returnPointNormal(Vertex* point);
-
+	void calculateTriangleNormal(Triangle* triangle);
+	void calculateVertexNormals();
+	void calculateVertexTangentPlane(Vertex* vertex);
+	void calculateTriangleTangentPlane(Triangle* triangle);
 
 };

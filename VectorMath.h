@@ -14,6 +14,7 @@ namespace VectorMath
 	inline float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
 	inline float calculateAngleBetweenVectors(const float* vertex1, const float* vertex2);
 	inline void midpoint(float v_A[3], const float v_B[3], const float v_C[3]);
+	inline float calculateDistanceToTangentPlane(const float* point, const float* plane_normal, const float* plane_origin);
 
 
 	//v_A = v_B - v_C
@@ -115,6 +116,10 @@ namespace VectorMath
 		v_A[2] = (v_B[2] + v_C[2]) / 2.0f;
 	}
 
-
+	float calculateDistanceToTangentPlane(const float* point, const float* plane_normal, const float* plane_origin) {
+		float vector_to_point[3] = { point[0] - plane_origin[0], point[1] - plane_origin[1], point[2] - plane_origin[2] };
+		float distance = abs(innerProduct(vector_to_point, plane_normal));
+		return distance;
+	}
 
 }

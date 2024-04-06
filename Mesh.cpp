@@ -555,13 +555,13 @@ void Mesh::inflatePoint(Vertex* vert)
 {
 	if (vert->deleted)
 		return;
-	//windingNumberByYusufSahillioglu(vert);
-	//if (vert->winding == 0.0f)
-	//	return;
-	//while (vert->winding == 1.0f)
-	//{
+	windingNumberByYusufSahillioglu(vert);
+	if (vert->winding == 0.0f)
+		return;
+	while (vert->winding == 1.0f)
+	{
 		float* normal = returnPointNormal(vert);
-		float alpha = 0.5;
+		float alpha = 0.01;
 		float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
 		normal_to_be_added[0] = normal[0] - vert->coords[0];
 		normal_to_be_added[1] = normal[1] - vert->coords[1];
@@ -569,9 +569,9 @@ void Mesh::inflatePoint(Vertex* vert)
 		vert->coords[0] -= normal_to_be_added[0] * alpha;
 		vert->coords[1] -= normal_to_be_added[1] * alpha;
 		vert->coords[2] -= normal_to_be_added[2] * alpha;
-	//	windingNumberByYusufSahillioglu(vert);
-	//	int a = 5;
-	//}
+		windingNumberByYusufSahillioglu(vert);
+		int a = 5;
+	}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
@@ -689,4 +689,109 @@ triOtherVertsCoords getVectorsToTheOtherVerticesMesh(const triOtherVertsCoords& 
 		}
 	}
 	return vectorsToTheOtherVertices;
+}
+
+void Mesh::calculateTriangleNormal(Triangle* triangle)
+{
+	// Get the coordinates of the vertices of the triangle
+	float* v1 = verts[triangle->v1i]->coords;
+	float* v2 = verts[triangle->v2i]->coords;
+	float* v3 = verts[triangle->v3i]->coords;
+
+	// Calculate the vectors representing two edges of the triangle
+	float edge1[3] = { v2[0] - v1[0], v2[1] - v1[1], v2[2] - v1[2] };
+	float edge2[3] = { v3[0] - v1[0], v3[1] - v1[1], v3[2] - v1[2] };
+
+	// Calculate the cross product of the two edges to get the normal vector
+	float normal[3] = {
+		edge1[1] * edge2[2] - edge1[2] * edge2[1],
+		edge1[2] * edge2[0] - edge1[0] * edge2[2],
+		edge1[0] * edge2[1] - edge1[1] * edge2[0]
+	};
+
+	// Normalize the normal vector
+	float length = sqrt(normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2]);
+	triangle->triangle_normal[0] = normal[0] / length;
+	triangle->triangle_normal[1] = normal[1] / length;
+	triangle->triangle_normal[2] = normal[2] / length;
+}
+
+
+void Mesh::calculateVertexNormals()
+{
+	// Iterate over each vertex
+	for (Vertex* vertex : verts) {
+		// Initialize the sum of normals to zero
+		float sumNormals[3] = { 0.0f, 0.0f, 0.0f };
+
+		// Iterate over each triangle in the vertex's triangle list
+		for (int triIdx : vertex->triList) {
+			// Get the triangle object
+			Triangle* triangle = tris[triIdx];
+
+			// Calculate the normal vector for the triangle
+			calculateTriangleNormal(triangle);
+
+			// Add the triangle's normal to the sum
+			sumNormals[0] += triangle->triangle_normal[0];
+			sumNormals[1] += triangle->triangle_normal[1];
+			sumNormals[2] += triangle->triangle_normal[2];
+		}
+
+		// Normalize the sum of normals to get the vertex normal
+		float length = sqrt(sumNormals[0] * sumNormals[0] + sumNormals[1] * sumNormals[1] + sumNormals[2] * sumNormals[2]);
+		vertex->point_normal[0] = sumNormals[0] / length;
+		vertex->point_normal[1] = sumNormals[1] / length;
+		vertex->point_normal[2] = sumNormals[2] / length;
+	}
+}
+
+// Calculate the tangent plane for a triangle
+void Mesh::calculateTriangleTangentPlane(Triangle* triangle) {
+	// Choose one vertex of the triangle as the origin point of the tangent plane
+	float* origin = verts[triangle->v1i]->coords;
+
+	// Calculate the normal vector of the triangle
+	calculateTriangleNormal(triangle);
+	float* normal = triangle->triangle_normal;
+
+	// Store the tangent plane data in the triangle
+	std::copy(normal, normal + 3, triangle->tangent_plane_normal);
+	std::copy(origin, origin + 3, triangle->tangent_plane_origin);
+}
+
+// Calculate the tangent plane for a vertex
+void Mesh::calculateVertexTangentPlane(Vertex* vertex) {
+	// Initialize sum of normals to calculate average
+	float sumNormals[3] = { 0.0f, 0.0f, 0.0f };
+	int numAdjacentTriangles = 0;
+
+	// Iterate over each triangle adjacent to the vertex
+	for (int triIdx : vertex->triList) {
+		// Calculate the normal vector for the triangle
+		Triangle* triangle = tris[triIdx];
+		calculateTriangleNormal(triangle);
+		float* normal = triangle->triangle_normal;
+
+		// Add the normal vector to the sum
+		sumNormals[0] += normal[0];
+		sumNormals[1] += normal[1];
+		sumNormals[2] += normal[2];
+
+		numAdjacentTriangles++;
+	}
+
+	// Compute the average normal vector
+	float avgNormal[3] = {
+		sumNormals[0] / numAdjacentTriangles,
+		sumNormals[1] / numAdjacentTriangles,
+		sumNormals[2] / numAdjacentTriangles
+	};
+
+	// Use the vertex coordinates as the origin point of the tangent plane
+	float* origin = vertex->coords;
+
+	// Store the tangent plane data in the vertex
+	std::copy(avgNormal, avgNormal + 3, vertex->tangent_plane_normal);
+	std::copy(origin, origin + 3, vertex->tangent_plane_origin);
 }
