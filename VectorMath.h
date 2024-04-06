@@ -13,7 +13,6 @@ namespace VectorMath
 	inline float innerProduct(const float v[3], const float q[3]);
 	inline float rayTriangleIntersectLength(const float* p, const float* d, const float* v0, const float* v1, const float* v2);
 	inline float calculateAngleBetweenVectors(const float* vertex1, const float* vertex2);
-	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr);
 	inline void midpoint(float v_A[3], const float v_B[3], const float v_C[3]);
 
 
@@ -97,26 +96,6 @@ namespace VectorMath
 			 // but not a ray intersection
 			return -2;
 	}
-
-	//void normalizeArray(const std::vector<float>& inputArr, std::vector<float>& outputArr) {
-	//	float minValue = std::numeric_limits<float>::max();
-	//	float maxValue = std::numeric_limits<float>::min();
-	//
-	//	// Find the minimum and maximum values in the input vector
-	//	for (float value : inputArr) {
-	//		if (value < minValue)
-	//			minValue = value;
-	//		if (value > maxValue)
-	//			maxValue = value;
-	//	}
-	//	int i = 0;
-	//	// Normalize the input vector values and store them in the output vector
-	//	for (float value : inputArr) {
-	//		float normalizedValue = (value - minValue) / (maxValue - minValue);
-	//		outputArr[i] = normalizedValue;
-	//		i++;
-	//	}
-	//}
 
 	float calculateAngleBetweenVectors(const float* vertex1, const float* vertex2)
 	{
