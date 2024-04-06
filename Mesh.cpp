@@ -555,19 +555,23 @@ void Mesh::inflatePoint(Vertex* vert)
 {
 	if (vert->deleted)
 		return;
-	windingNumberByYusufSahillioglu(vert);
-	if (vert->winding == 0.0f)
-		return;
-	while (vert->winding == 1.0f)
-	{
+	//windingNumberByYusufSahillioglu(vert);
+	//if (vert->winding == 0.0f)
+	//	return;
+	//while (vert->winding == 1.0f)
+	//{
 		float* normal = returnPointNormal(vert);
-		float alpha = 0.1;
-		vert->coords[0] += normal[0] * alpha;
-		vert->coords[1] += normal[1] * alpha;
-		vert->coords[2] += normal[2] * alpha;
-		windingNumberByYusufSahillioglu(vert);
-		int a = 5;
-	}
+		float alpha = 10;
+		float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
+		normal_to_be_added[0] = normal[0] - vert->coords[0];
+		normal_to_be_added[1] = normal[1] - vert->coords[1];
+		normal_to_be_added[2] = normal[2] - vert->coords[2];
+		vert->coords[0] -= normal_to_be_added[0] * alpha;
+		vert->coords[1] -= normal_to_be_added[1] * alpha;
+		vert->coords[2] -= normal_to_be_added[2] * alpha;
+	//	windingNumberByYusufSahillioglu(vert);
+	//	int a = 5;
+	//}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
@@ -624,20 +628,28 @@ float* Mesh::returnPointNormal(Vertex* point)
 		TD::fillWith(vectorsOtherVerticesArray1, otherCoords[0], 3);
 		float vectorsOtherVerticesArray2[3];
 		TD::fillWith(vectorsOtherVerticesArray2, otherCoords[1], 3);
-		float length = VectorMath::distanceBetweenVectors(vectorsOtherVerticesArray1, vectorsOtherVerticesArray2);
+		//float length = VectorMath::distanceBetweenVectors(vectorsOtherVerticesArray1, vectorsOtherVerticesArray2);
 
-		d[0] /= length;
-		d[1] /= length;
-		d[2] /= length;
+		//d[0] /= length;
+		//d[1] /= length;
+		//d[2] /= length;
 
 		normal[0] += d[0];
 		normal[1] += d[1];
 		normal[2] += d[2];
-		numParticipated++;
+		//numParticipated++;
 	}
-	normal[0] /= numParticipated;
-	normal[1] /= numParticipated;
-	normal[2] /= numParticipated;
+	//normal[0] /= numParticipated;
+	//normal[1] /= numParticipated;
+	//normal[2] /= numParticipated;
+
+	float zero[3] = { 0.0f, 0.0f, 0.0f };
+	float distance = VectorMath::distanceBetweenVectors(zero, normal);
+	
+	normal[0] /= distance;
+	normal[1] /= distance;
+	normal[2] /= distance;
+
 	return normal;
 }
 
@@ -666,17 +678,17 @@ triVertsCoords getCoordsOfTriangleMesh(const Mesh* mesh, const triVertsIds verte
 triOtherVertsCoords getOtherCoordsOfTriangleMesh(const triVertsCoords& coordsOfVerticesOfTriangle, const int selectedVertexNumber)
 {
 	triOtherVertsCoords coordsOfOtherVertices;
-	int number = 0;
-	for (size_t otherVertexNumber = 0; otherVertexNumber < 3; otherVertexNumber++)
-	{
-		if (selectedVertexNumber == otherVertexNumber)
-			continue;
-		//fill the coordinate values of other 2 vertices' array
-		for (size_t coordinate = 0; coordinate < 3; coordinate++) {
-			coordsOfOtherVertices[number][coordinate] = coordsOfVerticesOfTriangle[otherVertexNumber][coordinate];
+		int number = 0;
+		for (size_t otherVertexNumber = 0; otherVertexNumber < 3; otherVertexNumber++)
+		{
+			if (selectedVertexNumber == otherVertexNumber)
+				continue;
+			//fill the coordinate values of other 2 vertices' array
+			for (size_t coordinate = 0; coordinate < 3; coordinate++) {
+				coordsOfOtherVertices[number][coordinate] = coordsOfVerticesOfTriangle[otherVertexNumber][coordinate];
+			}
+			number++;
 		}
-		number++;
-	}
 	return coordsOfOtherVertices;
 }
 

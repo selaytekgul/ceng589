@@ -26,7 +26,7 @@ int main(int, char ** argv)
 
 	////Print the elements of the max heap
 	//std::cout << "Max heap elements (key-value pairs):" << std::endl;
-	//while (!minHeap.empty() && mesh->numDeletedTri < mesh->verts.size()/2.0) {
+	//while (!minHeap.empty() && mesh->numDeletedTri < mesh->verts.size()/4.0) {
 	//	auto kvp = minHeap.top(); // Get the top element
 	//	mesh->computeLength(kvp.second);
 	//	if (kvp.first - mesh->edges[kvp.second]->length > 0.0001)
@@ -47,10 +47,14 @@ int main(int, char ** argv)
 			continue;
 		original_mesh->inflatePoint(mesh->verts[i]);
 	}
-
+	//int i = 3;
+	//original_mesh->inflatePoint(mesh->verts[i]);
 
 	//CHANGE
-	mesh->toOFF(fileName + "_inflate.off");
+	//mesh->toOFF(fileName + "_" + std::to_string(i) + "_inflate.off");
+	mesh->toOFF(fileName + "_all_inflate_10.off");
+	//mesh->toOFF(fileName + "_all" + "_collapse_inflate_original_mesh_winding.off");
+	//mesh->toOFF(fileName + "_all" + "_collapse_original_mesh_winding.off");
 	return 0;
 }
 
