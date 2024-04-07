@@ -13,7 +13,7 @@
 int main(int, char** argv) {
     Mesh* mesh = new Mesh();
     Mesh* original_mesh = new Mesh();
-    std::string fileName = { "man0" };
+    std::string fileName = { "381" };
     mesh->loadOff(fileName + ".off");
     original_mesh->loadOff(fileName + ".off");
 
@@ -75,7 +75,7 @@ int main(int, char** argv) {
     }
 
 
-    mesh->toOFF(fileName + "_m_o.off"); // Mesh after collapsing edges
+    mesh->toOFF(fileName + "__m_o.off"); // Mesh after collapsing edges
 
      //Inflate points after collapsing edges
     for (size_t i = 0; i < mesh->verts.size(); i++) {
@@ -86,7 +86,7 @@ int main(int, char** argv) {
     //original_mesh->inflatePoint(mesh->verts[0]);
 
     // Save the modified mesh to OFF files
-    mesh->toOFF(fileName + "_all_inflated_m_o_0025.off"); // Mesh after inflating points
+    mesh->toOFF(fileName + "__all_inflated_m_o_0025.off"); // Mesh after inflating points
     //mesh->toOFF(fileName + "_all" + "_collapse_inflate_original_mesh_winding.off");
     //mesh->toOFF(fileName + "_all_collapse_original_mesh_winding.off");
 

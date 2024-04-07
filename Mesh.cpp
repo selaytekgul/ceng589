@@ -625,7 +625,7 @@ void Mesh::inflatePoint(Mesh* mesh, Vertex* vert)
 	mesh->windingNumberByYusufSahillioglu(vert);
 	if (vert->winding == 0.0f)
 		return;
-	while (vert->winding == 1.0f)
+	do
 	{
 		//float* normal = returnPointNormal(vert);
 		calculateVertexNormal(vert);
@@ -645,7 +645,7 @@ void Mesh::inflatePoint(Mesh* mesh, Vertex* vert)
 
 		mesh->windingNumberByYusufSahillioglu(vert);
 		int a = 5;
-	}
+	} while (vert->winding == 1.0f);
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
