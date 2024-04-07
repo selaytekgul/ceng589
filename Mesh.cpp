@@ -459,6 +459,39 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 			return false;
 	}
 
+	{
+		float* new_normal = returnCandidateVertexNormal(mid_coords, fromvid, tovid);
+		float* original_normal1 = verts[fromvid]->point_normal;
+		float* original_normal2 = verts[tovid]->point_normal;
+		float dot1 = VectorMath::innerProduct(original_normal1, new_normal);
+		float dot2 = VectorMath::innerProduct(original_normal2, new_normal);
+		if (dot1 < 0.1)
+		{
+			return false;
+		}
+		if (dot2 < 0.1)
+		{
+			return false;
+		}
+
+	}
+
+	if (abs(mid_coords[0] - std::numeric_limits<float>::max()) < 0.01 || abs(mid_coords[0] - std::numeric_limits<float>::min()) < 0.01)
+	{
+		int a = 0;
+		return false;
+	}
+	if (abs(mid_coords[1] - std::numeric_limits<float>::max()) < 0.01 || abs(mid_coords[1] - std::numeric_limits<float>::min()) < 0.01)
+	{
+		int a = 0;
+		return false;
+	}
+	if (abs(mid_coords[2] - std::numeric_limits<float>::max()) < 0.01 || abs(mid_coords[2] - std::numeric_limits<float>::min()) < 0.01)
+	{
+		int a = 0;
+		return false;
+	}
+
 	//delete vertex
 	if (verts[fromvid]->deleted == false)
 	{
@@ -562,6 +595,7 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
 
+	///modifiy neighbor verts
 	for (size_t i = 0; i < verts[fromvid]->vertList.size(); i++)
 	{
 		int vertid = verts[fromvid]->vertList[i];
@@ -623,13 +657,14 @@ void Mesh::inflatePoint(Mesh* mesh, Vertex* vert)
 	if (vert->deleted)
 		return;
 	mesh->windingNumberByYusufSahillioglu(vert);
-	if (vert->winding == 0.0f)
-		return;
 	do
 	{
 		//float* normal = returnPointNormal(vert);
 		calculateVertexNormal(vert);
-		float* normal = vert->point_normal;
+		float normal[3] = { 0.0f, 0.0f, 0.0f };
+		normal[0] = vert->point_normal[0];
+		normal[1] = vert->point_normal[1];
+		normal[2] = vert->point_normal[2];
 		float alpha = 0.025;
 		//float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
 		//normal_to_be_added[0] = normal[0] - vert->coords[0];
@@ -790,6 +825,33 @@ void Mesh::calculateTriangleNormal(Triangle* triangle)
 	triangle->triangle_normal[2] = normal[2] / length;
 }
 
+float* Mesh::returnTriangleNormal(float* v1, float* v2, float* v3)
+{
+	//// Get the coordinates of the vertices of the triangle
+	//float* v1 = verts[triangle->v1i]->coords;
+	//float* v2 = verts[triangle->v2i]->coords;
+	//float* v3 = verts[triangle->v3i]->coords;
+
+	// Calculate the vectors representing two edges of the triangle
+	float edge1[3] = { v2[0] - v1[0], v2[1] - v1[1], v2[2] - v1[2] };
+	float edge2[3] = { v3[0] - v1[0], v3[1] - v1[1], v3[2] - v1[2] };
+
+	// Calculate the cross product of the two edges to get the normal vector
+	float normal[3] = {
+		edge1[1] * edge2[2] - edge1[2] * edge2[1],
+		edge1[2] * edge2[0] - edge1[0] * edge2[2],
+		edge1[0] * edge2[1] - edge1[1] * edge2[0]
+	};
+
+	// Normalize the normal vector
+	float length = sqrt(normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2]);
+	normal[0] = normal[0] / length;
+	normal[1] = normal[1] / length;
+	normal[2] = normal[2] / length;
+
+	return normal;
+}
+
 
 void Mesh::calculateVertexNormals()
 {
@@ -818,6 +880,139 @@ void Mesh::calculateVertexNormals()
 		vertex->point_normal[1] = sumNormals[1] / length;
 		vertex->point_normal[2] = sumNormals[2] / length;
 	}
+}
+
+float* Mesh::returnCandidateVertexNormal(float* midCoords, int fromvid, int tovid)
+{
+	float sumNormals[3] = { 0.0f, 0.0f, 0.0f };
+
+	// Iterate over each triangle in the vertex's triangle list
+	for (int triIdx : verts[fromvid]->triList) {
+		// Get the triangle object
+		Triangle* triangle = tris[triIdx];
+		float vertexCoords[3][3] = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+		int index = 0;
+		if (triangle->v1i == fromvid)
+		{
+			vertexCoords[index][0] = midCoords[0];
+			vertexCoords[index][1] = midCoords[1];
+			vertexCoords[index][2] = midCoords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v2i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v2i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v2i]->coords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v3i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v3i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v3i]->coords[2];
+		}
+		else if (triangle->v2i == fromvid)
+		{
+			vertexCoords[index][0] = verts[triangle->v1i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v1i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v1i]->coords[2];
+			index++;
+			vertexCoords[index][0] = midCoords[0];
+			vertexCoords[index][1] = midCoords[1];
+			vertexCoords[index][2] = midCoords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v3i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v3i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v3i]->coords[2];
+		}
+		else if (triangle->v3i == fromvid)
+		{
+			vertexCoords[index][0] = verts[triangle->v1i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v1i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v1i]->coords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v2i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v2i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v2i]->coords[2];
+			index++;
+			vertexCoords[index][0] = midCoords[0];
+			vertexCoords[index][1] = midCoords[1];
+			vertexCoords[index][2] = midCoords[2];
+		}
+
+		// Calculate the normal vector for the triangle
+		float* triangle_normal = returnTriangleNormal(vertexCoords[0], vertexCoords[1], vertexCoords[2]);
+
+		// Add the triangle's normal to the sum
+		sumNormals[0] += triangle_normal[0];
+		sumNormals[1] += triangle_normal[1];
+		sumNormals[2] += triangle_normal[2];
+	}
+
+
+
+
+	// Iterate over each triangle in the vertex's triangle list
+	for (int triIdx : verts[tovid]->triList) {
+		// Get the triangle object
+		Triangle* triangle = tris[triIdx];
+		float vertexCoords[3][3] = { { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } };
+		int index = 0;
+		if (triangle->v1i == tovid)
+		{
+			vertexCoords[index][0] = midCoords[0];
+			vertexCoords[index][1] = midCoords[1];
+			vertexCoords[index][2] = midCoords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v2i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v2i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v2i]->coords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v3i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v3i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v3i]->coords[2];
+		}
+		else if (triangle->v2i == tovid)
+		{
+			vertexCoords[index][0] = verts[triangle->v1i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v1i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v1i]->coords[2];
+			index++;
+			vertexCoords[index][0] = midCoords[0];
+			vertexCoords[index][1] = midCoords[1];
+			vertexCoords[index][2] = midCoords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v3i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v3i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v3i]->coords[2];
+		}
+		else if (triangle->v3i == tovid)
+		{
+			vertexCoords[index][0] = verts[triangle->v1i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v1i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v1i]->coords[2];
+			index++;
+			vertexCoords[index][0] = verts[triangle->v2i]->coords[0];
+			vertexCoords[index][1] = verts[triangle->v2i]->coords[1];
+			vertexCoords[index][2] = verts[triangle->v2i]->coords[2];
+			index++;
+			vertexCoords[index][0] = midCoords[0];
+			vertexCoords[index][1] = midCoords[1];
+			vertexCoords[index][2] = midCoords[2];
+		}
+
+		// Calculate the normal vector for the triangle
+		float* triangle_normal = returnTriangleNormal(vertexCoords[0], vertexCoords[1], vertexCoords[2]);
+
+		// Add the triangle's normal to the sum
+		sumNormals[0] += triangle_normal[0];
+		sumNormals[1] += triangle_normal[1];
+		sumNormals[2] += triangle_normal[2];
+	}
+
+
+	// Normalize the sum of normals to get the vertex normal
+	float length = sqrt(sumNormals[0] * sumNormals[0] + sumNormals[1] * sumNormals[1] + sumNormals[2] * sumNormals[2]);
+	sumNormals[0] = sumNormals[0] / length;
+	sumNormals[1] = sumNormals[1] / length;
+	sumNormals[2] = sumNormals[2] / length;
+
+	return sumNormals;
 }
 
 void Mesh::calculateVertexNormal(Vertex* vertex)

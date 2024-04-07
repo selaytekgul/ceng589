@@ -39,14 +39,14 @@ int main(int, char** argv) {
         minHeap.push({ mesh->edges[i]->midToEndPointTangentPlanesDist, mesh->edges[i]->edge_idx });
     }
 
-    //for (size_t i = 0; i < mesh->edges.size(); i++) {
-    //    // Insert key-value pairs into the min heap
-    //    const int edgeidx = mesh->edges[i]->edge_idx;
-    //    mesh->computeLength(edgeidx);
-    //    minHeap.push({ mesh->edges[i]->length, edgeidx });
-    //}
+    for (size_t i = 0; i < mesh->edges.size(); i++) {
+        // Insert key-value pairs into the min heap
+        const int edgeidx = mesh->edges[i]->edge_idx;
+        mesh->computeLength(edgeidx);
+        minHeap.push({ mesh->edges[i]->length, edgeidx });
+    }
 
-    while (!minHeap.empty() && mesh->numDeletedTri < mesh->tris.size()/2) {
+    while (!minHeap.empty() && mesh->numDeletedTri < mesh->tris.size()/4) {
         
         auto kvp = minHeap.top(); // Get the top element
         
@@ -75,18 +75,18 @@ int main(int, char** argv) {
     }
 
 
-    mesh->toOFF(fileName + "__m_o.off"); // Mesh after collapsing edges
+    mesh->toOFF(fileName + "____m_o.off"); // Mesh after collapsing edges
 
      //Inflate points after collapsing edges
     for (size_t i = 0; i < mesh->verts.size(); i++) {
         if (mesh->verts[i]->deleted)
             continue;
-        mesh->inflatePoint(mesh, mesh->verts[i]);
+        mesh->inflatePoint(original_mesh, mesh->verts[i]);
     }
     //original_mesh->inflatePoint(mesh->verts[0]);
 
     // Save the modified mesh to OFF files
-    mesh->toOFF(fileName + "__all_inflated_m_o_0025.off"); // Mesh after inflating points
+    mesh->toOFF(fileName + "____all_inflated_m_o_0025.off"); // Mesh after inflating points
     //mesh->toOFF(fileName + "_all" + "_collapse_inflate_original_mesh_winding.off");
     //mesh->toOFF(fileName + "_all_collapse_original_mesh_winding.off");
 

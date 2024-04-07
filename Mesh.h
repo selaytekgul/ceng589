@@ -99,5 +99,7 @@ public:
 	void calculateVertexNormal(Vertex* vertex);
 	void calculateVertexTangentPlane(Vertex* vertex);
 	void calculateTriangleTangentPlane(Triangle* triangle);
+	float* returnCandidateVertexNormal(float* midCoords, int fromvid, int tovid);
+	float* returnTriangleNormal(float* v1, float* v2, float* v3);
 
 };
