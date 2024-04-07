@@ -291,6 +291,19 @@ void Mesh::computeLength(int edgeIdx)
 	edges[edgeIdx]->length = VectorMath::distanceBetweenVectors(v1coords, v2coords);
 }
 
+void Mesh::computeDistFromEdgeMidToEndPntsTangPla(int edgeIdx)
+{
+	float mid[3] = { 0.0f, 0.0f, 0.0f };
+	VectorMath::midpoint(mid, verts[edges[edgeIdx]->v1i]->coords, verts[edges[edgeIdx]->v2i]->coords);
+
+	const float dist1 = VectorMath::calculateDistanceToTangentPlane(mid, verts[edges[edgeIdx]->v1i]->tangent_plane_normal, verts[edges[edgeIdx]->v1i]->tangent_plane_origin);
+	const float dist2 = VectorMath::calculateDistanceToTangentPlane(mid, verts[edges[edgeIdx]->v2i]->tangent_plane_normal, verts[edges[edgeIdx]->v2i]->tangent_plane_origin);
+
+	std::cout << "edge id: " << edges[edgeIdx]->edge_idx << " distance: " << dist1 + dist2 << std::endl;
+	edges[edgeIdx]->midToEndPointTangentPlanesDist = dist1 + dist2;
+}
+
+
 void Mesh::windingNumberByYusufSahillioglu(Vertex* pnt)
 {
 	//computes generalized winding number (eq. 5 in Jacobson'13) of pnt to see whether it is inside the mesh (winding=1) or not (winding=0); holds for watertight meshes (still well-behaved otherwise)
@@ -495,8 +508,11 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		{
 			edges[edgeid]->v2i = tovid;
 		}
-		computeLength(edgeid);
-		minHeap->push({ edges[edgeid]->length, edgeid});
+		
+		//computeLength(edgeid);
+		computeDistFromEdgeMidToEndPntsTangPla(edgeid);
+		//minHeap->push({ edges[edgeid]->length, edgeid});
+		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
 
 	//modify connected edges
@@ -513,8 +529,11 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		//{
 		//	edges[edgeid]->v2i = tovid;
 		//}
-		computeLength(edgeid);
-		minHeap->push({ edges[edgeid]->length, edgeid });
+		
+		//computeLength(edgeid);
+		computeDistFromEdgeMidToEndPntsTangPla(edgeid);
+		//minHeap->push({ edges[edgeid]->length, edgeid });
+		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
 }
 

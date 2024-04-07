@@ -47,6 +47,7 @@ struct Edge
 	bool isInShortestPath = false;
 	std::vector< int > triList;
 	bool deleted = false;
+	float midToEndPointTangentPlanesDist = 0.0f;
 	Edge(int id, int v1, int v2) : edge_idx(id), v1i(v1), v2i(v2) {};
 };
 
@@ -86,6 +87,7 @@ public:
 	void createDoubleOpenCube(float side);
 	void loadOff(std::string name);
 	void computeLength(int edgeIdx);
+	void computeDistFromEdgeMidToEndPntsTangPla(int edgeIdx);
 	void collapseEdgeTo(Edge* edge, int tovi);
 	void collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap);
 	void toOFF(const std::string& filename);
