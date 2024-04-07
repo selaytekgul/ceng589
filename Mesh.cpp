@@ -459,22 +459,22 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 			return false;
 	}
 
-	{
-		float* new_normal = returnCandidateVertexNormal(mid_coords, fromvid, tovid);
-		float* original_normal1 = verts[fromvid]->point_normal;
-		float* original_normal2 = verts[tovid]->point_normal;
-		float dot1 = VectorMath::innerProduct(original_normal1, new_normal);
-		float dot2 = VectorMath::innerProduct(original_normal2, new_normal);
-		if (dot1 < 0.1)
-		{
-			return false;
-		}
-		if (dot2 < 0.1)
-		{
-			return false;
-		}
+	//{
+	//	float* new_normal = returnCandidateVertexNormal(mid_coords, fromvid, tovid);
+	//	float* original_normal1 = verts[fromvid]->point_normal;
+	//	float* original_normal2 = verts[tovid]->point_normal;
+	//	float dot1 = VectorMath::innerProduct(original_normal1, new_normal);
+	//	float dot2 = VectorMath::innerProduct(original_normal2, new_normal);
+	//	if (dot1 < 0.1)
+	//	{
+	//		return false;
+	//	}
+	//	if (dot2 < 0.1)
+	//	{
+	//		return false;
+	//	}
 
-	}
+	//}
 
 	if (abs(mid_coords[0] - std::numeric_limits<float>::max()) < 0.01 || abs(mid_coords[0] - std::numeric_limits<float>::min()) < 0.01)
 	{
@@ -577,10 +577,10 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		if (it == verts[tovid]->edgeList.end()) {
 			verts[tovid]->edgeList.push_back(edgeid);
 		}
-		//computeLength(edgeid);
-		computeDistFromEdgeMidToEndPntsTangPla(edgeid);
-		//minHeap->push({ edges[edgeid]->length, edgeid});
-		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
+		computeLength(edgeid);
+		//computeDistFromEdgeMidToEndPntsTangPla(edgeid);
+		minHeap->push({ edges[edgeid]->length, edgeid});
+		//minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
 
 	//modify connected edges
@@ -589,10 +589,10 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		int edgeid = verts[tovid]->edgeList[e];
 		if (edges[edgeid]->deleted == true)
 			continue;		
-		//computeLength(edgeid);
-		computeDistFromEdgeMidToEndPntsTangPla(edgeid);
-		//minHeap->push({ edges[edgeid]->length, edgeid });
-		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
+		computeLength(edgeid);
+		//computeDistFromEdgeMidToEndPntsTangPla(edgeid);
+		minHeap->push({ edges[edgeid]->length, edgeid });
+		//minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
 
 	///modifiy neighbor verts
@@ -1008,6 +1008,8 @@ float* Mesh::returnCandidateVertexNormal(float* midCoords, int fromvid, int tovi
 
 	// Normalize the sum of normals to get the vertex normal
 	float length = sqrt(sumNormals[0] * sumNormals[0] + sumNormals[1] * sumNormals[1] + sumNormals[2] * sumNormals[2]);
+	if (length < 0.0001)
+		length = 0.0001;
 	sumNormals[0] = sumNormals[0] / length;
 	sumNormals[1] = sumNormals[1] / length;
 	sumNormals[2] = sumNormals[2] / length;
@@ -1035,6 +1037,8 @@ void Mesh::calculateVertexNormal(Vertex* vertex)
 
 	// Normalize the sum of normals to get the vertex normal
 	float length = sqrt(sumNormals[0] * sumNormals[0] + sumNormals[1] * sumNormals[1] + sumNormals[2] * sumNormals[2]);
+	if (length < 0.0001)
+		length = 0.0001;
 	vertex->point_normal[0] = sumNormals[0] / length;
 	vertex->point_normal[1] = sumNormals[1] / length;
 	vertex->point_normal[2] = sumNormals[2] / length;

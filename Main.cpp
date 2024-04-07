@@ -17,27 +17,27 @@ int main(int, char** argv) {
     mesh->loadOff(fileName + ".off");
     original_mesh->loadOff(fileName + ".off");
 
-    // Calculate tangent planes for triangles
-    for (size_t i = 0; i < mesh->tris.size(); i++) {
-        mesh->calculateTriangleTangentPlane(mesh->tris[i]);
-        original_mesh->calculateTriangleTangentPlane(mesh->tris[i]);
-    }
+    //// Calculate tangent planes for triangles
+    //for (size_t i = 0; i < mesh->tris.size(); i++) {
+    //    mesh->calculateTriangleTangentPlane(mesh->tris[i]);
+    //    original_mesh->calculateTriangleTangentPlane(mesh->tris[i]);
+    //}
 
-    // Calculate tangent planes for vertices
-    for (size_t i = 0; i < mesh->verts.size(); i++) {
-        mesh->calculateVertexTangentPlane(mesh->verts[i]);
-        original_mesh->calculateVertexTangentPlane(mesh->verts[i]);
-    }
+    //// Calculate tangent planes for vertices
+    //for (size_t i = 0; i < mesh->verts.size(); i++) {
+    //    mesh->calculateVertexTangentPlane(mesh->verts[i]);
+    //    original_mesh->calculateVertexTangentPlane(mesh->verts[i]);
+    //}
 
     // Create a priority queue of pairs of floats (min heap)
     std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> minHeap;
 
-    // Calculate distance_between tangent planes and edge midpoints
-    for (size_t i = 0; i < mesh->edges.size(); i++) {
-        mesh->computeDistFromEdgeMidToEndPntsTangPla(i);
-        original_mesh->computeDistFromEdgeMidToEndPntsTangPla(i);
-        minHeap.push({ mesh->edges[i]->midToEndPointTangentPlanesDist, mesh->edges[i]->edge_idx });
-    }
+    //// Calculate distance_between tangent planes and edge midpoints
+    //for (size_t i = 0; i < mesh->edges.size(); i++) {
+    //    mesh->computeDistFromEdgeMidToEndPntsTangPla(i);
+    //    original_mesh->computeDistFromEdgeMidToEndPntsTangPla(i);
+    //    minHeap.push({ mesh->edges[i]->midToEndPointTangentPlanesDist, mesh->edges[i]->edge_idx });
+    //}
 
     for (size_t i = 0; i < mesh->edges.size(); i++) {
         // Insert key-value pairs into the min heap
@@ -46,19 +46,26 @@ int main(int, char** argv) {
         minHeap.push({ mesh->edges[i]->length, edgeidx });
     }
 
-    while (!minHeap.empty() && mesh->numDeletedTri < mesh->tris.size()/4) {
+    int numSkippedKey = 0;
+    //while (!minHeap.empty() && mesh->numDeletedTri < mesh->tris.size()/2 && numSkippedKey < mesh->tris.size()/2) {
+    //while (!minHeap.empty() && mesh->numDeletedTri < 70 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size() / 2) {
+    //while (!minHeap.empty() && mesh->numDeletedTri < 80 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/2) {
+    //while (!minHeap.empty() && mesh->numDeletedTri < 90 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/2) {
+    while (!minHeap.empty() && mesh->numDeletedTri < 95 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/3) {
         
         auto kvp = minHeap.top(); // Get the top element
         
-        //mesh->computeLength(kvp.second);
-        mesh->computeDistFromEdgeMidToEndPntsTangPla(kvp.second);
+        mesh->computeLength(kvp.second);
+        //mesh->computeDistFromEdgeMidToEndPntsTangPla(kvp.second);
 
-        //if (kvp.first - mesh->edges[kvp.second]->length > 0.0001) {
-        if (kvp.first - mesh->edges[kvp.second]->midToEndPointTangentPlanesDist > 0.0001) {
+        if (kvp.first - mesh->edges[kvp.second]->length > 0.0001) {
+        //if (kvp.first - mesh->edges[kvp.second]->midToEndPointTangentPlanesDist > 0.0001) {
             std::cout << "Skipped key: " << kvp.first << ", value: " << kvp.second << std::endl;
             minHeap.pop(); // Remove the top element
+            numSkippedKey++;
             continue;
         }
+        numSkippedKey = 0;
         std::cout << "Key: " << kvp.first << ", value: " << kvp.second << std::endl;
         if (mesh->edges[kvp.second]->deleted)
         {
@@ -75,7 +82,7 @@ int main(int, char** argv) {
     }
 
 
-    mesh->toOFF(fileName + "____m_o.off"); // Mesh after collapsing edges
+    mesh->toOFF("5l.off"); // Mesh after collapsing edges
 
      //Inflate points after collapsing edges
     for (size_t i = 0; i < mesh->verts.size(); i++) {
@@ -86,9 +93,7 @@ int main(int, char** argv) {
     //original_mesh->inflatePoint(mesh->verts[0]);
 
     // Save the modified mesh to OFF files
-    mesh->toOFF(fileName + "____all_inflated_m_o_0025.off"); // Mesh after inflating points
-    //mesh->toOFF(fileName + "_all" + "_collapse_inflate_original_mesh_winding.off");
-    //mesh->toOFF(fileName + "_all_collapse_original_mesh_winding.off");
+    mesh->toOFF("5li.off");
 
     return 0;
 }
