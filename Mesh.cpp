@@ -606,15 +606,15 @@ void Mesh::inflatePoint(Vertex* vert)
 {
 	if (vert->deleted)
 		return;
-	//windingNumberByYusufSahillioglu(vert);
-	//if (vert->winding == 0.0f)
-	//	return;
-	//while (vert->winding == 1.0f)
-	//{
+	windingNumberByYusufSahillioglu(vert);
+	if (vert->winding == 0.0f)
+		return;
+	while (vert->winding == 1.0f)
+	{
 		//float* normal = returnPointNormal(vert);
 		calculateVertexNormal(vert);
 		float* normal = vert->point_normal;
-		float alpha = 10;
+		float alpha = 0.1;
 		//float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
 		//normal_to_be_added[0] = normal[0] - vert->coords[0];
 		//normal_to_be_added[1] = normal[1] - vert->coords[1];
@@ -627,9 +627,9 @@ void Mesh::inflatePoint(Vertex* vert)
 		vert->coords[1] += normal[1] * alpha;
 		vert->coords[2] += normal[2] * alpha;
 
-	//	windingNumberByYusufSahillioglu(vert);
-	//	int a = 5;
-	//}
+		windingNumberByYusufSahillioglu(vert);
+		int a = 5;
+	}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
