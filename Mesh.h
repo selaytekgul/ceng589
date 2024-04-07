@@ -89,7 +89,7 @@ public:
 	void computeLength(int edgeIdx);
 	void computeDistFromEdgeMidToEndPntsTangPla(int edgeIdx);
 	void collapseEdgeTo(Edge* edge, int tovi);
-	void collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap);
+	bool collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap);
 	void toOFF(const std::string& filename);
 	void inflatePoint(Vertex* vert);
 	void calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber);

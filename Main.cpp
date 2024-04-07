@@ -13,7 +13,7 @@
 int main(int, char** argv) {
     Mesh* mesh = new Mesh();
     Mesh* original_mesh = new Mesh();
-    std::string fileName = { "cube_24" };
+    std::string fileName = { "381" };
     mesh->loadOff(fileName + ".off");
     original_mesh->loadOff(fileName + ".off");
 
@@ -46,24 +46,35 @@ int main(int, char** argv) {
     //    minHeap.push({ mesh->edges[i]->length, edgeidx });
     //}
 
-    //while (!minHeap.empty() && mesh->numDeletedTri < mesh->verts.size()/2) {
-    //    
-    //    auto kvp = minHeap.top(); // Get the top element
-    //    
-    //    //mesh->computeLength(kvp.second);
-    //    mesh->computeDistFromEdgeMidToEndPntsTangPla(kvp.second);
+    while (!minHeap.empty() && mesh->numDeletedTri < mesh->verts.size()/2) {
+        
+        auto kvp = minHeap.top(); // Get the top element
+        
+        //mesh->computeLength(kvp.second);
+        mesh->computeDistFromEdgeMidToEndPntsTangPla(kvp.second);
 
-    //    //if (kvp.first - mesh->edges[kvp.second]->length > 0.0001) {
-    //    if (kvp.first - mesh->edges[kvp.second]->midToEndPointTangentPlanesDist > 0.0001) {
-    //        std::cout << "Skipped key: " << kvp.first << ", value: " << kvp.second << std::endl;
-    //        minHeap.pop(); // Remove the top element
-    //        continue;
-    //    }
-    //    std::cout << "Key: " << kvp.first << ", value: " << kvp.second << std::endl;
+        //if (kvp.first - mesh->edges[kvp.second]->length > 0.0001) {
+        if (kvp.first - mesh->edges[kvp.second]->midToEndPointTangentPlanesDist > 0.0001) {
+            std::cout << "Skipped key: " << kvp.first << ", value: " << kvp.second << std::endl;
+            minHeap.pop(); // Remove the top element
+            continue;
+        }
+        std::cout << "Key: " << kvp.first << ", value: " << kvp.second << std::endl;
+        if (mesh->edges[kvp.second]->deleted)
+        {
+            minHeap.pop(); // Remove the top element
+            continue;
+        }
+        bool collapsed = mesh->collapseEdge(mesh->edges[kvp.second], &minHeap);
+        
+        if (collapsed)
+        {
+            int a = 9;
+        }
+        minHeap.pop(); // Remove the top element
+    }
 
-    //    mesh->collapseEdge(mesh->edges[kvp.second], &minHeap);
-    //    minHeap.pop(); // Remove the top element
-    //}
+
     mesh->toOFF(fileName + "_+.off"); // Mesh after collapsing edges
 
      //Inflate points after collapsing edges

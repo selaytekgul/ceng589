@@ -418,30 +418,50 @@ void Mesh::collapseEdgeTo(Edge* edge, int tovi)
 	}
 };
 
-void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap)
+bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap)
 {
-	const int endP1i = edge->v1i;
-	const int endP2i = edge->v2i;
-
-	float coords[3];
-	VectorMath::midpoint(coords, verts[endP1i]->coords, verts[endP2i]->coords);
-
-	int fromvid = endP1i;
-	int tovid = endP2i;
-	int numIntersectNeighVerts = 0;
-	for (size_t i = 0; i < verts[endP1i]->vertList.size(); i++)
+	int fromvid;
+	int tovid;
+	float mid_coords[3];
+	
 	{
-		int neighIdx = verts[endP1i]->vertList[i];
-		for (size_t j = 0; j < verts[endP2i]->vertList.size(); j++)
+		const int endP1i = edge->v1i;
+		const int endP2i = edge->v2i;
+		VectorMath::midpoint(mid_coords, verts[endP1i]->coords, verts[endP2i]->coords);
+		fromvid = endP1i;
+		tovid = endP2i;
+
+		if (tovid == fromvid)
 		{
-			int neighIdx2 = verts[endP2i]->vertList[j];
-			if (neighIdx == neighIdx2)
-				numIntersectNeighVerts++;
+			int b = 8;
+			edge->deleted = true;
+			return false;
+		}
+		if (edge->edge_idx == 2)
+		{
+			int c = 8;
 		}
 	}
 
-	if (numIntersectNeighVerts >= 3)
-		return;
+	{
+		int numSameNeighVerts = 0;
+		for (size_t i = 0; i < verts[fromvid]->vertList.size(); i++)
+		{
+			int neighIdx = verts[fromvid]->vertList[i];
+			for (size_t j = 0; j < verts[tovid]->vertList.size(); j++)
+			{
+				int neighIdx2 = verts[tovid]->vertList[j];
+				if (neighIdx == neighIdx2 && verts[neighIdx2]->deleted == false && verts[neighIdx]->deleted == false)
+				{
+					numSameNeighVerts++;
+					break;
+				}
+			}
+		}
+
+		if (numSameNeighVerts >= 3)
+			return false;
+	}
 
 	//delete vertex
 	if (verts[fromvid]->deleted == false)
@@ -456,6 +476,9 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		numDeletedEdge++;
 		edges[edge->edge_idx]->deleted = true;
 	}
+	else {
+		int alreadydeletededge = 9;
+	}
 
 	//delete triangles
 	for (size_t t = 0; t < edge->triList.size(); t++)
@@ -469,9 +492,10 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 	}
 
 	//modify remaining vertex coords
-	verts[tovid]->coords[0] = coords[0];
-	verts[tovid]->coords[1] = coords[1];
-	verts[tovid]->coords[2] = coords[2];
+	verts[tovid]->coords[0] = mid_coords[0];
+	verts[tovid]->coords[1] = mid_coords[1];
+	verts[tovid]->coords[2] = mid_coords[2];
+
 
 	//modify connected triangles
 	for (size_t t = 0; t < verts[fromvid]->triList.size(); t++)
@@ -492,6 +516,14 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		{
 			tris[trid]->v3i = tovid;
 		}
+		else {
+			int g = 0;
+			continue;
+		}
+		auto it = std::find(verts[tovid]->triList.begin(), verts[tovid]->triList.end(), trid);
+		if (it == verts[tovid]->triList.end()) {
+			verts[tovid]->triList.push_back(trid);
+		}
 	}
 	
 	//modify connected edges
@@ -508,7 +540,14 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		{
 			edges[edgeid]->v2i = tovid;
 		}
-		
+		else {
+			int a = 9;
+			continue;
+		}
+		auto it = std::find(verts[tovid]->edgeList.begin(), verts[tovid]->edgeList.end(), edgeid);
+		if (it == verts[tovid]->edgeList.end()) {
+			verts[tovid]->edgeList.push_back(edgeid);
+		}
 		//computeLength(edgeid);
 		computeDistFromEdgeMidToEndPntsTangPla(edgeid);
 		//minHeap->push({ edges[edgeid]->length, edgeid});
@@ -520,21 +559,14 @@ void Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 	{
 		int edgeid = verts[tovid]->edgeList[e];
 		if (edges[edgeid]->deleted == true)
-			continue;
-		//if (fromvid == edges[edgeid]->v1i)
-		//{
-		//	edges[edgeid]->v1i = tovid;
-		//}
-		//else if (fromvid == edges[edgeid]->v2i)
-		//{
-		//	edges[edgeid]->v2i = tovid;
-		//}
-		
+			continue;		
 		//computeLength(edgeid);
 		computeDistFromEdgeMidToEndPntsTangPla(edgeid);
 		//minHeap->push({ edges[edgeid]->length, edgeid });
 		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
+
+	return true;
 }
 
 void Mesh::toOFF(const std::string& filename)
