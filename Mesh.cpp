@@ -574,23 +574,30 @@ void Mesh::inflatePoint(Vertex* vert)
 {
 	if (vert->deleted)
 		return;
-	windingNumberByYusufSahillioglu(vert);
-	if (vert->winding == 0.0f)
-		return;
-	while (vert->winding == 1.0f)
-	{
-		float* normal = returnPointNormal(vert);
-		float alpha = 0.01;
-		float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
-		normal_to_be_added[0] = normal[0] - vert->coords[0];
-		normal_to_be_added[1] = normal[1] - vert->coords[1];
-		normal_to_be_added[2] = normal[2] - vert->coords[2];
-		vert->coords[0] -= normal_to_be_added[0] * alpha;
-		vert->coords[1] -= normal_to_be_added[1] * alpha;
-		vert->coords[2] -= normal_to_be_added[2] * alpha;
-		windingNumberByYusufSahillioglu(vert);
-		int a = 5;
-	}
+	//windingNumberByYusufSahillioglu(vert);
+	//if (vert->winding == 0.0f)
+	//	return;
+	//while (vert->winding == 1.0f)
+	//{
+		//float* normal = returnPointNormal(vert);
+		calculateVertexNormal(vert);
+		float* normal = vert->point_normal;
+		float alpha = 10;
+		//float normal_to_be_added[3] = {0.0f, 0.0f, 0.0f};
+		//normal_to_be_added[0] = normal[0] - vert->coords[0];
+		//normal_to_be_added[1] = normal[1] - vert->coords[1];
+		//normal_to_be_added[2] = normal[2] - vert->coords[2];
+		//vert->coords[0] -= normal_to_be_added[0] * alpha;
+		//vert->coords[1] -= normal_to_be_added[1] * alpha;
+		//vert->coords[2] -= normal_to_be_added[2] * alpha;
+
+		vert->coords[0] += normal[0] * alpha;
+		vert->coords[1] += normal[1] * alpha;
+		vert->coords[2] += normal[2] * alpha;
+
+	//	windingNumberByYusufSahillioglu(vert);
+	//	int a = 5;
+	//}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
@@ -763,6 +770,31 @@ void Mesh::calculateVertexNormals()
 		vertex->point_normal[1] = sumNormals[1] / length;
 		vertex->point_normal[2] = sumNormals[2] / length;
 	}
+}
+
+void Mesh::calculateVertexNormal(Vertex* vertex)
+{
+	float sumNormals[3] = { 0.0f, 0.0f, 0.0f };
+
+	// Iterate over each triangle in the vertex's triangle list
+	for (int triIdx : vertex->triList) {
+		// Get the triangle object
+		Triangle* triangle = tris[triIdx];
+
+		// Calculate the normal vector for the triangle
+		calculateTriangleNormal(triangle);
+
+		// Add the triangle's normal to the sum
+		sumNormals[0] += triangle->triangle_normal[0];
+		sumNormals[1] += triangle->triangle_normal[1];
+		sumNormals[2] += triangle->triangle_normal[2];
+	}
+
+	// Normalize the sum of normals to get the vertex normal
+	float length = sqrt(sumNormals[0] * sumNormals[0] + sumNormals[1] * sumNormals[1] + sumNormals[2] * sumNormals[2]);
+	vertex->point_normal[0] = sumNormals[0] / length;
+	vertex->point_normal[1] = sumNormals[1] / length;
+	vertex->point_normal[2] = sumNormals[2] / length;
 }
 
 // Calculate the tangent plane for a triangle

@@ -96,6 +96,7 @@ public:
 	float* returnPointNormal(Vertex* point);
 	void calculateTriangleNormal(Triangle* triangle);
 	void calculateVertexNormals();
+	void calculateVertexNormal(Vertex* vertex);
 	void calculateVertexTangentPlane(Vertex* vertex);
 	void calculateTriangleTangentPlane(Triangle* triangle);
 
