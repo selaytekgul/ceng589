@@ -13,7 +13,7 @@
 int main(int, char** argv) {
     Mesh* mesh = new Mesh();
     Mesh* original_mesh = new Mesh();
-    std::string fileName = { "man0" };
+    std::string fileName = { "381" };
     mesh->loadOff(fileName + ".off");
     original_mesh->loadOff(fileName + ".off");
 
@@ -39,7 +39,8 @@ int main(int, char** argv) {
 
     // Print elements of the min heap
     std::cout << "Min heap elements (key-value pairs):" << std::endl;
-    while (!minHeap.empty() && mesh->numDeletedTri < 50) {
+    while (!minHeap.empty() && mesh->numDeletedTri < mesh->verts.size()/2) {
+    //while (!minHeap.empty() && mesh->numDeletedTri < 50) {
         auto kvp = minHeap.top(); // Get the top element
         mesh->computeLength(kvp.second);
         if (kvp.first - mesh->edges[kvp.second]->length > 0.0001) {
