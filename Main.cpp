@@ -23,6 +23,13 @@ int main(int, char** argv) {
     //    original_mesh->calculateTriangleTangentPlane(mesh->tris[i]);
     //}
 
+
+        //// Calculate tangent planes for triangles
+    for (size_t i = 0; i < mesh->tris.size(); i++) {
+        mesh->calculateTriangleNormal(mesh->tris[i]);
+        original_mesh->calculateTriangleNormal(mesh->tris[i]);
+    }
+     
     //// Calculate tangent planes for vertices
     //for (size_t i = 0; i < mesh->verts.size(); i++) {
     //    mesh->calculateVertexTangentPlane(mesh->verts[i]);
@@ -47,11 +54,11 @@ int main(int, char** argv) {
     }
 
     int numSkippedKey = 0;
-    //while (!minHeap.empty() && mesh->numDeletedTri < mesh->tris.size()/2 && numSkippedKey < mesh->tris.size()/2) {
+    while (!minHeap.empty() && mesh->numDeletedTri < mesh->tris.size()/2 && numSkippedKey < mesh->tris.size()/2) {
     //while (!minHeap.empty() && mesh->numDeletedTri < 70 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size() / 2) {
     //while (!minHeap.empty() && mesh->numDeletedTri < 80 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/2) {
     //while (!minHeap.empty() && mesh->numDeletedTri < 90 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/2) {
-    while (!minHeap.empty() && mesh->numDeletedTri < 95 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/3) {
+    //while (!minHeap.empty() && mesh->numDeletedTri < 95 * mesh->tris.size()/100 && numSkippedKey < mesh->tris.size()/3) {
         
         auto kvp = minHeap.top(); // Get the top element
         
@@ -82,7 +89,7 @@ int main(int, char** argv) {
     }
 
 
-    mesh->toOFF("5l.off"); // Mesh after collapsing edges
+    mesh->toOFF("50c.off"); // Mesh after collapsing edges
 
      //Inflate points after collapsing edges
     for (size_t i = 0; i < mesh->verts.size(); i++) {
@@ -93,7 +100,7 @@ int main(int, char** argv) {
     //original_mesh->inflatePoint(mesh->verts[0]);
 
     // Save the modified mesh to OFF files
-    mesh->toOFF("5li.off");
+    mesh->toOFF("50ci.off");
 
     return 0;
 }

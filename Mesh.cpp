@@ -284,11 +284,22 @@ void Mesh::modifyEdge(int v1, int v2, int triIdx)
 
 void Mesh::computeLength(int edgeIdx)
 {
-	int endP1 = edges[edgeIdx]->v1i;
+	/*int endP1 = edges[edgeIdx]->v1i;
 	int endP2 = edges[edgeIdx]->v2i;
 	const float* v1coords = verts[endP1]->coords;
 	const float* v2coords = verts[endP2]->coords;
-	edges[edgeIdx]->length = VectorMath::distanceBetweenVectors(v1coords, v2coords);
+	edges[edgeIdx]->length = VectorMath::distanceBetweenVectors(v1coords, v2coords);*/
+	Edge* edge = edges[edgeIdx];
+	if (edge->triList.size() == 2)
+	{
+		float* normal1 = tris[edge->triList[0]]->triangle_normal;
+		float* normal2 = tris[edge->triList[1]]->triangle_normal;
+
+		edges[edgeIdx]->length = VectorMath::innerProduct(normal1, normal2);
+	}
+	else {
+		edges[edgeIdx]->length = 1.0;
+	}
 }
 
 void Mesh::computeDistFromEdgeMidToEndPntsTangPla(int edgeIdx)
