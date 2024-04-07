@@ -91,7 +91,7 @@ public:
 	void collapseEdgeTo(Edge* edge, int tovi);
 	bool collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>>* minHeap);
 	void toOFF(const std::string& filename);
-	void inflatePoint(Vertex* vert);
+	void inflatePoint(Mesh* mesh, Vertex* vert);
 	void calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber);
 	float* returnPointNormal(Vertex* point);
 	void calculateTriangleNormal(Triangle* triangle);

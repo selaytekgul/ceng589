@@ -299,7 +299,7 @@ void Mesh::computeDistFromEdgeMidToEndPntsTangPla(int edgeIdx)
 	const float dist1 = VectorMath::calculateDistanceToTangentPlane(mid, verts[edges[edgeIdx]->v1i]->tangent_plane_normal, verts[edges[edgeIdx]->v1i]->tangent_plane_origin);
 	const float dist2 = VectorMath::calculateDistanceToTangentPlane(mid, verts[edges[edgeIdx]->v2i]->tangent_plane_normal, verts[edges[edgeIdx]->v2i]->tangent_plane_origin);
 
-	std::cout << "edge id: " << edges[edgeIdx]->edge_idx << " distance: " << dist1 + dist2 << std::endl;
+	//std::cout << "edge id: " << edges[edgeIdx]->edge_idx << " distance: " << dist1 + dist2 << std::endl;
 	edges[edgeIdx]->midToEndPointTangentPlanesDist = dist1 + dist2;
 }
 
@@ -437,10 +437,6 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 			edge->deleted = true;
 			return false;
 		}
-		if (edge->edge_idx == 2)
-		{
-			int c = 8;
-		}
 	}
 
 	{
@@ -566,6 +562,26 @@ bool Mesh::collapseEdge(Edge* edge, std::priority_queue<std::pair<float, int>, s
 		minHeap->push({ edges[edgeid]->midToEndPointTangentPlanesDist, edges[edgeid]->edge_idx });
 	}
 
+	for (size_t i = 0; i < verts[fromvid]->vertList.size(); i++)
+	{
+		int vertid = verts[fromvid]->vertList[i];
+		if (verts[vertid]->deleted)
+			continue;
+		{
+			auto it = std::find(verts[tovid]->vertList.begin(), verts[tovid]->vertList.end(), vertid);
+			if (it == verts[tovid]->vertList.end() && tovid != vertid) {
+				verts[tovid]->vertList.push_back(vertid);
+			}
+		}
+		
+		{
+			auto it2 = std::find(verts[vertid]->vertList.begin(), verts[vertid]->vertList.end(), tovid);
+			if (it2 == verts[vertid]->vertList.end() && tovid != vertid) {
+				verts[vertid]->vertList.push_back(tovid);
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -602,15 +618,15 @@ void Mesh::toOFF(const std::string& filename)
 	std::cout << "OFF file saved: " << filename << std::endl;
 }
 
-void Mesh::inflatePoint(Vertex* vert)
+void Mesh::inflatePoint(Mesh* mesh, Vertex* vert)
 {
 	if (vert->deleted)
 		return;
-	//windingNumberByYusufSahillioglu(vert);
-	//if (vert->winding == 0.0f)
-	//	return;
-	//while (vert->winding == 1.0f)
-	//{
+	mesh->windingNumberByYusufSahillioglu(vert);
+	if (vert->winding == 0.0f)
+		return;
+	while (vert->winding == 1.0f)
+	{
 		//float* normal = returnPointNormal(vert);
 		calculateVertexNormal(vert);
 		float* normal = vert->point_normal;
@@ -627,9 +643,9 @@ void Mesh::inflatePoint(Vertex* vert)
 		vert->coords[1] += normal[1] * alpha;
 		vert->coords[2] += normal[2] * alpha;
 
-	//	windingNumberByYusufSahillioglu(vert);
-	//	int a = 5;
-	//}
+		mesh->windingNumberByYusufSahillioglu(vert);
+		int a = 5;
+	}
 }
 
 void Mesh::calculateNormalVectorMesh(float crossProductVector[3], const triVertsCoords& coordinatesOfVerticesOfTriangle, const size_t selectedVertexNumber)
